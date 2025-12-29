@@ -1,71 +1,68 @@
 import streamlit as st
 import plotly.graph_objects as go
 
-# 1. ENGENHARIA VISUAL: ESTÉTICA METÁLICA E CONTRASTE DE ELITE
+# 1. ENGENHARIA VISUAL: ALTO CONTRASTE E ESTÉTICA DE ELITE
 st.set_page_config(page_title="Protocolo LIDERUM", layout="wide")
 
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@700&display=swap');
 
-    /* Fundo Azul Metálico com Brilho Profundo */
+    /* Fundo Azul Metálico com Brilho */
     .stApp {
         background: linear-gradient(180deg, #001f3f 0%, #000c1a 100%);
         color: #FFFFFF;
         font-family: 'Montserrat', sans-serif;
     }
 
-    /* Títulos de Autoridade */
+    /* Títulos em Dourado Serifado */
     h1 {
         color: #D4AF37 !important;
         font-family: 'Playfair Display', serif !important;
         font-size: 42px !important;
         text-shadow: 2px 4px 8px rgba(0,0,0,0.6);
         text-align: center;
-        margin-top: 0px;
     }
 
-    /* Perguntas com Leitura Facilitada */
+    /* Perguntas com Leitura de Elite */
     .question-text {
         font-size: 20px !important;
         font-weight: 500;
-        color: #FFFFFF;
+        color: #FFFFFF !important;
         margin-top: 25px;
         margin-bottom: 15px;
         text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
     }
 
-    /* NÚMEROS: Branco Puro, Negrito e Visível */
-    div[role="radiogroup"] label {
+    /* --- CORREÇÃO DE VISIBILIDADE DOS NÚMEROS --- */
+    /* Força o texto dos números a ser BRANCO PURO e visível */
+    div[data-testid="stRadio"] label p {
         color: #FFFFFF !important;
+        font-size: 22px !important;
         font-weight: 700 !important;
-        font-size: 20px !important;
-        background: rgba(255, 255, 255, 0.15);
-        padding: 8px 20px;
-        border-radius: 5px;
-        margin-right: 12px;
-        transition: 0.3s;
+        text-shadow: none !important;
     }
 
-    /* Destaque no número selecionado */
+    /* Estiliza o container de cada número para destaque */
+    div[role="radiogroup"] label {
+        background: rgba(255, 255, 255, 0.15) !important;
+        padding: 10px 25px !important;
+        border-radius: 8px !important;
+        margin-right: 15px !important;
+        border: 1px solid rgba(212, 175, 55, 0.2) !important;
+        transition: 0.3s !important;
+    }
+
+    /* Cor do número quando SELECIONADO (Dourado Liderum) */
     div[role="radiogroup"] [data-checked="true"] {
+        background: rgba(212, 175, 55, 0.5) !important;
         border: 2px solid #D4AF37 !important;
-        background: rgba(212, 175, 55, 0.4) !important;
-    }
-
-    /* Container das Opções 1-5 */
-    div[role="radiogroup"] {
-        background: rgba(0, 0, 0, 0.3);
-        padding: 20px;
-        border-radius: 10px;
-        border: 1px solid rgba(212, 175, 55, 0.4);
-        display: flex;
-        justify-content: space-around;
     }
     
-    label[data-testid="stWidgetLabel"] { display: none; }
+    /* Esconde o label técnico do Streamlit */
+    label[data-testid="stWidgetLabel"] { display: none !important; }
 
-    /* Botão de Comando LIDERUM */
+    /* Botão Final de Comando */
     .stButton>button {
         background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%);
         color: #001f3f;
@@ -77,20 +74,18 @@ st.markdown("""
         border: none;
         box-shadow: 0px 5px 25px rgba(212, 175, 55, 0.5);
         margin-top: 50px;
-        transition: 0.4s;
     }
-    .stButton>button:hover { transform: translateY(-3px); box-shadow: 0px 8px 35px rgba(212, 175, 55, 0.7); }
     </style>
     """, unsafe_allow_html=True)
 
-# LOGO CENTRALIZADA (ABRIEM/LIDERUM)
+# ESPAÇO PARA LOGO
 st.markdown("<div style='text-align: center;'><img src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png' width='120'></div>", unsafe_allow_html=True)
 
 st.markdown("<h1>PROTOCOLO DE GOVERNANÇA PESSOAL LIDERUM</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; color: #D4AF37; font-size: 18px; letter-spacing: 3px;'>MAPEAMENTO DE PERFORMANCE EM 9 DIMENSÕES</p>", unsafe_allow_html=True)
 st.write("---")
 
-# 2. ESTRUTURA TÉCNICA: 9 DIMENSÕES E 45 PERGUNTAS
+# 2. DIMENSÕES E PERGUNTAS (45 ITENS)
 dimensoes_premium = {
     "Visão e Alinhamento Estratégico": ["Eu tenho clareza sobre meus objetivos nos próximos meses.", "Meus objetivos pessoais e profissionais estão anotados e organizados.", "Eu consigo manter meu foco mesmo diante de distrações externas.", "Eu revisito minha visão de futuro com frequência para me orientar.", "Eu organizo minhas prioridades com base no que é realmente importante."],
     "Recompensa e Reforço Positivo": ["Eu reconheço minhas próprias conquistas, mesmo que pequenas.", "Eu costumo comemorar quando concluo uma etapa de um projeto.", "Eu me elogio por atitudes positivas que tomo no dia a dia.", "Eu consigo sentir orgulho do meu progresso, mesmo que não seja perfeito.", "Eu crio momentos intencionais para celebrar avanços."],
@@ -110,6 +105,7 @@ for dim, perguntas in dimensoes_premium.items():
         soma = 0
         for p in perguntas:
             st.markdown(f"<p class='question-text'>{p}</p>", unsafe_allow_html=True)
+            # Sistema de Escolha 1-5
             n = st.radio(f"Nota para {p}", [1, 2, 3, 4, 5], index=2, horizontal=True, key=p)
             soma += n
         respostas[dim] = soma
@@ -119,7 +115,6 @@ st.write("---")
 if st.button("GERAR DIAGNÓSTICO DE PERFORMANCE"):
     st.balloons()
     
-    # Gráfico de Radar Dourado
     categories = list(respostas.keys())
     values = list(respostas.values())
     fig = go.Figure()
@@ -132,6 +127,5 @@ if st.button("GERAR DIAGNÓSTICO DE PERFORMANCE"):
         cor = "🔴" if score <= 10 else "🟠" if score <= 17 else "🟢" if score <= 22 else "🌟"
         st.markdown(f"<div style='background: rgba(255,255,255,0.05); padding: 15px; border-radius: 5px; margin-bottom: 10px; border-left: 5px solid #D4AF37;'><b>{cor} {dim}</b>: {score}/25</div>", unsafe_allow_html=True)
 
-    # LINK DO WHATSAPP CONFIGURADO
+    # BOTÃO WHATSAPP FINAL
     st.link_button("💎 AGENDAR ANÁLISE COM O EXPERT", "https://wa.me/5581986245870")
-  
