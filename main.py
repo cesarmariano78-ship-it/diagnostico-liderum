@@ -1,64 +1,75 @@
 import streamlit as st
 import plotly.graph_objects as go
 
-# 1. ENGENHARIA VISUAL: AZUL METÁLICO E FONTES DE ELITE
+# 1. ENGENHARIA VISUAL: AZUL METÁLICO, FONTES DE ELITE E INTERATIVIDADE
 st.set_page_config(page_title="Protocolo LIDERUM", layout="wide")
 
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&family=Playfair+Display:wght@700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@700&display=swap');
 
-    /* Fundo Metálico Azul */
+    /* Fundo Azul Metálico com Brilho Profundo */
     .stApp {
-        background: linear-gradient(135deg, #001226 0%, #001f3f 50%, #001226 100%);
+        background: linear-gradient(180deg, #001f3f 0%, #000c1a 100%);
         color: #FFFFFF;
         font-family: 'Montserrat', sans-serif;
     }
 
-    /* Títulos em Dourado com Fonte Serifada */
-    h1, h2, h3 {
+    /* Centralização e Estilo de Títulos */
+    h1 {
         color: #D4AF37 !important;
         font-family: 'Playfair Display', serif !important;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        font-size: 42px !important;
+        text-shadow: 2px 4px 8px rgba(0,0,0,0.6);
+        text-align: center;
     }
 
-    /* Estilização dos Seletores (Sliders) */
-    .stSelectSlider label { color: #D4AF37 !important; font-weight: 600 !important; }
+    /* Estilização das Perguntas (Leitura de Elite) */
+    .question-text {
+        font-size: 20px !important;
+        font-weight: 400;
+        color: #FFFFFF;
+        margin-top: 25px;
+        margin-bottom: 12px;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
+    }
+
+    /* Customização dos Seletores 1-5 (Sem Arrastar) */
+    .stRadio div[role="radiogroup"] {
+        background: rgba(255, 255, 255, 0.07);
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid rgba(212, 175, 55, 0.4);
+    }
     
-    /* Botão de Alta Performance */
+    label[data-testid="stWidgetLabel"] { display: none; }
+
+    /* Botão de Comando LIDERUM */
     .stButton>button {
         background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%);
         color: #001f3f;
-        border: none;
         border-radius: 4px;
         font-weight: 700;
-        font-size: 20px;
-        padding: 15px;
-        box-shadow: 0px 4px 15px rgba(212, 175, 55, 0.3);
-        transition: 0.3s;
+        font-size: 24px;
+        padding: 20px;
+        width: 100%;
+        border: none;
+        box-shadow: 0px 5px 25px rgba(212, 175, 55, 0.4);
+        margin-top: 50px;
+        transition: 0.4s;
     }
-    .stButton>button:hover { transform: scale(1.01); box-shadow: 0px 6px 20px rgba(212, 175, 55, 0.5); }
-
-    /* Cards de Devolutiva Refinados */
-    .feedback-card {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(212, 175, 55, 0.2);
-        padding: 25px;
-        border-radius: 2px;
-        border-left: 8px solid #D4AF37;
-        margin-bottom: 20px;
-    }
+    .stButton>button:hover { transform: translateY(-3px); box-shadow: 0px 8px 35px rgba(212, 175, 55, 0.6); }
     </style>
     """, unsafe_allow_html=True)
 
-# ESPAÇO PARA LOGO (Substitua a URL abaixo pela sua logo)
-st.markdown("<div style='text-align: center;'><img src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png' width='100'></div>", unsafe_allow_html=True)
+# LOGO CENTRALIZADA
+st.markdown("<div style='text-align: center;'><img src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png' width='120'></div>", unsafe_allow_html=True)
 
-st.title("PROTOCOLO DE GOVERNANÇA PESSOAL LIDERUM")
-st.markdown("<p style='text-align: center; color: #D4AF37; font-size: 20px; letter-spacing: 2px;'>Mapeamento de Alta Performance em 9 Dimensões</p>", unsafe_allow_html=True)
+st.markdown("<h1>PROTOCOLO DE GOVERNANÇA PESSOAL LIDERUM</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #D4AF37; font-size: 18px; letter-spacing: 3px;'>MAPEAMENTO DE PERFORMANCE EM 9 DIMENSÕES</p>", unsafe_allow_html=True)
 st.write("---")
 
-# 2. DIMENSÕES E PERGUNTAS (45 ITENS COM NOMES ESTRATÉGICOS)
+# 2. DIMENSÕES E 45 PERGUNTAS (SISTEMA DE CLIQUE 1 A 5)
 dimensoes_premium = {
     "Visão e Alinhamento Estratégico": ["Eu tenho clareza sobre meus objetivos nos próximos meses.", "Meus objetivos pessoais e profissionais estão anotados e organizados.", "Eu consigo manter meu foco mesmo diante de distrações externas.", "Eu revisito minha visão de futuro com frequência para me orientar.", "Eu organizo minhas prioridades com base no que é realmente importante."],
     "Recompensa e Reforço Positivo": ["Eu reconheço minhas próprias conquistas, mesmo que pequenas.", "Eu costumo comemorar quando concluo uma etapa de um projeto.", "Eu me elogio por atitudes positivas que tomo no dia a dia.", "Eu consigo sentir orgulho do meu progresso, mesmo que não seja perfeito.", "Eu crio momentos intencionais para celebrar avanços."],
@@ -74,37 +85,29 @@ dimensoes_premium = {
 respostas = {}
 
 for dim, perguntas in dimensoes_premium.items():
-    with st.expander(f"▼ {dim.upper()}"):
+    with st.expander(f"✨ AVALIAR: {dim.upper()}"):
         soma = 0
         for p in perguntas:
-            n = st.select_slider(p, options=[1, 2, 3, 4, 5], value=3, key=p)
+            st.markdown(f"<p class='question-text'>{p}</p>", unsafe_allow_html=True)
+            n = st.radio(f"Nota para {p}", [1, 2, 3, 4, 5], index=2, horizontal=True, key=p)
             soma += n
         respostas[dim] = soma
 
 st.write("---")
 
-if st.button("PROCESSAR RESULTADOS ESTRATÉGICOS"):
-    # Gráfico de Radar Dourado Metálico
+if st.button("GERAR DIAGNÓSTICO DE PERFORMANCE"):
+    st.balloons()
+    
     categories = list(respostas.keys())
     values = list(respostas.values())
     fig = go.Figure()
     fig.add_trace(go.Scatterpolar(r=values + [values[0]], theta=categories + [categories[0]], fill='toself', line_color='#D4AF37', fillcolor='rgba(212, 175, 55, 0.3)'))
-    fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 25], color="white", gridcolor="rgba(212,175,55,0.2)")), showlegend=False, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(color="white", size=11))
+    fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 25], color="white", gridcolor="rgba(255,255,255,0.2)")), showlegend=False, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(color="white", size=10))
     st.plotly_chart(fig, use_container_width=True)
 
-    st.header("RELATÓRIO DE GOVERNANÇA")
+    st.markdown("<h3>SUA GOVERNANÇA POR DIMENSÃO</h3>", unsafe_allow_html=True)
     for dim, score in respostas.items():
-        if score <= 10: status, cor = "CRÍTICO", "🔴"
-        elif score <= 17: status, cor = "ALERTA", "🟠"
-        elif score <= 22: status, cor = "EFICIENTE", "🟢"
-        else: status, cor = "ELITE", "🌟"
-        
-        st.markdown(f"""
-            <div class="feedback-card">
-                <h3 style="text-align: left; margin: 0;">{cor} {dim}: {score}/25</h3>
-                <p style="color: {cor}; font-weight: 700;">NÍVEL ATUAL: {status}</p>
-            </div>
-        """, unsafe_allow_html=True)
-    
-    st.markdown("<h3 style='text-align: center;'>Agende seu Debriefing com o Expert</h3>", unsafe_allow_html=True)
-    st.link_button("💎 SOLICITAR SESSÃO ESTRATÉGICA", "https://wa.me/SEUNUMERO")
+        cor = "🔴" if score <= 10 else "🟠" if score <= 17 else "🟢" if score <= 22 else "🌟"
+        st.markdown(f"<div style='background: rgba(255,255,255,0.05); padding: 15px; border-radius: 5px; margin-bottom: 10px; border-left: 5px solid #D4AF37;'><b>{cor} {dim}</b>: {score}/25</div>", unsafe_allow_html=True)
+
+    st.link_button("💎 AGENDAR ANÁLISE COM O EXPERT", "https://wa.me/SEUNUMERO")
