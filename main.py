@@ -39,7 +39,7 @@ questoes_lista = [
     ("Análise e Consciência de Padrões", ["Reviso meu comportamento criticamente.", "Reconheço erros e busco aprender.", "Percebo meus padrões de sabotagem.", "Ajusto rotas sem culpa quando erro.", "Busco feedbacks com abertura."]),
     ("Governança e Disciplina Operacional", ["Planejo minha rotina de forma organizada.", "Priorizo o importante antes do urgente.", "Mantenho constância sem motivação.", "Equilibro tarefas operacionais e estratégicas.", "Tenho hábitos que sustentam minha produtividade."]),
     ("Modelagem e Expansão de Repertório", ["Tenho consciência de comportamentos a mudar.", "Busco aprender com quem admiro.", "Replico métodos que funcionam para outros.", "Observo e mudo pensamentos limitantes.", "Incorporo novas habilidades com rapidez."]),
-    ("Gestão da Narrativa e Mindset", ["Minha voz interna me incentiva.", "Percebo e ressignifico pensamentos punitivos.", "Converso comigo com respeito e firmeza.", "Silencio pensamentos sabotadores.", "Meu diálogo interno ajuda minhas ações."]),
+    ("Gestão da Narrativa e Mindset", ["Minha vai interna me incentiva.", "Percebo e ressignifico pensamentos punitivos.", "Converso comigo com respeito e firmeza.", "Silencio pensamentos sabotadores.", "Meu diálogo interno ajuda minhas ações."]),
     ("Arquitetura de Sistemas de Crenças", ["Acredito que sou capaz de aprender e evoluir sempre.", "Percebo quando ajo por crenças limitantes.", "Mudo minha realidade mudando crenças.", "Tenho crenças fortes sobre minha liderança.", "Identifico a origem das minhas crenças."]),
     ("Padrão de Entrega e Excelência", ["Me esforço para entregar o máximo.", "Percebo evolução na qualidade das entregas.", "Mantenho comprometimento sob pressão.", "Tenho clareza de pontos fortes e de melhoria.", "Entrego além do básico sempre."]),
     ("Postura Ativa e Protagonismo", ["Assumo responsabilidade pelas escolhas.", "Evito colocar culpa em fatores externos.", "Ajo com rapidez para mudar o que controlo.", "Encaro desafios como oportunidades.", "Olho para mim antes de culpar o ambiente."])
@@ -47,11 +47,6 @@ questoes_lista = [
 
 # --- ETAPA 1: QUESTÕES ---
 if st.session_state.etapa == 'questoes':
-    if st.button("🧪 MODO TESTE RÁPIDO"):
-        st.session_state.scores = [random.randint(15, 25) for _ in range(9)]
-        st.session_state.total = sum(st.session_state.scores)
-        st.session_state.etapa = 'captura'; st.rerun()
-
     q_idx = 0
     for cat, perguntas in questoes_lista:
         with st.expander(f"✨ DIMENSÃO: {cat.upper()}"):
@@ -88,18 +83,14 @@ elif st.session_state.etapa == 'captura':
                     except: st.session_state.etapa = 'resultado'; st.rerun()
                 else: st.warning("Por favor, preencha todos os campos.")
 
-# --- ETAPA 3: LAUDO DE ALTO IMPACTO (FIXO) ---
+# --- ETAPA 3: LAUDO ---
 elif st.session_state.etapa == 'resultado':
     st.markdown(f"### Análise Individual: <span class='highlight'>{st.session_state.nome_usuario.upper()}</span>", unsafe_allow_html=True)
-    
-    # KPIs Superiores
     c1, c2 = st.columns(2)
     with c1: st.metric("Pontuação Total", f"{st.session_state.total} / 225")
     with c2: st.metric("Zona de Governança", st.session_state.zona)
-    
     st.write("---")
     col_l, col_r = st.columns([1.2, 0.8])
-    
     with col_l:
         categories = ['Visão', 'Recompensa', 'Análise', 'Governança', 'Modelagem', 'Narrativa', 'Crenças', 'Excelência', 'Postura']
         fig = go.Figure()
@@ -110,58 +101,19 @@ elif st.session_state.etapa == 'resultado':
             font=dict(color="white", size=16)
         )
         st.plotly_chart(fig, use_container_width=True)
-
     with col_r:
         st.markdown("<div class='laudo-container'>", unsafe_allow_html=True)
         st.markdown("### 🔍 Direcionamento Estratégico")
         if st.session_state.zona == "ELITE":
-            st.markdown(f"""
-            <span class='highlight'>{st.session_state.nome_usuario}</span>, seus resultados indicam uma **Governança de Elite**. 
-            O foco deve ser na blindagem da constância absoluta. Mantenha a guarda alta contra a cegueira da eficiência e foque em otimizar sua expansão e crescimento contínuo. 
-            Lembre-se que Autoliderança é um processo vivo. 
-            Caso queira receber nosso Laudo completo, gerado por IA treinada por mim, César Mariano, você terá acesso não só a um diagnóstico, mas a um plano de execução pronto para acelerar seu desenvolvimento.
-            """, unsafe_allow_html=True)
+            st.markdown(f"<span class='highlight'>{st.session_state.nome_usuario}</span>, seus resultados indicam uma **Governança de Elite**. O foco deve ser na blindagem da constância absoluta. Mantenha a guarda alta contra a cegueira da eficiência e foque em otimizar sua expansão e crescimento contínuo. Lembre-se que Autoliderança é um processo vivo. Caso queira receber nosso Laudo completo, gerado por IA treinada por mim, César Mariano, você terá acesso não só a um diagnóstico, mas a um plano de execução pronto para acelerar seu desenvolvimento.", unsafe_allow_html=True)
         elif st.session_state.zona == "OSCILAÇÃO":
-            st.markdown(f"""
-            <span class='highlight'>{st.session_state.nome_usuario}</span>, você está na zona de **Intermitência**. 
-            Sua performance oscila entre picos de excelência e vales de inércia. Isso ocorre porque sua disciplina pessoal ainda é dependente de estímulos externos ou picos emocionais. 
-            Para tracionar de verdade, é necessário estabilizar seus pilares operacionais e silenciar a narrativa sabotadora. 
-            Acesse agora o Laudo completo, gerado por IA treinada por mim, César Mariano, e tenha acesso não só a um diagnóstico detalhado, mas a um plano de execução pronto para desbloquear as áreas que ainda estão travadas e acelerar seu desenvolvimento.
-            """, unsafe_allow_html=True)
+            st.markdown(f"<span class='highlight'>{st.session_state.nome_usuario}</span>, você está na zona de **Intermitência**. Sua performance oscila entre picos de excelência e vales de inércia. Isso ocorre porque sua disciplina pessoal ainda é dependente de estímulos externos ou picos emocionais. Para tracionar de verdade, é necessário estabilizar seus pilares operacionais e silenciar a narrativa sabotadora. Acesse agora o Laudo completo, gerado por IA treinada por mim, César Mariano, e tenha acesso não só a um diagnóstico detalhado, mas a um plano de execução pronto para desbloquear as áreas que ainda estão travadas e acelerar seu desenvolvimento.", unsafe_allow_html=True)
         else:
-            st.markdown(f"""
-            <span class='highlight'>{st.session_state.nome_usuario}</span>, você está em **Modo de Sobrevivência**. 
-            Sua governança pessoal colapsou e você provavelmente sente que está perdendo o controle sobre sua agenda e seus resultados. A intervenção deve ser imediata. 
-            Não é sobre trabalhar mais, mas sobre implementar o método correto de intervenção nos pontos vitais que minam a sua energia e sabotam os seus resultados. 
-            Acesse agora o Laudo completo, gerado por IA treinada por mim, César Mariano, e tenha acesso não só a um diagnóstico detalhado, mas a um plano de execução pronto para desbloquear as áreas que ainda estão travadas e acelerar seu desenvolvimento.
-            """, unsafe_allow_html=True)
+            st.markdown(f"<span class='highlight'>{st.session_state.nome_usuario}</span>, você está em **Modo de Sobrevivência**. Sua governança pessoal colapsou e você provavelmente sente que está perdendo o controle sobre sua agenda e seus resultados. A intervenção deve ser imediata. Não é sobre trabalhar mais, mas sobre implementar o método correto de intervenção nos pontos vitais que minam a sua energia e sabotam os seus resultados. Acesse agora o Laudo completo, gerado por IA treinada por mim, César Mariano, e tenha acesso não só a um diagnóstico detalhado, mas a um plano de execução pronto para desbloquear as áreas que ainda estão travadas e acelerar seu desenvolvimento.", unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
-
     st.write("---")
-    
-    # SEÇÃO DE BOTÕES
     st.markdown("<h3 style='text-align: center;'>Próximo Passo Estratégico</h3>", unsafe_allow_html=True)
     st.write("Este laudo aponta sua zona atual. Para subir de nível, você precisa de profundidade.")
-    
-    # 1. BOTÃO DE CHECKOUT CENTRALIZADO
-    st.markdown(f"""
-        <div style='text-align: center; margin-bottom: 25px;'>
-            <a href='https://pay.hotmart.com/SEU_LINK' target='_blank' style='text-decoration: none;'>
-                <div style='background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%); color: #001226; padding: 20px 45px; font-weight: bold; border-radius: 8px; display: inline-block; width: 100%; max-width: 600px; font-size: 20px;'>
-                    ADQUIRIR MEU LAUDO ESTRATÉGICO COMPLETO COM IA →
-                </div>
-            </a>
-        </div>
-    """, unsafe_allow_html=True)
-    
-    # 2. BOTÃO FALE COM NOSSA EQUIPE
+    st.markdown(f"<div style='text-align: center; margin-bottom: 25px;'><a href='https://pay.hotmart.com/SEU_LINK' target='_blank' style='text-decoration: none;'><div style='background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%); color: #001226; padding: 20px 45px; font-weight: bold; border-radius: 8px; display: inline-block; width: 100%; max-width: 600px; font-size: 20px;'>ADQUIRIR MEU LAUDO ESTRATÉGICO COMPLETO COM IA →</div></a></div>", unsafe_allow_html=True)
     wa_url = "https://wa.me/5581982602018?text=Olá!%20Acabei%20de%20fazer%20meu%20Diagnóstico%20LIDERUM%20e%20quero%20conhecer%20as%20soluções."
-    st.markdown(f"""
-        <div style='text-align: left;'>
-            <a href='{wa_url}' target='_blank' style='text-decoration: none;'>
-                <div style='background: rgba(212, 175, 55, 0.1); color: #D4AF37; border: 1px solid #D4AF37; padding: 12px 25px; font-weight: bold; border-radius: 5px; display: inline-block;'>
-                    💬 FALE COM NOSSA EQUIPE
-                </div>
-            </a>
-        </div>
-    """, unsafe_allow_html=True)
+    st.markdown(f"<div style='text-align: left;'><a href='{wa_url}' target='_blank' style='text-decoration: none;'><div style='background: rgba(212, 175, 55, 0.1); color: #D
