@@ -5,7 +5,7 @@ import datetime
 import pandas as pd
 from streamlit_gsheets import GSheetsConnection
 
-# 1. SETUP VISUAL LIDERUM (NOMES DOS CAMPOS EM BRANCO)
+# 1. SETUP VISUAL LIDERUM (NOMES BRANCOS PARA VISIBILIDADE)
 st.set_page_config(page_title="Protocolo LIDERUM", layout="wide")
 
 st.markdown("""
@@ -14,10 +14,8 @@ st.markdown("""
     .stApp { background-color: #000c1a; color: #FFFFFF; font-family: 'Montserrat', sans-serif; }
     h1 { color: #D4AF37 !important; font-family: 'Playfair Display', serif !important; text-align: center; }
     
-    /* TORNA OS NOMES DOS CAMPOS (LABELS) BRANCOS E VISÍVEIS */
-    label, .stTextInput label, [data-testid="stMarkdownContainer"] p { 
-        color: #FFFFFF !important; font-size: 18px !important; font-weight: 600 !important; 
-    }
+    /* NOMES DOS CAMPOS EM BRANCO */
+    label, .stTextInput label, p { color: #FFFFFF !important; font-size: 18px !important; font-weight: 600 !important; }
     
     div[data-testid="stRadio"] label p { color: #FFFFFF !important; font-size: 24px !important; font-weight: 800 !important; }
     div[role="radiogroup"] label { background-color: #001f3f !important; border: 2px solid #D4AF37 !important; padding: 10px 25px !important; border-radius: 8px; margin-right: 10px; }
@@ -28,7 +26,6 @@ st.markdown("""
         width: 100% !important; border: none !important; padding: 15px !important;
     }
     .question-text { font-size: 20px !important; color: #FFFFFF !important; margin-top: 25px; border-bottom: 1px solid rgba(212, 175, 55, 0.1); padding-bottom: 5px; }
-    .zone-card { background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 12px; border-left: 12px solid #D4AF37; margin-top: 20px; line-height: 1.6; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -98,12 +95,11 @@ elif st.session_state.etapa == 'captura':
                         }])
                         conn.update(worksheet="Sheet1", data=pd.concat([df_existente, nova], ignore_index=True))
                         
-                        with st.spinner('Gerando laudo estratégico...'): time.sleep(5)
+                        with st.spinner('Processando...'): time.sleep(5)
                         st.session_state.etapa = 'resultado'
                         st.rerun()
                     except Exception as e:
                         st.error(f"❌ ERRO TÉCNICO: {e}")
-                        st.info("O sistema identificou um problema na conexão. Verifique o seu Secrets.")
                 else: st.warning("Preencha todos os campos.")
 
 elif st.session_state.etapa == 'resultado':
@@ -112,5 +108,6 @@ elif st.session_state.etapa == 'resultado':
     fig.add_trace(go.Scatterpolar(r=list(st.session_state.notas.values()) + [list(st.session_state.notas.values())[0]], theta=list(st.session_state.notas.keys()) + [list(st.session_state.notas.keys())[0]], fill='toself', fillcolor='rgba(212, 175, 55, 0.4)', line=dict(color='#D4AF37', width=6)))
     fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 25], color="white")), showlegend=False, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=650)
     st.plotly_chart(fig, use_container_width=True)
-    st.markdown(f"<div class='zone-card'><h2 style='color: #D4AF37; margin:0;'>{st.session_state.res_cor} STATUS: {st.session_state.res_zona}</h2><p style='margin-top:20px; font-size: 21px;'>{st.session_state.res_txt}</p></div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 12px; border-left: 12px solid #D4AF37;'><h2>{st.session_state.res_cor} STATUS: {st.session_state.res_zona}</h2><p style='font-size: 21px;'>{st.session_state.res_txt}</p></div>", unsafe_allow_html=True)
     st.link_button("💎 SOLICITAR ACESSO AO LAUDO COMPLETO (IA)", "https://wa.me/5581986245870", use_container_width=True)
+    
