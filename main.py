@@ -5,7 +5,7 @@ import datetime
 import pandas as pd
 from streamlit_gsheets import GSheetsConnection
 
-# 1. SETUP VISUAL LIDERUM
+# 1. SETUP VISUAL LIDERUM (NOMES DOS CAMPOS EM BRANCO)
 st.set_page_config(page_title="Protocolo LIDERUM", layout="wide")
 
 st.markdown("""
@@ -13,7 +13,12 @@ st.markdown("""
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@700&display=swap');
     .stApp { background-color: #000c1a; color: #FFFFFF; font-family: 'Montserrat', sans-serif; }
     h1 { color: #D4AF37 !important; font-family: 'Playfair Display', serif !important; text-align: center; }
-    label, .stTextInput label, p { color: #FFFFFF !important; font-size: 18px !important; font-weight: 600 !important; }
+    
+    /* TORNA OS NOMES DOS CAMPOS (LABELS) BRANCOS E VISÍVEIS */
+    label, .stTextInput label, [data-testid="stMarkdownContainer"] p { 
+        color: #FFFFFF !important; font-size: 18px !important; font-weight: 600 !important; 
+    }
+    
     div[data-testid="stRadio"] label p { color: #FFFFFF !important; font-size: 24px !important; font-weight: 800 !important; }
     div[role="radiogroup"] label { background-color: #001f3f !important; border: 2px solid #D4AF37 !important; padding: 10px 25px !important; border-radius: 8px; margin-right: 10px; }
     .stForm { background: rgba(255, 255, 255, 0.03) !important; border: 1px solid #D4AF37 !important; border-radius: 15px !important; padding: 30px !important; }
@@ -23,7 +28,7 @@ st.markdown("""
         width: 100% !important; border: none !important; padding: 15px !important;
     }
     .question-text { font-size: 20px !important; color: #FFFFFF !important; margin-top: 25px; border-bottom: 1px solid rgba(212, 175, 55, 0.1); padding-bottom: 5px; }
-    .zone-card { background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 12px; border-left: 10px solid #D4AF37; margin-top: 20px; line-height: 1.6; }
+    .zone-card { background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 12px; border-left: 12px solid #D4AF37; margin-top: 20px; line-height: 1.6; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -31,7 +36,7 @@ if 'etapa' not in st.session_state: st.session_state.etapa = 'questoes'
 
 st.title("PROTOCOLO DE GOVERNANÇA PESSOAL LIDERUM")
 
-# QUESTÕES
+# LISTA DE QUESTÕES (MANTIDA)
 questoes_lista = [
     ("Visão e Alinhamento Estratégico", ["Eu tenho clareza sobre meus objetivos nos próximos meses.", "Meus objetivos pessoais e profissionais estão anotados.", "Mantenho meu foco mesmo com distrações externas.", "Revisito minha visão de futuro com frequência.", "Organizo minhas prioridades pelo que é importante."]),
     ("Recompensa e Reforço Positivo", ["Reconheço minhas próprias conquistas.", "Comemoro quando concluo uma etapa.", "Me elogio por atitudes positivas.", "Sinto orgulho do meu progresso.", "Crio momentos para celebrar avanços."]),
@@ -62,7 +67,7 @@ if st.session_state.etapa == 'questoes':
                 atual += 5
             st.session_state.notas, st.session_state.total, st.session_state.etapa = notas, sum(notas.values()), 'captura'
             st.rerun()
-        else: st.error(f"⚠️ Por favor, responda as 45 questões. Falta(m) {45 - respondidas}.")
+        else: st.error(f"⚠️ Responda as 45 questões. Falta(m) {45 - respondidas}.")
 
 elif st.session_state.etapa == 'captura':
     col1, col2, col3 = st.columns([1, 1.8, 1])
@@ -83,33 +88,22 @@ elif st.session_state.etapa == 'captura':
                     
                     st.session_state.res_zona, st.session_state.res_cor, st.session_state.res_txt = z, c, tx
 
-                    # --- PARTE CRÍTICA: GRAVAÇÃO COM FEEDBACK VISUAL ---
-                    sucesso_db = False
                     try:
                         conn = st.connection("gsheets", type=GSheetsConnection)
-                        # Tenta ler a aba Sheet1
                         df_existente = conn.read(worksheet="Sheet1")
-                        
-                        nova_linha = pd.DataFrame([{
+                        nova = pd.DataFrame([{
                             "Data": datetime.datetime.now().strftime("%d/%m/%Y %H:%M"),
                             "Nome": nome, "Email": email, "WhatsApp": whatsapp, 
                             "Cargo": cargo, "Pontuacao_Total": t, "Zona": z
                         }])
+                        conn.update(worksheet="Sheet1", data=pd.concat([df_existente, nova], ignore_index=True))
                         
-                        # Concatena e atualiza
-                        df_atualizado = pd.concat([df_existente, nova_linha], ignore_index=True).dropna(how='all')
-                        conn.update(worksheet="Sheet1", data=df_atualizado)
-                        sucesso_db = True
-                    except Exception as e:
-                        # Se der erro aqui, ele vai aparecer em uma caixa vermelha gigante no site
-                        st.error(f"❌ ERRO AO SALVAR NA PLANILHA: {e}")
-                        st.info("Verifique se o seu JSON no Secrets está correto e se a aba chama-se 'Sheet1'.")
-                        st.stop() # Interrompe para você conseguir ler o erro
-
-                    if sucesso_db:
-                        with st.spinner('Processando laudo estratégico...'): time.sleep(5)
+                        with st.spinner('Gerando laudo estratégico...'): time.sleep(5)
                         st.session_state.etapa = 'resultado'
                         st.rerun()
+                    except Exception as e:
+                        st.error(f"❌ ERRO TÉCNICO: {e}")
+                        st.info("O sistema identificou um problema na conexão. Verifique o seu Secrets.")
                 else: st.warning("Preencha todos os campos.")
 
 elif st.session_state.etapa == 'resultado':
