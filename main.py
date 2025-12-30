@@ -1,32 +1,18 @@
 import streamlit as st
 import plotly.graph_objects as go
-import time
 import datetime
 import pandas as pd
 import random
-import re
 from streamlit_gsheets import GSheetsConnection
 
-# 1. FUNÇÃO DE SEGURANÇA (Limpa a chave para evitar erro de Base64)
-def sanitize_private_key(pem: str) -> str:
-    if not pem: return ""
-    pem = pem.replace("\ufeff", "").replace("\r\n", "\n").replace("\r", "\n").strip()
-    pem = pem.replace("-----BEGIN PRIVATE KEY-----", "-----BEGIN PRIVATE KEY-----\n")
-    pem = pem.replace("-----END PRIVATE KEY-----", "\n-----END PRIVATE KEY-----")
-    m = re.search(r"-----BEGIN PRIVATE KEY-----\s*(.*?)\s*-----END PRIVATE KEY-----", pem, flags=re.DOTALL)
-    if not m: return pem
-    body = re.sub(r"[^A-Za-z0-9+/=]", "", m.group(1))
-    body = "\n".join(body[i:i+64] for i in range(0, len(body), 64))
-    return f"-----BEGIN PRIVATE KEY-----\n{body}\n-----END PRIVATE KEY-----\n"
-
-# 2. SETUP VISUAL LIDERUM (NOMES EM BRANCO)
+# 1. SETUP VISUAL LIDERUM
 st.set_page_config(page_title="Protocolo LIDERUM", layout="wide")
 st.markdown("""
     <style>
     .stApp { background-color: #000c1a; color: #FFFFFF; }
     label, p, .stTextInput label { color: #FFFFFF !important; font-size: 18px !important; font-weight: 600 !important; }
     .stButton>button { background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%) !important; color: #001226 !important; width: 100%; font-weight: bold; padding: 15px; }
-    .question-text { font-size: 20px !important; color: #FFFFFF !important; margin-top: 25px; border-bottom: 1px solid rgba(212, 175, 55, 0.1); padding-bottom: 5px; }
+    .question-text { font-size: 18px !important; color: #FFFFFF !important; margin-top: 15px; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -34,7 +20,7 @@ if 'etapa' not in st.session_state: st.session_state.etapa = 'questoes'
 
 st.title("PROTOCOLO DE GOVERNANÇA PESSOAL LIDERUM")
 
-# LISTA DE TODAS AS 45 PERGUNTAS
+# LISTA DE CATEGORIAS E PERGUNTAS (45 ITENS)
 questoes_lista = [
     ("Visão e Alinhamento Estratégico", ["Eu tenho clareza sobre meus objetivos nos próximos meses.", "Meus objetivos pessoais e profissionais estão anotados.", "Mantenho meu foco mesmo com distrações externas.", "Revisito minha visão de futuro com frequência.", "Organizo minhas prioridades pelo que é importante."]),
     ("Recompensa e Reforço Positivo", ["Reconheço minhas próprias conquistas.", "Comemoro quando concluo uma etapa.", "Me elogio por atitudes positivas.", "Sinto orgulho do meu progresso.", "Crio momentos para celebrar avanços."]),
@@ -49,8 +35,7 @@ questoes_lista = [
 
 # ETAPA 1: QUESTÕES
 if st.session_state.etapa == 'questoes':
-    # ATALHO PARA VOCÊ NÃO TER QUE CLICAR 45 VEZES NOS TESTES
-    if st.button("🧪 MODO DESENVOLVEDOR: PULAR PARA CADASTRO"):
+    if st.button("🧪 MODO TESTE: PREENCHER TUDO"):
         for i in range(45): st.session_state[f"q_{i}"] = random.randint(3, 5)
         st.session_state.total = sum(st.session_state[f"q_{i}"] for i in range(45))
         st.session_state.etapa = 'captura'
@@ -65,14 +50,13 @@ if st.session_state.etapa == 'questoes':
                 q_idx += 1
     
     if st.button("PROCESSAR MEU DIAGNÓSTICO"):
-        respondidas = sum(1 for i in range(45) if st.session_state.get(f"q_{i}") is not None)
-        if respondidas == 45:
+        if sum(1 for i in range(45) if st.session_state.get(f"q_{i}") is not None) == 45:
             st.session_state.total = sum(st.session_state.get(f"q_{i}") for i in range(45))
             st.session_state.etapa = 'captura'
             st.rerun()
         else: st.error("⚠️ Responda todas as 45 questões.")
 
-# ETAPA 2: CAPTURA E GRAVAÇÃO
+# ETAPA 2: CAPTURA E GRAVAÇÃO (USANDO O SECRETS AUTOMÁTICO)
 elif st.session_state.etapa == 'captura':
     col1, col2, col3 = st.columns([1, 1.8, 1])
     with col2:
@@ -83,32 +67,33 @@ elif st.session_state.etapa == 'captura':
             
             if st.form_submit_button("LIBERAR MEU RESULTADO"):
                 if all([nome, email, whatsapp, cargo]):
+                    t = st.session_state.total
+                    z = "ZONA DE ELITE" if t > 200 else "ZONA DE OSCILAÇÃO" if t > 122 else "ZONA DE SOBREVIVÊNCIA"
                     try:
-                        # Prepara credenciais e limpa a chave
-                        c = dict(st.secrets["connections"]["gsheets"])
-                        c["private_key"] = sanitize_private_key(c["private_key"])
-                        if "type" in c: del c["type"]
+                        # CONEXÃO AUTOMÁTICA (Lê do Secrets [connections.gsheets])
+                        conn = st.connection("gsheets", type=GSheetsConnection)
                         
-                        conn = st.connection("gsheets", type=GSheetsConnection, **c)
-                        df = conn.read(worksheet="Sheet1")
+                        # Tenta ler a aba. Se o nome estiver errado, ele avisará.
+                        df_existente = conn.read(worksheet="Sheet1")
                         
                         nova = pd.DataFrame([{
                             "Data": datetime.datetime.now().strftime("%d/%m/%Y %H:%M"),
-                            "Nome": nome, "Email": email, "WhatsApp": whatsapp, "Cargo": cargo,
-                            "Pontuacao_Total": st.session_state.total, "Zona": "Analise"
+                            "Nome": nome, "Email": email, "WhatsApp": whatsapp, 
+                            "Cargo": cargo, "Pontuacao_Total": t, "Zona": z
                         }])
                         
-                        conn.update(worksheet="Sheet1", data=pd.concat([df, nova], ignore_index=True))
+                        conn.update(worksheet="Sheet1", data=pd.concat([df_existente, nova], ignore_index=True))
                         st.session_state.etapa = 'resultado'
                         st.rerun()
                     except Exception as e:
-                        st.error(f"❌ Erro ao salvar: {e}")
+                        st.error(f"❌ ERRO NA PLANILHA: {e}")
+                        st.info("Dica: Verifique se o nome da aba é 'Sheet1' ou 'Página1'.")
                 else: st.warning("Preencha todos os campos.")
 
 # ETAPA 3: SUCESSO
 elif st.session_state.etapa == 'resultado':
-    st.success("✅ Dados enviados com sucesso!")
-    st.write(f"Pontuação Total: {st.session_state.total}")
+    st.success("✅ FUNCIONOU! Verifique sua planilha agora.")
+    st.write(f"Sua Pontuação Total: {st.session_state.total}")
     if st.button("RECOMEÇAR"):
         st.session_state.etapa = 'questoes'
         st.rerun()
