@@ -115,20 +115,35 @@ elif st.session_state.etapa == 'resultado':
         st.markdown("<div class='laudo-container'>", unsafe_allow_html=True)
         st.markdown("### 🔍 Direcionamento Estratégico")
         if st.session_state.zona == "ELITE":
-            st.markdown(f"<span class='highlight'>{st.session_state.nome_usuario}</span>, seus resultados indicam uma **Governança de Elite**. O foco deve ser na blindagem da constância absoluta.", unsafe_allow_html=True)
+            st.markdown(f"""
+            <span class='highlight'>{st.session_state.nome_usuario}</span>, seus resultados indicam uma **Governança de Elite**. 
+            O foco deve ser na blindagem da constância absoluta. Mantenha a guarda alta contra a cegueira da eficiência e foque em otimizar sua expansão e crescimento contínuo. 
+            Lembre-se que Autoliderança é um processo vivo. 
+            Caso queira receber nosso Laudo completo, gerado por IA treinada por mim, César Mariano, você terá acesso não só a um diagnóstico, mas a um plano de execução pronto para acelerar seu desenvolvimento.
+            """, unsafe_allow_html=True)
         elif st.session_state.zona == "OSCILAÇÃO":
-            st.markdown(f"<span class='highlight'>{st.session_state.nome_usuario}</span>, você está na zona de **Intermitência**. Sua performance oscila entre picos de excelência e vales de inércia.", unsafe_allow_html=True)
+            st.markdown(f"""
+            <span class='highlight'>{st.session_state.nome_usuario}</span>, você está na zona de **Intermitência**. 
+            Sua performance oscila entre picos de excelência e vales de inércia. Isso ocorre porque sua disciplina pessoal ainda é dependente de estímulos externos ou picos emocionais. 
+            Para tracionar de verdade, é necessário estabilizar seus pilares operacionais e silenciar a narrativa sabotadora. 
+            Acesse agora o Laudo completo, gerado por IA treinada por mim, César Mariano, e tenha acesso não só a um diagnóstico detalhado, mas a um plano de execução pronto para desbloquear as áreas que ainda estão travadas e acelerar seu desenvolvimento.
+            """, unsafe_allow_html=True)
         else:
-            st.markdown(f"<span class='highlight'>{st.session_state.nome_usuario}</span>, você está em **Modo de Sobrevivência**. Sua governança colapsou e a intervenção deve ser imediata.", unsafe_allow_html=True)
+            st.markdown(f"""
+            <span class='highlight'>{st.session_state.nome_usuario}</span>, você está em **Modo de Sobrevivência**. 
+            Sua governança pessoal colapsou e você provavelmente sente que está perdendo o controle sobre sua agenda e seus resultados. A intervenção deve ser imediata. 
+            Não é sobre trabalhar mais, mas sobre implementar o método correto de intervenção nos pontos vitais que minam a sua energia e sabotam os seus resultados. 
+            Acesse agora o Laudo completo, gerado por IA treinada por mim, César Mariano, e tenha acesso não só a um diagnóstico detalhado, mas a um plano de execução pronto para desbloquear as áreas que ainda estão travadas e acelerar seu desenvolvimento.
+            """, unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
     st.write("---")
     
-    # SEÇÃO DE BOTÕES (RESTAURADA À POSIÇÃO ORIGINAL)
+    # SEÇÃO DE BOTÕES
     st.markdown("<h3 style='text-align: center;'>Próximo Passo Estratégico</h3>", unsafe_allow_html=True)
     st.write("Este laudo aponta sua zona atual. Para subir de nível, você precisa de profundidade.")
     
-    # 1. BOTÃO DE CHECKOUT CENTRALIZADO (O MAIOR)
+    # 1. BOTÃO DE CHECKOUT CENTRALIZADO
     st.markdown(f"""
         <div style='text-align: center; margin-bottom: 25px;'>
             <a href='https://pay.hotmart.com/SEU_LINK' target='_blank' style='text-decoration: none;'>
@@ -139,7 +154,7 @@ elif st.session_state.etapa == 'resultado':
         </div>
     """, unsafe_allow_html=True)
     
-    # 2. BOTÃO FALE COM NOSSA EQUIPE (SUBSTITUINDO O RECOMECAR)
+    # 2. BOTÃO FALE COM NOSSA EQUIPE
     wa_url = "https://wa.me/5581982602018?text=Olá!%20Acabei%20de%20fazer%20meu%20Diagnóstico%20LIDERUM%20e%20quero%20conhecer%20as%20soluções."
     st.markdown(f"""
         <div style='text-align: left;'>
