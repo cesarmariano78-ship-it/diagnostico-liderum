@@ -2,9 +2,10 @@ import streamlit as st
 import plotly.graph_objects as go
 import time
 import datetime
+import pandas as pd
 from streamlit_gsheets import GSheetsConnection
 
-# 1. SETUP VISUAL E CSS (MANTENDO O ALTO CONTRASTE DOS NÚMEROS)
+# 1. SETUP VISUAL E CSS
 st.set_page_config(page_title="Protocolo LIDERUM", layout="wide")
 
 st.markdown("""
@@ -28,7 +29,8 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-if 'etapa' not in st.session_state: st.session_state.etapa = 'questoes'
+if 'etapa' not in st.session_state: 
+    st.session_state.etapa = 'questoes'
 
 st.title("PROTOCOLO DE GOVERNANÇA PESSOAL LIDERUM")
 
@@ -38,10 +40,10 @@ questoes_lista = [
     ("Recompensa e Reforço Positivo", ["Reconheço minhas próprias conquistas.", "Comemoro quando concluo uma etapa.", "Me elogio por atitudes positivas.", "Sinto orgulho do meu progresso.", "Crio momentos para celebrar avanços."]),
     ("Análise e Consciência de Padrões", ["Reviso meu comportamento criticamente.", "Reconheço erros e busco aprender.", "Percebo meus padrões de sabotagem.", "Ajusto rotas sem culpa quando erro.", "Busco feedbacks com abertura."]),
     ("Governança e Disciplina Operacional", ["Planejo minha rotina de forma organizada.", "Priorizo o importante antes do urgente.", "Mantenho constância sem motivação.", "Equilibro tarefas operacionais e estratégicas.", "Tenho hábitos que sustentam minha produtividade."]),
-    ("Modelagem e Expansão de Repertório", ["Tenho consciência de comportamentos a mudar.", "Busco aprender com quem admiro.", "Replico métodos que funcionam para outros.", "Observo e mudo pensamentos limitantes.", "Incorporo novas habilidades com rapidez."],),
-    ("Gestão da Narrativa e Mindset", ["Minha voz interna me incentiva.", "Percebo e ressignifico pensamentos punitivos.", "Converso comigo com respeito e firmeza.", "Silencio pensamentos sabotadores.", "Meu diálogo interno ajuda minhas ações."],),
-    ("Arquitetura de Sistemas de Crenças", ["Acredito que sou capaz de aprender e evoluir sempre.", "Percebo quando ajo por crenças limitantes.", "Mudo minha realidade mudando crenças.", "Tenho crenças fortes sobre minha liderança.", "Identifico a origem das minhas crenças."],),
-    ("Padrão de Entrega e Excelência", ["Me esforço para entregar o máximo.", "Percebo evolução na qualidade das entregas.", "Mantenho comprometimento sob pressão.", "Tenho clareza de pontos fortes e de melhoria.", "Entrego além do básico sempre."],),
+    ("Modelagem e Expansão de Repertório", ["Tenho consciência de comportamentos a mudar.", "Busco aprender com quem admiro.", "Replico métodos que funcionam para outros.", "Observo e mudo pensamentos limitantes.", "Incorporo novas habilidades com rapidez."]),
+    ("Gestão da Narrativa e Mindset", ["Minha voz interna me incentiva.", "Percebo e ressignifico pensamentos punitivos.", "Converso comigo com respeito e firmeza.", "Silencio pensamentos sabotadores.", "Meu diálogo interno ajuda minhas ações."]),
+    ("Arquitetura de Sistemas de Crenças", ["Acredito que sou capaz de aprender e evoluir sempre.", "Percebo quando ajo por crenças limitantes.", "Mudo minha realidade mudando crenças.", "Tenho crenças fortes sobre minha liderança.", "Identifico a origem das minhas crenças."]),
+    ("Padrão de Entrega e Excelência", ["Me esforço para entregar o máximo.", "Percebo evolução na qualidade das entregas.", "Mantenho comprometimento sob pressão.", "Tenho clareza de pontos fortes e de melhoria.", "Entrego além do básico sempre."]),
     ("Postura Ativa e Protagonismo", ["Assumo responsabilidade pelas escolhas.", "Evito colocar culpa em fatores externos.", "Ajo com rapidez para mudar o que controlo.", "Encaro desafios como oportunidades.", "Olho para mim antes de culpar o ambiente."])
 ]
 
@@ -56,7 +58,6 @@ if st.session_state.etapa == 'questoes':
                 q_idx += 1
     
     if st.button("FINALIZAR E PROCESSAR DIAGNÓSTICO"):
-        # VALIDAÇÃO ROBUSTA: CHECA SE AS 45 CHAVES ESTÃO PREENCHIDAS NO SESSION_STATE
         respondidas = sum(1 for i in range(45) if st.session_state.get(f"q_{i}") is not None)
         
         if respondidas == 45:
@@ -74,7 +75,7 @@ if st.session_state.etapa == 'questoes':
         else:
             st.error(f"⚠️ Atenção: Você respondeu {respondidas} de 45 questões. Por favor, revise os blocos acima.")
 
-# ETAPA 2: CAPTURA (INTEGRAÇÃO GOOGLE SHEETS)
+# ETAPA 2: CAPTURA E GRAVAÇÃO
 elif st.session_state.etapa == 'captura':
     col1, col2, col3 = st.columns([1, 1.8, 1])
     with col2:
@@ -84,33 +85,67 @@ elif st.session_state.etapa == 'captura':
             email = st.text_input("E-mail Estratégico")
             whatsapp = st.text_input("WhatsApp")
             cargo = st.text_input("Empresa e Cargo")
+            
             if st.form_submit_button("LIBERAR MEU RESULTADO"):
                 if all([nome, email, whatsapp, cargo]):
                     t = st.session_state.total
-                    if t <= 122: z, c, tx = "ZONA DE SOBREVIVÊNCIA", "🔴", "Sua pontuação indica que você está operando em Zona de Risco. Para te tranquilizar, quero dizer que isso é mais comum do que você imagina, até mesmo em líderes experientes. Você está pronto para ajustar alguns pontos e crescer de forma exponencial? Assuma o controle! Ao solicitar seu laudo completo, você terá acesso à estrutura detalhada que traz consciência e um plano de ação com ferramentas e exercícios práticos."
-                    elif t <= 200: z, c, tx = "ZONA DE OSCILAÇÃO", "🟠", "Você possui as competências necessárias, mas está preso em um ciclo de oscilação. Você sente que 'está quase lá', mas o peso operacional constante trava seu próximo salto de faturamento e liberdade. Para prosperar de forma sustentável, você precisa identificar quais são as dimensões que estão agindo como seu 'freio de mão invisível'."
-                    else: z, c, tx = "ZONA DE ELITE", "🌟", "Parabéns! Sua pontuação o coloca em um patamar muito acima da média do mercado. Porém, a autoliderança em alto nível exige manutenção constante para não se tornar complacente. Para você que já performa no topo, nosso Laudo Premium oferece a estrutura de Diagnóstico de Detalhe, revelando micro-oportunidades de expansão."
+                    if t <= 122: z, c, tx = "ZONA DE SOBREVIVÊNCIA", "🔴", "Sua pontuação indica que você está operando em Zona de Risco..."
+                    elif t <= 200: z, z, tx = "ZONA DE OSCILAÇÃO", "🟠", "Você possui as competências necessárias, mas está preso em um ciclo de oscilação..."
+                    else: z, c, tx = "ZONA DE ELITE", "🌟", "Parabéns! Sua pontuação o coloca em um patamar muito acima da média..."
                     
                     st.session_state.res_zona, st.session_state.res_cor, st.session_state.res_txt = z, c, tx
 
+                    # TENTATIVA DE GRAVAÇÃO NA PLANILHA
                     try:
                         conn = st.connection("gsheets", type=GSheetsConnection)
-                        nova = {"Data": datetime.datetime.now().strftime("%d/%m/%Y %H:%M"), "Nome": nome, "Email": email, "WhatsApp": whatsapp, "Cargo": cargo, "Pontuacao_Total": t, "Zona": z}
-                        conn.create(data=[nova])
-                    except: pass
+                        # O nome 'Sheet1' abaixo deve ser igual ao nome da aba na sua planilha do Google
+                        df_existente = conn.read(worksheet="Sheet1") 
+                        
+                        nova_linha = pd.DataFrame([{
+                            "Data": datetime.datetime.now().strftime("%d/%m/%Y %H:%M"),
+                            "Nome": nome,
+                            "Email": email,
+                            "WhatsApp": whatsapp,
+                            "Cargo": cargo,
+                            "Pontuacao_Total": t,
+                            "Zona": z
+                        }])
+                        
+                        df_atualizado = pd.concat([df_existente, nova_linha], ignore_index=True)
+                        conn.update(worksheet="Sheet1", data=df_atualizado)
+                        st.success("Diagnóstico registrado com sucesso!")
+                    except Exception as e:
+                        st.error(f"Erro ao salvar dados: {e}. Verifique se a aba da planilha se chama 'Sheet1'.")
                     
-                    with st.spinner('Processando laudo...'): time.sleep(10)
+                    with st.spinner('Gerando seu gráfico estratégico...'):
+                        time.sleep(2)
                     st.session_state.etapa = 'resultado'
                     st.rerun()
-                else: st.warning("Preencha todos os campos.")
+                else:
+                    st.warning("Preencha todos os campos.")
 
 # ETAPA 3: LAUDO ESTRATÉGICO
 elif st.session_state.etapa == 'resultado':
     st.markdown("<h2 style='text-align: center; color: #D4AF37;'>SEU MAPA ESTRATÉGICO DE PERFORMANCE</h2>", unsafe_allow_html=True)
+    
+    # Gerar Gráfico Radar
     fig = go.Figure()
-    fig.add_trace(go.Scatterpolar(r=list(st.session_state.notas.values()) + [list(st.session_state.notas.values())[0]], theta=list(st.session_state.notas.keys()) + [list(st.session_state.notas.keys())[0]], fill='toself', fillcolor='rgba(212, 175, 55, 0.4)', line=dict(color='#D4AF37', width=6)))
-    fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 25], color="white")), showlegend=False, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=650)
+    fig.add_trace(go.Scatterpolar(
+        r=list(st.session_state.notas.values()) + [list(st.session_state.notas.values())[0]],
+        theta=list(st.session_state.notas.keys()) + [list(st.session_state.notas.keys())[0]],
+        fill='toself',
+        fillcolor='rgba(212, 175, 55, 0.4)',
+        line=dict(color='#D4AF37', width=6)
+    ))
+    fig.update_layout(
+        polar=dict(radialaxis=dict(visible=True, range=[0, 25], color="white")),
+        showlegend=False,
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        height=650
+    )
     st.plotly_chart(fig, use_container_width=True)
 
     st.markdown(f"<div class='zone-card'><h2 style='color: #D4AF37; margin:0;'>{st.session_state.res_cor} STATUS: {st.session_state.res_zona}</h2><p style='margin-top:20px; font-size: 21px;'>{st.session_state.res_txt}</p></div>", unsafe_allow_html=True)
-    st.link_button("💎 SOLICITAR ACESSO AO LAUDO ESTRATÉGICO", "https://wa.me/5581986245870")
+    
+    st.link_button("💎 SOLICITAR ACESSO AO LAUDO COMPLETO (IA)", "https://wa.me/5581986245870")
