@@ -4,7 +4,7 @@ import requests
 import datetime
 import random
 
-# 1. SETUP VISUAL LIDERUM (Identidade Visual)
+# 1. SETUP VISUAL E ESTILO LIDERUM
 st.set_page_config(page_title="Protocolo LIDERUM", layout="wide")
 st.markdown("""
     <style>
@@ -26,7 +26,7 @@ if 'etapa' not in st.session_state: st.session_state.etapa = 'questoes'
 
 st.title("PROTOCOLO DE GOVERNANÇA PESSOAL LIDERUM")
 
-# 2. LISTA COMPLETA DAS 45 PERGUNTAS (9 Dimensões)
+# 2. LISTA INTEGRAL DAS 45 PERGUNTAS (9 Dimensões)
 questoes_lista = [
     ("Visão e Alinhamento Estratégico", ["Eu tenho clareza sobre meus objetivos nos próximos meses.", "Meus objetivos pessoais e profissionais estão anotados.", "Mantenho meu foco mesmo com distrações externas.", "Revisito minha visão de futuro com frequência.", "Organizo minhas prioridades pelo que é importante."]),
     ("Recompensa e Reforço Positivo", ["Reconheço minhas próprias conquistas.", "Comemoro quando concluo uma etapa.", "Me elogio por atitudes positivas.", "Sinto orgulho do meu progresso.", "Crio momentos para celebrar avanços."]),
@@ -56,6 +56,13 @@ if st.session_state.etapa == 'questoes':
     
     if st.button("PROCESSAR MEU DIAGNÓSTICO"):
         if sum(1 for i in range(45) if st.session_state.get(f"q_{i}") is not None) == 45:
+            # Cálculos por categoria
+            scores = []
+            for i in range(0, 45, 5):
+                soma = sum(st.session_state[f"q_{j}"] for j in range(i, i+5))
+                scores.append(soma)
+            st.session_state.scores = scores
+            st.session_state.total = sum(scores)
             st.session_state.etapa = 'captura'
             st.rerun()
         else: st.error("⚠️ Responda todas as 45 questões.")
@@ -69,73 +76,45 @@ elif st.session_state.etapa == 'captura':
             nome = st.text_input("Nome Completo")
             email = st.text_input("E-mail Estratégico")
             whatsapp = st.text_input("WhatsApp")
-            cargo = st.text_input("Cargo")
+            cargo = st.text_input("Empresa / Cargo")
             
             if st.form_submit_button("GERAR MEU LAUDO AGORA"):
                 if all([nome, email, whatsapp, cargo]):
-                    # Cálculos das Notas por Dimensão
-                    scores = []
-                    for i in range(0, 45, 5):
-                        soma = sum(st.session_state[f"q_{j}"] for j in range(i, i+5))
-                        scores.append(soma)
-                    
-                    st.session_state.scores = scores
-                    st.session_state.total = sum(scores)
                     t = st.session_state.total
-                    st.session_state.zona = "ELITE" if t > 200 else "OSCILAÇÃO" if t > 122 else "SOBREVIVÊNCIA"
-                    st.session_state.dados_lead = {"nome": nome, "email": email}
+                    z = "ELITE" if t > 200 else "OSCILAÇÃO" if t > 122 else "SOBREVIVÊNCIA"
+                    st.session_state.zona = z
+                    st.session_state.nome_usuario = nome
                     
-                    # Payload para o Webhook
                     payload = {
                         "nome": nome, "email": email, "whatsapp": whatsapp,
-                        "cargo": cargo, "pontos": t, "zona": st.session_state.zona
+                        "cargo": cargo, "pontos": t, "zona": z
                     }
                     try:
-                        requests.post(URL_WEBHOOK, json=payload, timeout=10)
-                        st.session_state.etapa = 'resultado'
-                        st.rerun()
-                    except: st.error("Falha ao salvar dados, mas vamos gerar seu laudo.")
+                        res = requests.post(URL_WEBHOOK, json=payload, timeout=10)
+                        if res.status_code == 200:
+                            st.session_state.etapa = 'resultado'
+                            st.rerun()
+                        else: st.error(f"Erro no servidor Google: {res.status_code}")
+                    except Exception as e: st.error(f"Falha ao salvar: {e}")
                 else: st.warning("Preencha todos os campos.")
 
 # --- ETAPA 3: LAUDO E GRÁFICO DE RADAR ---
 elif st.session_state.etapa == 'resultado':
-    st.markdown(f"## Olá, {st.session_state.dados_lead['nome']}! Aqui está sua análise.")
-    
+    st.markdown(f"## Olá, {st.session_state.nome_usuario}! Aqui está sua análise.")
     col_l, col_r = st.columns([1, 1])
     
     with col_l:
         st.markdown(f"### Pontuação Total: **{st.session_state.total} / 225**")
         st.markdown(f"### Zona de Governança: **{st.session_state.zona}**")
-        
-        # Laudo de Feedback baseado na Zona
-        if st.session_state.zona == "ELITE":
-            st.info("📊 **LAUDO:** Você possui uma governança de alto nível. Seu desafio agora é a manutenção da constância e a modelagem de novos sucessores.")
-        elif st.session_state.zona == "OSCILAÇÃO":
-            st.warning("📊 **LAUDO:** Sua performance alterna entre picos de excelência e vales de inércia. É necessário estabilizar seus processos de disciplina.")
-        else:
-            st.error("📊 **LAUDO:** Sua governança pessoal está em estado crítico. O foco imediato deve ser na recuperação da disciplina básica e visão de futuro.")
+        if st.session_state.zona == "ELITE": st.info("🏆 **LAUDO:** Governança de alto nível. Foco em manutenção.")
+        elif st.session_state.zona == "OSCILAÇÃO": st.warning("⚖️ **LAUDO:** Performance inconstante. Necessário estabilizar rotina.")
+        else: st.error("🚩 **LAUDO:** Estado crítico. Urgência em recuperar disciplina básica.")
 
     with col_r:
-        # Gráfico de Radar usando Plotly
         categories = ['Visão', 'Recompensa', 'Análise', 'Governança', 'Modelagem', 'Narrativa', 'Crenças', 'Excelência', 'Postura']
         fig = go.Figure()
-        fig.add_trace(go.Scatterpolar(
-            r=st.session_state.scores,
-            theta=categories,
-            fill='toself',
-            fillcolor='rgba(212, 175, 55, 0.4)',
-            line=dict(color='#D4AF37')
-        ))
-        fig.update_layout(
-            polar=dict(
-                bgcolor="rgba(0,12,26,1)",
-                radialaxis=dict(visible=True, range=[0, 25], color="white")
-            ),
-            showlegend=False,
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)",
-            font=dict(color="white", size=14)
-        )
+        fig.add_trace(go.Scatterpolar(r=st.session_state.scores, theta=categories, fill='toself', fillcolor='rgba(212, 175, 55, 0.4)', line=dict(color='#D4AF37')))
+        fig.update_layout(polar=dict(bgcolor="rgba(0,12,26,1)", radialaxis=dict(visible=True, range=[0, 25], color="white")), showlegend=False, paper_bgcolor="rgba(0,0,0,0)", font=dict(color="white", size=14))
         st.plotly_chart(fig, use_container_width=True)
 
     if st.button("RECOMEÇAR DIAGNÓSTICO"):
