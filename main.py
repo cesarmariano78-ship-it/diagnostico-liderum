@@ -7,7 +7,7 @@ import random
 import re
 from streamlit_gsheets import GSheetsConnection
 
-# 1. FUNÇÃO DE LIMPEZA DA CHAVE (Sua proteção contra o erro de 65 caracteres)
+# 1. FUNÇÃO DE LIMPEZA DA CHAVE (Proteção contra erro de Base64/65 caracteres)
 def sanitize_private_key(pem: str) -> str:
     if not pem: return ""
     pem = pem.replace("\ufeff", "").replace("\r\n", "\n").replace("\r", "\n").strip()
@@ -49,7 +49,7 @@ questoes_lista = [
 
 # ETAPA 1: QUESTÕES
 if st.session_state.etapa == 'questoes':
-    # BOTÃO DE ATALHO PARA VOCÊ NÃO PRECISAR RESPONDER 45 VEZES
+    # BOTÃO DE ATALHO PARA TESTE
     if st.button("🧪 MODO TESTE: PREENCHER TUDO AUTOMATICAMENTE"):
         for i in range(45): st.session_state[f"q_{i}"] = random.randint(3, 5)
         st.session_state.total = sum(st.session_state[f"q_{i}"] for i in range(45))
@@ -72,7 +72,7 @@ if st.session_state.etapa == 'questoes':
             st.rerun()
         else: st.error("⚠️ Responda todas as 45 questões.")
 
-# ETAPA 2: CAPTURA E GRAVAÇÃO
+# ETAPA 2: CAPTURA E GRAVAÇÃO (RESOLUÇÃO DO ERRO 'SPREADSHEET')
 elif st.session_state.etapa == 'captura':
     col1, col2, col3 = st.columns([1, 1.8, 1])
     with col2:
@@ -86,16 +86,31 @@ elif st.session_state.etapa == 'captura':
                     t = st.session_state.total
                     z = "ZONA DE ELITE" if t > 200 else "ZONA DE OSCILAÇÃO" if t > 122 else "ZONA DE SOBREVIVÊNCIA"
                     try:
-                        # 1. PEGA CREDENCIAIS E LAVA A CHAVE
-                        creds = dict(st.secrets["connections"]["gsheets"])
-                        creds["private_key"] = sanitize_private_key(creds["private_key"])
-                        if "type" in creds: del creds["type"] # <--- ISSO RESOLVE O ERRO DE 'MULTIPLE VALUES'
+                        # --- SOLUÇÃO CIRÚRGICA ---
+                        # 1. Pega os dados brutos do Secrets
+                        raw_creds = dict(st.secrets["connections"]["gsheets"])
                         
-                        # 2. CONECTA E GRAVA
-                        conn = st.connection("gsheets", type=GSheetsConnection, **creds)
-                        df_existente = conn.read(worksheet="Sheet1")
-                        nova = pd.DataFrame([{"Data": datetime.datetime.now().strftime("%d/%m/%Y %H:%M"), "Nome": nome, "Email": email, "WhatsApp": whatsapp, "Cargo": cargo, "Pontuacao_Total": t, "Zona": z}])
-                        conn.update(worksheet="Sheet1", data=pd.concat([df_existente, nova], ignore_index=True))
+                        # 2. SEPARA o link da planilha das credenciais (Isso evita o erro 'unexpected argument')
+                        spreadsheet_url = raw_creds.pop("spreadsheet", None)
+                        
+                        # 3. Limpa a chave privada
+                        raw_creds["private_key"] = sanitize_private_key(raw_creds["private_key"])
+                        
+                        # 4. Remove a etiqueta 'type' duplicada
+                        if "type" in raw_creds: del raw_creds["type"]
+                        
+                        # 5. Conecta usando os blocos separados
+                        conn = st.connection("gsheets", type=GSheetsConnection, **raw_creds)
+                        
+                        # 6. Grava na aba Sheet1 usando o URL que separamos
+                        df_existente = conn.read(spreadsheet=spreadsheet_url, worksheet="Sheet1")
+                        nova = pd.DataFrame([{
+                            "Data": datetime.datetime.now().strftime("%d/%m/%Y %H:%M"), 
+                            "Nome": nome, "Email": email, "WhatsApp": whatsapp, 
+                            "Cargo": cargo, "Pontuacao_Total": t, "Zona": z
+                        }])
+                        conn.update(spreadsheet=spreadsheet_url, worksheet="Sheet1", data=pd.concat([df_existente, nova], ignore_index=True))
+                        
                         st.session_state.etapa = 'resultado'
                         st.rerun()
                     except Exception as e:
@@ -104,8 +119,8 @@ elif st.session_state.etapa == 'captura':
 
 # ETAPA 3: SUCESSO
 elif st.session_state.etapa == 'resultado':
-    st.success("✅ Diagnóstico enviado para a planilha!")
-    st.write(f"Sua Pontuação Total: {st.session_state.total}")
+    st.success("✅ FUNCIONOU! Verifique sua planilha.")
+    st.write(f"Pontuação: {st.session_state.total}")
     if st.button("RECOMEÇAR"):
         st.session_state.etapa = 'questoes'
         st.rerun()
