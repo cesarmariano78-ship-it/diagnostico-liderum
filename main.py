@@ -1,36 +1,36 @@
 import streamlit as st
 import plotly.graph_objects as go
+import time
 
-# 1. ESTÉTICA METÁLICA LIDERUM
+# 1. ENGENHARIA VISUAL LIDERUM (MÁXIMO IMPACTO)
 st.set_page_config(page_title="Protocolo LIDERUM", layout="wide")
 
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@700&display=swap');
     .stApp { background: linear-gradient(180deg, #001f3f 0%, #000c1a 100%); color: #FFFFFF; font-family: 'Montserrat', sans-serif; }
-    h1 { color: #D4AF37 !important; font-family: 'Playfair Display', serif !important; text-align: center; }
+    h1 { color: #D4AF37 !important; font-family: 'Playfair Display', serif !important; text-align: center; font-size: 40px !important; }
     
-    /* ESTILO DOS BOTÕES (CORREÇÃO DE VISIBILIDADE) */
+    /* CARD CENTRALIZADO */
+    .stForm { background: rgba(255, 255, 255, 0.05) !important; border: 1px solid rgba(212, 175, 55, 0.3) !important; border-radius: 15px !important; padding: 40px !important; }
+    
+    /* BOTÃO DOURADO VISÍVEL */
     .stButton>button {
         background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%) !important;
         color: #001226 !important;
         font-weight: 700 !important;
-        font-size: 20px !important;
+        font-size: 22px !important;
         width: 100% !important;
         border: none !important;
-        box-shadow: 0px 4px 15px rgba(212, 175, 55, 0.4) !important;
-        opacity: 1 !important;
-        visibility: visible !important;
+        box-shadow: 0px 5px 20px rgba(212, 175, 55, 0.5) !important;
+        text-transform: uppercase;
+        letter-spacing: 2px;
     }
 
-    /* Estilo do Card Centralizado */
-    .stForm { background: rgba(255, 255, 255, 0.05) !important; border: 1px solid rgba(212, 175, 55, 0.3) !important; border-radius: 15px !important; padding: 30px !important; }
-    
-    .question-text { font-size: 19px !important; color: #FFFFFF !important; margin-top: 20px; }
-    
-    /* Estilo dos Números 1-5 */
-    div[data-testid="stRadio"] label p { color: #FFFFFF !important; font-size: 20px !important; font-weight: 700 !important; }
-    div[role="radiogroup"] label { background: rgba(255, 255, 255, 0.1) !important; padding: 10px 20px !important; border-radius: 5px; margin-right: 10px; }
+    .question-text { font-size: 20px !important; color: #FFFFFF !important; margin-top: 25px; text-shadow: 1px 1px 2px black; }
+    div[data-testid="stRadio"] label p { color: #FFFFFF !important; font-size: 22px !important; font-weight: 700 !important; }
+    div[role="radiogroup"] label { background: rgba(255, 255, 255, 0.1) !important; padding: 12px 25px !important; border-radius: 8px; margin-right: 15px; }
+    .zone-card { background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 10px; border-left: 10px solid #D4AF37; margin-bottom: 30px; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -39,7 +39,7 @@ if 'etapa' not in st.session_state: st.session_state.etapa = 'questoes'
 st.markdown("<div style='text-align: center;'><img src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png' width='100'></div>", unsafe_allow_html=True)
 st.title("PROTOCOLO DE GOVERNANÇA PESSOAL LIDERUM")
 
-# DIMENSÕES E PERGUNTAS
+# 2. DIMENSÕES E PERGUNTAS (45 ITENS)
 dimensoes_info = {
     "Visão e Alinhamento Estratégico": ["Eu tenho clareza sobre meus objetivos nos próximos meses.", "Meus objetivos pessoais e profissionais estão anotados e organizados.", "Eu consigo manter meu foco mesmo diante de distrações externas.", "Eu revisito minha visão de futuro com frequência para me orientar.", "Eu organizo minhas prioridades com base no que é realmente importante."],
     "Recompensa e Reforço Positivo": ["Eu reconheço minhas próprias conquistas, mesmo que pequenas.", "Eu costumo comemorar quando concluo uma etapa de um projeto.", "Eu me elogio por atitudes positivas que tomo no dia a dia.", "Eu consigo sentir orgulho do meu progresso, mesmo que não seja perfeito.", "Eu crio momentos intencionais para celebrar avanços."],
@@ -55,17 +55,13 @@ dimensoes_info = {
 if st.session_state.etapa == 'questoes':
     respostas = {}
     for dim, perguntas in dimensoes_info.items():
-        with st.expander(f"📌 AVALIAR: {dim.upper()}"):
-            soma = 0
+        with st.expander(f"✨ AVALIAR: {dim.upper()}"):
             for p in perguntas:
                 st.markdown(f"<p class='question-text'>{p}</p>", unsafe_allow_html=True)
-                # AJUSTE: index=None faz com que nada venha marcado por padrão
-                n = st.radio(f"Nota para {p}", [1, 2, 3, 4, 5], index=None, horizontal=True, key=p)
-                soma += n if n is not None else 0
-            respostas[dim] = soma if all(st.session_state.get(pg) is not None for pg in perguntas) else None
+                st.radio(f"Nota para {p}", [1, 2, 3, 4, 5], index=None, horizontal=True, key=p)
     
-    if st.button("FINALIZAR E GERAR DIAGNÓSTICO"):
-        # VERIFICAÇÃO SE TODAS FORAM RESPONDIDAS
+    if st.button("FINALIZAR E PROCESSAR DIAGNÓSTICO"):
+        # VERIFICAÇÃO RIGOROSA
         todas_respondidas = True
         for dim, perguntas in dimensoes_info.items():
             for p in perguntas:
@@ -74,52 +70,70 @@ if st.session_state.etapa == 'questoes':
                     break
         
         if todas_respondidas:
-            # Calcula as notas finais se tudo estiver ok
-            notas_finais = {}
-            for dim, perguntas in dimensoes_info.items():
-                notas_finais[dim] = sum(st.session_state.get(p) for p in perguntas)
-            
+            notas_finais = {dim: sum(st.session_state.get(p) for p in perguntas) for dim, perguntas in dimensoes_info.items()}
             st.session_state.notas = notas_finais
             st.session_state.total = sum(notas_finais.values())
             st.session_state.etapa = 'captura'
             st.rerun()
         else:
-            st.error("⚠️ Atenção: Para um diagnóstico preciso, você precisa responder todas as questões antes de finalizar.")
+            st.error("⚠️ O Protocolo exige 100% de preenchimento para garantir a precisão científica do seu laudo.")
 
 elif st.session_state.etapa == 'captura':
-    col1, col2, col3 = st.columns([1, 2, 1])
+    col1, col2, col3 = st.columns([1, 1.5, 1])
     with col2:
-        st.markdown("<h3 style='text-align: center;'>🔒 SEU RESULTADO ESTÁ PRONTO!</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align: center;'>🔒 SEU MAPA ESTÁ PRONTO!</h3>", unsafe_allow_html=True)
+        st.write("Insira seus dados para liberar o acesso ao Gráfico de Governança:")
         with st.form("leads"):
-            nome = st.text_input("Nome Completo", placeholder="Como deseja ser chamado?")
-            email = st.text_input("E-mail Profissional", placeholder="Seu melhor e-mail")
-            whatsapp = st.text_input("WhatsApp (com DDD)", placeholder="(00) 00000-0000")
-            cargo = st.text_input("Empresa e Cargo", placeholder="Ex: Diretor na Indústria X")
-            if st.form_submit_button("LIBERAR MEU DIAGNÓSTICO"):
-                if nome and email and whatsapp and cargo:
+            st.text_input("Nome Completo", key="form_nome")
+            st.text_input("E-mail Estratégico", key="form_email")
+            st.text_input("WhatsApp (DDD)", key="form_whatsapp")
+            st.text_input("Empresa e Cargo", key="form_cargo")
+            if st.form_submit_button("LIBERAR MEU RESULTADO AGORA"):
+                if all([st.session_state.form_nome, st.session_state.form_email, st.session_state.form_whatsapp, st.session_state.form_cargo]):
+                    with st.spinner('Analisando correlações... Gerando Mapa de Governança...'):
+                        time.sleep(3) # O suspense que gera valor
                     st.session_state.etapa = 'resultado'
                     st.rerun()
                 else:
-                    st.warning("Por favor, preencha todos os campos para liberar seu gráfico.")
+                    st.warning("Preencha todos os campos para prosseguir.")
 
 elif st.session_state.etapa == 'resultado':
+    st.markdown("<h2 style='text-align: center; color: #D4AF37;'>MAPA DE GOVERNANÇA PESSOAL</h2>", unsafe_allow_html=True)
+    
+    # 3. GRÁFICO "GLOW UP" COM CORES DINÂMICAS
     categories = list(st.session_state.notas.keys())
     values = list(st.session_state.notas.values())
+    
+    # Define a cor baseada na performance total
+    total = st.session_state.total
+    if total <= 122: color_hex, glow = '#CD7F32', 'rgba(205, 127, 50, 0.4)' # Bronze
+    elif total <= 200: color_hex, glow = '#D4AF37', 'rgba(212, 175, 55, 0.4)' # Ouro
+    else: color_hex, glow = '#FFD700', 'rgba(255, 215, 0, 0.6)' # Ouro Brilhante
+
     fig = go.Figure()
-    fig.add_trace(go.Scatterpolar(r=values + [values[0]], theta=categories + [categories[0]], fill='toself', line_color='#D4AF37', fillcolor='rgba(212, 175, 55, 0.3)'))
-    fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 25], color="white", gridcolor="rgba(255,255,255,0.2)")), showlegend=False, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=550, font=dict(color="white", size=11))
+    fig.add_trace(go.Scatterpolar(
+        r=values + [values[0]], theta=categories + [categories[0]],
+        fill='toself', fillcolor=glow,
+        line=dict(color=color_hex, width=4),
+        marker=dict(size=10, color='white', line=dict(color=color_hex, width=2))
+    ))
+    
+    fig.update_layout(
+        polar=dict(
+            radialaxis=dict(visible=True, range=[0, 25], color="white", gridcolor="rgba(255,255,255,0.1)"),
+            angularaxis=dict(tickfont=dict(size=13, color="white", family="Montserrat"))
+        ),
+        showlegend=False, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=650
+    )
     st.plotly_chart(fig, use_container_width=True)
 
-    total = st.session_state.total
+    # TEXTOS DE ZONA (Conforme sua revisão)
     if total <= 122:
-        zona, cor = "ZONA DE SOBREVIVÊNCIA", "🔴"
-        texto = f"Sua pontuação de {total}/225 indica que você está operando em Zona de Risco..."
+        status, cor_emoji, texto = "ZONA DE SOBREVIVÊNCIA", "🔴", "Sua pontuação indica Zona de Risco. Mas isso é comum até em líderes experientes. Está pronto para crescer exponencialmente? Assuma o controle! O laudo detalhado (R$ 47) traz o plano de ação prático."
     elif total <= 200:
-        zona, cor = "ZONA DE OSCILAÇÃO", "🟠"
-        texto = f"Sua pontuação de {total}/225 revela que você possui as competências necessárias, mas está preso em um ciclo de oscilação..."
+        status, cor_emoji, texto = "ZONA DE OSCILAÇÃO", "🟠", "Você possui as competências, mas está preso no ciclo de oscilação. O peso operacional trava seu salto. Identifique as dimensões que são seu 'freio de mão invisível' com nosso laudo completo e plano de ação."
     else:
-        zona, cor = "ZONA DE ELITE", "🌟"
-        texto = f"Parabéns! Sua pontuação de {total}/225 coloca você em um patamar muito acima da média..."
+        status, cor_emoji, texto = "ZONA DE ELITE", "🌟", "Parabéns! Performance muito acima do mercado. Mas autoliderança exige manutenção constante. O laudo premium revela micro-oportunidades de expansão para você nunca oscilar."
 
-    st.markdown(f"<div class='zone-card'><h2 style='color: #D4AF37; margin:0;'>{cor} STATUS: {zona}</h2><p style='margin-top:15px; font-size: 18px;'>{texto}</p></div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='zone-card'><h2 style='color: #D4AF37; margin:0;'>{cor_emoji} {status}</h2><p style='margin-top:15px; font-size: 18px;'>{texto}</p></div>", unsafe_allow_html=True)
     st.link_button("💎 SOLICITAR ACESSO AO LAUDO ESTRATÉGICO", "https://wa.me/5581986245870")
