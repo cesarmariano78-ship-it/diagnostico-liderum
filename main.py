@@ -10,29 +10,27 @@ st.markdown("""
     .stApp { background: linear-gradient(180deg, #001f3f 0%, #000c1a 100%); color: #FFFFFF; font-family: 'Montserrat', sans-serif; }
     h1 { color: #D4AF37 !important; font-family: 'Playfair Display', serif !important; text-align: center; }
     
-    /* Estilo do Card Centralizado (Simulando Pop-up) */
-    .stForm {
-        background: rgba(255, 255, 255, 0.05) !important;
-        border: 1px solid rgba(212, 175, 55, 0.3) !important;
-        border-radius: 15px !important;
-        padding: 30px !important;
-    }
-
-    /* BOTÃO DE LIBERAÇÃO EM DESTAQUE */
-    div.stFormSubmitButton > button {
+    /* ESTILO DOS BOTÕES (CORREÇÃO DE VISIBILIDADE) */
+    .stButton>button {
         background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%) !important;
-        color: #001f3f !important;
+        color: #001226 !important;
         font-weight: 700 !important;
         font-size: 20px !important;
         width: 100% !important;
         border: none !important;
-        padding: 15px !important;
         box-shadow: 0px 4px 15px rgba(212, 175, 55, 0.4) !important;
+        opacity: 1 !important;
+        visibility: visible !important;
     }
 
+    /* Estilo do Card Centralizado */
+    .stForm { background: rgba(255, 255, 255, 0.05) !important; border: 1px solid rgba(212, 175, 55, 0.3) !important; border-radius: 15px !important; padding: 30px !important; }
+    
     .question-text { font-size: 19px !important; color: #FFFFFF !important; margin-top: 20px; }
+    
+    /* Estilo dos Números 1-5 */
     div[data-testid="stRadio"] label p { color: #FFFFFF !important; font-size: 20px !important; font-weight: 700 !important; }
-    .zone-card { background: rgba(255, 255, 255, 0.05); padding: 25px; border-radius: 5px; border-left: 8px solid #D4AF37; margin-bottom: 20px; text-align: justify; }
+    div[role="radiogroup"] label { background: rgba(255, 255, 255, 0.1) !important; padding: 10px 20px !important; border-radius: 5px; margin-right: 10px; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -41,7 +39,7 @@ if 'etapa' not in st.session_state: st.session_state.etapa = 'questoes'
 st.markdown("<div style='text-align: center;'><img src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png' width='100'></div>", unsafe_allow_html=True)
 st.title("PROTOCOLO DE GOVERNANÇA PESSOAL LIDERUM")
 
-# DIMENSÕES E 45 PERGUNTAS (SISTEMA DE CLIQUE 1 A 5)
+# DIMENSÕES E PERGUNTAS
 dimensoes_info = {
     "Visão e Alinhamento Estratégico": ["Eu tenho clareza sobre meus objetivos nos próximos meses.", "Meus objetivos pessoais e profissionais estão anotados e organizados.", "Eu consigo manter meu foco mesmo diante de distrações externas.", "Eu revisito minha visão de futuro com frequência para me orientar.", "Eu organizo minhas prioridades com base no que é realmente importante."],
     "Recompensa e Reforço Positivo": ["Eu reconheço minhas próprias conquistas, mesmo que pequenas.", "Eu costumo comemorar quando concluo uma etapa de um projeto.", "Eu me elogio por atitudes positivas que tomo no dia a dia.", "Eu consigo sentir orgulho do meu progresso, mesmo que não seja perfeito.", "Eu crio momentos intencionais para celebrar avanços."],
@@ -61,32 +59,50 @@ if st.session_state.etapa == 'questoes':
             soma = 0
             for p in perguntas:
                 st.markdown(f"<p class='question-text'>{p}</p>", unsafe_allow_html=True)
-                n = st.radio(f"Nota para {p}", [1, 2, 3, 4, 5], index=2, horizontal=True, key=p)
-                soma += n
-            respostas[dim] = soma
+                # AJUSTE: index=None faz com que nada venha marcado por padrão
+                n = st.radio(f"Nota para {p}", [1, 2, 3, 4, 5], index=None, horizontal=True, key=p)
+                soma += n if n is not None else 0
+            respostas[dim] = soma if all(st.session_state.get(pg) is not None for pg in perguntas) else None
     
     if st.button("FINALIZAR E GERAR DIAGNÓSTICO"):
-        st.session_state.notas = respostas
-        st.session_state.total = sum(respostas.values())
-        st.session_state.etapa = 'captura'
-        st.rerun()
+        # VERIFICAÇÃO SE TODAS FORAM RESPONDIDAS
+        todas_respondidas = True
+        for dim, perguntas in dimensoes_info.items():
+            for p in perguntas:
+                if st.session_state.get(p) is None:
+                    todas_respondidas = False
+                    break
+        
+        if todas_respondidas:
+            # Calcula as notas finais se tudo estiver ok
+            notas_finais = {}
+            for dim, perguntas in dimensoes_info.items():
+                notas_finais[dim] = sum(st.session_state.get(p) for p in perguntas)
+            
+            st.session_state.notas = notas_finais
+            st.session_state.total = sum(notas_finais.values())
+            st.session_state.etapa = 'captura'
+            st.rerun()
+        else:
+            st.error("⚠️ Atenção: Para um diagnóstico preciso, você precisa responder todas as questões antes de finalizar.")
 
 elif st.session_state.etapa == 'captura':
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         st.markdown("<h3 style='text-align: center;'>🔒 SEU RESULTADO ESTÁ PRONTO!</h3>", unsafe_allow_html=True)
-        st.write("Identificamos oscilações importantes em suas dimensões de performance. Preencha seus dados para visualizar seu Gráfico de Governança:")
         with st.form("leads"):
-            st.text_input("Nome Completo", placeholder="Como deseja ser chamado?")
-            st.text_input("E-mail Profissional", placeholder="Seu melhor e-mail")
-            st.text_input("WhatsApp (com DDD)", placeholder="(00) 00000-0000")
-            st.text_input("Empresa e Cargo", placeholder="Ex: Diretor na Indústria X")
-            if st.form_submit_button("LIBERAR DIAGNÓSTICO"):
-                st.session_state.etapa = 'resultado'
-                st.rerun()
+            nome = st.text_input("Nome Completo", placeholder="Como deseja ser chamado?")
+            email = st.text_input("E-mail Profissional", placeholder="Seu melhor e-mail")
+            whatsapp = st.text_input("WhatsApp (com DDD)", placeholder="(00) 00000-0000")
+            cargo = st.text_input("Empresa e Cargo", placeholder="Ex: Diretor na Indústria X")
+            if st.form_submit_button("LIBERAR MEU DIAGNÓSTICO"):
+                if nome and email and whatsapp and cargo:
+                    st.session_state.etapa = 'resultado'
+                    st.rerun()
+                else:
+                    st.warning("Por favor, preencha todos os campos para liberar seu gráfico.")
 
 elif st.session_state.etapa == 'resultado':
-    # Gráfico de Radar
     categories = list(st.session_state.notas.keys())
     values = list(st.session_state.notas.values())
     fig = go.Figure()
@@ -97,21 +113,13 @@ elif st.session_state.etapa == 'resultado':
     total = st.session_state.total
     if total <= 122:
         zona, cor = "ZONA DE SOBREVIVÊNCIA", "🔴"
-        texto = f"Sua pontuação de {total}/225 indica que você está operando em Zona de Risco. Mas, para te tranquilizar, quero dizer que isso é mais comum do que você imagina, até mesmo em líderes experientes. Você está pronto para ajustar alguns pontos e crescer de forma exponencial? Assuma o controle! Para ter acesso ao seu laudo detalhado, preparamos uma estrutura completa que traz consciência e um plano de ação com ferramentas e exercícios práticos para desenvolver as áreas que hoje travam sua evolução."
+        texto = f"Sua pontuação de {total}/225 indica que você está operando em Zona de Risco..."
     elif total <= 200:
         zona, cor = "ZONA DE OSCILAÇÃO", "🟠"
-        texto = f"Sua pontuação de {total}/225 revela que você possui as competências necessárias, mas está preso em um ciclo de oscilação. Você sente que 'está quase lá', mas o peso operacional constante trava seu próximo salto de faturamento e liberdade. Para decolar e prosperar de forma sustentável, você precisa identificar quais são as dimensões que estão agindo como seu 'freio de mão invisível'. Ao adquirir nosso laudo completo, você recebe esse diagnóstico profundo e o Plano de Ação Estratégico com ferramentas práticas para você decolar e prosperar."
+        texto = f"Sua pontuação de {total}/225 revela que você possui as competências necessárias, mas está preso em um ciclo de oscilação..."
     else:
         zona, cor = "ZONA DE ELITE", "🌟"
-        texto = f"Parabéns! Sua pontuação de {total}/225 coloca você em um patamar muito acima da média do mercado. Porém, eu sei (e você sabe) que a autoliderança é algo que deve estar em constante desenvolvimento. Para você que já está performando em alto nível, ao adquirir o nosso laudo premium, você vai receber uma estrutura de diagnóstico detalhada e profunda para entender como age em cada uma das áreas, além de ferramentas para dar manutenção e expansão naquelas que precisam de maior cuidado ou que são o seu maior gargalo hoje."
+        texto = f"Parabéns! Sua pontuação de {total}/225 coloca você em um patamar muito acima da média..."
 
-    st.markdown(f"""
-    <div class='zone-card'>
-        <h2 style='color: #D4AF37; margin:0;'>{cor} STATUS: {zona}</h2>
-        <p style='margin-top:15px; font-size: 18px;'>{texto}</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown("<h4 style='text-align: center;'>DESEJA O LAUDO COMPLETO E O PLANO DE AÇÃO?</h4>", unsafe_allow_html=True)
-    # Aqui futuramente você pode trocar o link do WhatsApp pelo link da Eduzz/Kiwify
+    st.markdown(f"<div class='zone-card'><h2 style='color: #D4AF37; margin:0;'>{cor} STATUS: {zona}</h2><p style='margin-top:15px; font-size: 18px;'>{texto}</p></div>", unsafe_allow_html=True)
     st.link_button("💎 SOLICITAR ACESSO AO LAUDO ESTRATÉGICO", "https://wa.me/5581986245870")
