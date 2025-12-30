@@ -3,6 +3,7 @@ import plotly.graph_objects as go
 import time
 import datetime
 import pandas as pd
+import random
 from streamlit_gsheets import GSheetsConnection
 
 # 1. SETUP VISUAL LIDERUM (NOMES BRANCOS PARA VISIBILIDADE)
@@ -33,39 +34,35 @@ if 'etapa' not in st.session_state: st.session_state.etapa = 'questoes'
 
 st.title("PROTOCOLO DE GOVERNANÇA PESSOAL LIDERUM")
 
-# LISTA DE QUESTÕES (MANTIDA)
-questoes_lista = [
-    ("Visão e Alinhamento Estratégico", ["Eu tenho clareza sobre meus objetivos nos próximos meses.", "Meus objetivos pessoais e profissionais estão anotados.", "Mantenho meu foco mesmo com distrações externas.", "Revisito minha visão de futuro com frequência.", "Organizo minhas prioridades pelo que é importante."]),
-    ("Recompensa e Reforço Positivo", ["Reconheço minhas próprias conquistas.", "Comemoro quando concluo uma etapa.", "Me elogio por atitudes positivas.", "Sinto orgulho do meu progresso.", "Crio momentos para celebrar avanços."]),
-    ("Análise e Consciência de Padrões", ["Reviso meu comportamento criticamente.", "Reconheço erros e busco aprender.", "Percebo meus padrões de sabotagem.", "Ajusto rotas sem culpa quando erro.", "Busco feedbacks com abertura."]),
-    ("Governança e Disciplina Operacional", ["Planejo minha rotina de forma organizada.", "Priorizo o importante antes do urgente.", "Mantenho constância sem motivação.", "Equilibro tarefas operacionais e estratégicas.", "Tenho hábitos que sustentam minha produtividade."]),
-    ("Modelagem e Expansão de Repertório", ["Tenho consciência de comportamentos a mudar.", "Busco aprender com quem admiro.", "Replico métodos que funcionam para outros.", "Observo e mudo pensamentos limitantes.", "Incorporo novas habilidades com rapidez."]),
-    ("Gestão da Narrativa e Mindset", ["Minha voz interna me incentiva.", "Percebo e ressignifico pensamentos punitivos.", "Converso comigo com respeito e firmeza.", "Silencio pensamentos sabotadores.", "Meu diálogo interno ajuda minhas ações."]),
-    ("Arquitetura de Sistemas de Crenças", ["Acredito que sou capaz de aprender e evoluir sempre.", "Percebo quando ajo por crenças limitantes.", "Mudo minha realidade mudando crenças.", "Tenho crenças fortes sobre minha liderança.", "Identifico a origem das minhas crenças."]),
-    ("Padrão de Entrega e Excelência", ["Me esforço para entregar o máximo.", "Percebo evolução na qualidade das entregas.", "Mantenho comprometimento sob pressão.", "Tenho clareza de pontos fortes e de melhoria.", "Entrego além do básico sempre."]),
-    ("Postura Ativa e Protagonismo", ["Assumo responsabilidade pelas escolhas.", "Evito colocar culpa em fatores externos.", "Ajo com rapidez para mudar o que controlo.", "Encaro desafios como oportunidades.", "Olho para mim antes de culpar o ambiente."])
-]
+# CATEGORIAS
+categorias = ["Visão e Alinhamento Estratégico", "Recompensa e Reforço Positivo", "Análise e Consciência de Padrões", "Governança e Disciplina Operacional", "Modelagem e Expansão de Repertório", "Gestão da Narrativa e Mindset", "Arquitetura de Sistemas de Crenças", "Padrão de Entrega e Excelência", "Postura Ativa e Protagonismo"]
 
+# ETAPA 1: QUESTÕES
 if st.session_state.etapa == 'questoes':
+    # --- BOTÃO DE ATALHO DE TESTE ---
+    if st.button("🧪 MODO TESTE: PULAR PARA CADASTRO"):
+        for i in range(45): st.session_state[f"q_{i}"] = random.randint(3, 5)
+        st.session_state.total = sum(st.session_state[f"q_{i}"] for i in range(45))
+        st.session_state.etapa = 'captura'
+        st.rerun()
+
     q_idx = 0
-    for cat, perguntas in questoes_lista:
+    for cat in categorias:
         with st.expander(f"✨ DIMENSÃO: {cat.upper()}"):
-            for p in perguntas:
-                st.markdown(f"<p class='question-text'>{p}</p>", unsafe_allow_html=True)
+            for p_num in range(5):
+                st.markdown(f"<p class='question-text'>Pergunta {p_num + 1} de {cat}</p>", unsafe_allow_html=True)
                 st.radio(f"R_{q_idx}", [1, 2, 3, 4, 5], index=None, horizontal=True, key=f"q_{q_idx}", label_visibility="collapsed")
                 q_idx += 1
+    
     if st.button("PROCESSAR MEU DIAGNÓSTICO"):
         respondidas = sum(1 for i in range(45) if st.session_state.get(f"q_{i}") is not None)
         if respondidas == 45:
-            notas = {}
-            atual = 0
-            for cat, pergs in questoes_lista:
-                notas[cat] = sum(st.session_state.get(f"q_{i}") for i in range(atual, atual + 5))
-                atual += 5
-            st.session_state.notas, st.session_state.total, st.session_state.etapa = notas, sum(notas.values()), 'captura'
+            st.session_state.total = sum(st.session_state.get(f"q_{i}") for i in range(45))
+            st.session_state.etapa = 'captura'
             st.rerun()
-        else: st.error(f"⚠️ Responda as 45 questões. Falta(m) {45 - respondidas}.")
+        else: st.error(f"⚠️ Responda todas as 45 questões.")
 
+# ETAPA 2: CAPTURA E GRAVAÇÃO
 elif st.session_state.etapa == 'captura':
     col1, col2, col3 = st.columns([1, 1.8, 1])
     with col2:
@@ -79,35 +76,33 @@ elif st.session_state.etapa == 'captura':
             if st.form_submit_button("LIBERAR MEU RESULTADO"):
                 if all([nome, email, whatsapp, cargo]):
                     t = st.session_state.total
-                    if t <= 122: z, c, tx = "ZONA DE SOBREVIVÊNCIA", "🔴", "Sua pontuação indica que você está operando em Zona de Risco..."
-                    elif t <= 200: z, c, tx = "ZONA DE OSCILAÇÃO", "🟠", "Você possui as competências necessárias..."
-                    else: z, c, tx = "ZONA DE ELITE", "🌟", "Parabéns! Sua pontuação o coloca em um patamar..."
-                    
-                    st.session_state.res_zona, st.session_state.res_cor, st.session_state.res_txt = z, c, tx
-
+                    z = "ZONA DE ELITE" if t > 200 else "ZONA DE OSCILAÇÃO" if t > 122 else "ZONA DE SOBREVIVÊNCIA"
                     try:
                         conn = st.connection("gsheets", type=GSheetsConnection)
                         df_existente = conn.read(worksheet="Sheet1")
+                        
+                        # NOMES DAS COLUNAS CONFERIDOS UM POR UM
                         nova = pd.DataFrame([{
                             "Data": datetime.datetime.now().strftime("%d/%m/%Y %H:%M"),
-                            "Nome": nome, "Email": email, "WhatsApp": whatsapp, 
-                            "Cargo": cargo, "Pontuacao_Total": t, "Zona": z
+                            "Nome": nome,
+                            "Email": email,
+                            "WhatsApp": whatsapp,
+                            "Cargo": cargo,
+                            "Pontuacao_Total": t,
+                            "Zona": z
                         }])
-                        conn.update(worksheet="Sheet1", data=pd.concat([df_existente, nova], ignore_index=True))
                         
-                        with st.spinner('Processando...'): time.sleep(5)
+                        conn.update(worksheet="Sheet1", data=pd.concat([df_existente, nova], ignore_index=True))
                         st.session_state.etapa = 'resultado'
                         st.rerun()
                     except Exception as e:
-                        st.error(f"❌ ERRO TÉCNICO: {e}")
+                        st.error(f"❌ ERRO TÉCNICO AO SALVAR: {e}")
                 else: st.warning("Preencha todos os campos.")
 
+# ETAPA 3: SUCESSO
 elif st.session_state.etapa == 'resultado':
-    st.markdown("<h2 style='text-align: center; color: #D4AF37;'>SEU MAPA ESTRATÉGICO DE PERFORMANCE</h2>", unsafe_allow_html=True)
-    fig = go.Figure()
-    fig.add_trace(go.Scatterpolar(r=list(st.session_state.notas.values()) + [list(st.session_state.notas.values())[0]], theta=list(st.session_state.notas.keys()) + [list(st.session_state.notas.keys())[0]], fill='toself', fillcolor='rgba(212, 175, 55, 0.4)', line=dict(color='#D4AF37', width=6)))
-    fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 25], color="white")), showlegend=False, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=650)
-    st.plotly_chart(fig, use_container_width=True)
-    st.markdown(f"<div style='background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 12px; border-left: 12px solid #D4AF37;'><h2>{st.session_state.res_cor} STATUS: {st.session_state.res_zona}</h2><p style='font-size: 21px;'>{st.session_state.res_txt}</p></div>", unsafe_allow_html=True)
-    st.link_button("💎 SOLICITAR ACESSO AO LAUDO COMPLETO (IA)", "https://wa.me/5581986245870", use_container_width=True)
-    
+    st.success("✅ Diagnóstico enviado com sucesso!")
+    st.write(f"Sua Pontuação Total: {st.session_state.total}")
+    if st.button("RECOMEÇAR"):
+        st.session_state.etapa = 'questoes'
+        st.rerun()
