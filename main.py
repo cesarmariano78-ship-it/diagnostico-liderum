@@ -9,26 +9,27 @@ st.set_page_config(page_title="Protocolo LIDERUM", layout="wide")
 st.markdown("""
     <style>
     .stApp { background-color: #000c1a; color: #FFFFFF; }
-    .stMetric { background-color: rgba(212, 175, 55, 0.1); padding: 15px; border-radius: 10px; border: 1px solid #D4AF37; }
+    .top-banner { background-color: #000c1a; height: 50px; width: 100%; border-bottom: 1px solid rgba(212, 175, 55, 0.2); margin-bottom: 20px; }
+    div[data-testid="stMetric"] { background-color: rgba(212, 175, 55, 0.05); border: 1px solid #D4AF37; padding: 15px; border-radius: 10px; }
     label, p, span, div { color: #FFFFFF !important; font-size: 18px !important; }
     .stButton>button { 
         background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%) !important; 
-        color: #001226 !important; width: 100%; font-weight: bold; padding: 15px; border-radius: 8px; font-size: 20px !important;
+        color: #001226 !important; width: 100%; font-weight: bold; padding: 15px; border-radius: 8px; font-size: 18px !important;
     }
     .question-text { font-size: 19px !important; color: #FFFFFF !important; margin-top: 20px; border-bottom: 1px solid rgba(212, 175, 55, 0.1); padding-bottom: 10px; }
-    .laudo-container { background-color: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 15px; border-left: 6px solid #D4AF37; margin-top: 25px; line-height: 1.6; }
+    .laudo-container { background-color: rgba(255, 255, 255, 0.03); padding: 35px; border-radius: 15px; border-left: 6px solid #D4AF37; margin-top: 25px; line-height: 1.7; }
     .highlight { color: #D4AF37 !important; font-weight: bold; }
     </style>
     """, unsafe_allow_html=True)
 
-# INICIALIZAÇÃO DE ESTADO
 if 'etapa' not in st.session_state: st.session_state.etapa = 'questoes'
 if 'total' not in st.session_state: st.session_state.total = 0
 if 'scores' not in st.session_state: st.session_state.scores = [0] * 9
 
-# URL QUE JÁ ESTÁ FUNCIONANDO (image_dd0739.png)
+# URL VALIDADA (image_dd0739.png)
 URL_WEBHOOK = "https://script.google.com/macros/s/AKfycbwrbNk635ZiqpX0U7TRvkYfTQJsC3sO6m4KbBFEDruHLiaGDmhEax0wsd6FlKnIovM/exec"
 
+st.markdown('<div class="top-banner"></div>', unsafe_allow_html=True)
 st.title("PROTOCOLO DE GOVERNANÇA PESSOAL LIDERUM")
 
 # LISTA INTEGRAL DAS 45 PERGUNTAS
@@ -47,7 +48,7 @@ questoes_lista = [
 # --- ETAPA 1: QUESTÕES ---
 if st.session_state.etapa == 'questoes':
     if st.button("🧪 MODO TESTE RÁPIDO"):
-        st.session_state.scores = [random.randint(18, 25) for _ in range(9)]
+        st.session_state.scores = [random.randint(15, 25) for _ in range(9)]
         st.session_state.total = sum(st.session_state.scores)
         st.session_state.etapa = 'captura'; st.rerun()
 
@@ -63,14 +64,13 @@ if st.session_state.etapa == 'questoes':
             st.session_state.scores = [sum(st.session_state[f"q_{j}"] for j in range(i, i+5)) for i in range(0, 45, 5)]
             st.session_state.total = sum(st.session_state.scores)
             st.session_state.etapa = 'captura'; st.rerun()
-        else: st.error("⚠️ Responda todas as 45 questões para gerar o laudo.")
+        else: st.error("⚠️ Responda todas as 45 questões.")
 
-# --- ETAPA 2: CAPTURA (image_ddd5ac.png) ---
+# --- ETAPA 2: CAPTURA ---
 elif st.session_state.etapa == 'captura':
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         st.markdown("<h3 style='text-align: center; color: #D4AF37;'>🔒 DIAGNÓSTICO CONCLUÍDO!</h3>", unsafe_allow_html=True)
-        st.write("Preencha os dados abaixo para desbloquear sua devolutiva individual e o gráfico de radar.")
         with st.form("lead_form"):
             nome = st.text_input("Nome Completo")
             email = st.text_input("E-mail Estratégico")
@@ -86,67 +86,67 @@ elif st.session_state.etapa == 'captura':
                         requests.post(URL_WEBHOOK, json=payload, timeout=10)
                         st.session_state.etapa = 'resultado'; st.rerun()
                     except: st.session_state.etapa = 'resultado'; st.rerun()
-                else: st.warning("Por favor, preencha todos os campos para prosseguir.")
+                else: st.warning("Por favor, preencha todos os campos.")
 
-# --- ETAPA 3: LAUDO DE ALTO IMPACTO ---
+# --- ETAPA 3: LAUDO DE ALTO IMPACTO (FIXO) ---
 elif st.session_state.etapa == 'resultado':
-    st.markdown(f"## Protocolo LIDERUM: {st.session_state.nome_usuario}")
+    st.markdown(f"### Análise Individual: <span class='highlight'>{st.session_state.nome_usuario.upper()}</span>", unsafe_allow_html=True)
     
-    # Cabeçalho com Notas em Destaque
+    # KPIs Superiores
     c1, c2 = st.columns(2)
-    with c1: st.metric("Sua Pontuação Total", f"{st.session_state.total} / 225")
-    with c2: st.metric("Zona de Performance", st.session_state.zona)
+    with c1: st.metric("Pontuação Total", f"{st.session_state.total} / 225")
+    with c2: st.metric("Zona de Governança", st.session_state.zona)
     
     st.write("---")
-    
-    col_l, col_r = st.columns([1.1, 0.9])
+    col_l, col_r = st.columns([1.2, 0.8])
     
     with col_l:
-        # Radar Plotly com tamanho aumentado
         categories = ['Visão', 'Recompensa', 'Análise', 'Governança', 'Modelagem', 'Narrativa', 'Crenças', 'Excelência', 'Postura']
         fig = go.Figure()
-        fig.add_trace(go.Scatterpolar(r=st.session_state.scores, theta=categories, fill='toself', fillcolor='rgba(212, 175, 55, 0.3)', line=dict(color='#D4AF37', width=3)))
+        fig.add_trace(go.Scatterpolar(r=st.session_state.scores, theta=categories, fill='toself', fillcolor='rgba(212, 175, 55, 0.35)', line=dict(color='#D4AF37', width=4)))
         fig.update_layout(
-            polar=dict(bgcolor="rgba(0,12,26,1)", radialaxis=dict(visible=True, range=[0, 25], color="#888", gridcolor="rgba(212,175,55,0.2)")),
-            showlegend=False, paper_bgcolor="rgba(0,0,0,0)", height=550, margin=dict(l=80, r=80, t=20, b=20),
-            font=dict(color="white", size=15)
+            polar=dict(bgcolor="rgba(0,12,26,1)", radialaxis=dict(visible=True, range=[0, 25], color="#888", gridcolor="rgba(212,175,55,0.1)")),
+            showlegend=False, paper_bgcolor="rgba(0,0,0,0)", height=600, margin=dict(l=100, r=100, t=20, b=20),
+            font=dict(color="white", size=16)
         )
         st.plotly_chart(fig, use_container_width=True)
 
     with col_r:
         st.markdown("<div class='laudo-container'>", unsafe_allow_html=True)
-        st.markdown("### 🔍 Devolutiva Estratégica")
+        st.markdown("### 🔍 Direcionamento Estratégico")
         if st.session_state.zona == "ELITE":
-            st.markdown(f"""
-            Parabéns, <span class='highlight'>{st.session_state.nome_usuario}</span>. Seus resultados indicam uma **Governança de Elite**. 
-            Você possui clareza estratégica e disciplina operacional acima da média. Seu maior risco agora é a **cegueira da eficiência**: quando o sistema roda tão bem que você para de questionar as novas fronteiras. 
-            O foco deve ser na blindagem da sua rotina e na modelagem de sucessão.
-            """, unsafe_allow_html=True)
+            st.markdown(f"<span class='highlight'>{st.session_state.nome_usuario}</span>, seus resultados indicam uma **Governança de Elite**. O foco deve ser na blindagem da constância absoluta.", unsafe_allow_html=True)
         elif st.session_state.zona == "OSCILAÇÃO":
-            st.markdown(f"""
-            Atenção, <span class='highlight'>{st.session_state.nome_usuario}</span>. Sua performance é marcada por **intermitência**. 
-            Você vive ciclos de 'explosão de produtividade' seguidos de vales de inércia ou apagamento de incêndios. Isso acontece porque sua governança pessoal ainda é refém de estímulos externos ou do seu estado emocional. 
-            É necessário estabilizar seus pilares de disciplina básica para parar de 'patinar' e começar a tracionar de verdade.
-            """, unsafe_allow_html=True)
+            st.markdown(f"<span class='highlight'>{st.session_state.nome_usuario}</span>, você está na zona de **Intermitência**. Sua performance oscila entre picos de excelência e vales de inércia.", unsafe_allow_html=True)
         else:
-            st.markdown(f"""
-            Alerta Crítico, <span class='highlight'>{st.session_state.nome_usuario}</span>. Seus dados indicam que você está em **Modo de Sobrevivência**. 
-            Sua governança pessoal está colapsada e você provavelmente sente que está perdendo o controle sobre sua agenda e seus resultados. 
-            Não é falta de capacidade, é falta de método. A intervenção nos seus hábitos de liderança e organização deve ser sua prioridade absoluta antes que o esgotamento ocorra.
-            """, unsafe_allow_html=True)
+            st.markdown(f"<span class='highlight'>{st.session_state.nome_usuario}</span>, você está em **Modo de Sobrevivência**. Sua governança colapsou e a intervenção deve ser imediata.", unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
     st.write("---")
     
-    # CTAs Estratégicos
-    st.markdown("<h3 style='text-align: center;'>Próximo Passo para sua Evolução</h3>", unsafe_allow_html=True)
-    st.write("Este laudo superficial é o seu 'ponto de partida'. Para um plano de ação personalizado, escolha uma das opções abaixo:")
+    # SEÇÃO DE BOTÕES (RESTAURADA À POSIÇÃO ORIGINAL)
+    st.markdown("<h3 style='text-align: center;'>Próximo Passo Estratégico</h3>", unsafe_allow_html=True)
+    st.write("Este laudo aponta sua zona atual. Para subir de nível, você precisa de profundidade.")
     
-    bt1, bt2 = st.columns(2)
-    with bt1:
-        # Link do Checkout Hotmart
-        st.markdown(f"<div style='text-align: center;'><a href='https://pay.hotmart.com/SEU_LINK' target='_blank' style='text-decoration: none;'><div style='background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%); color: #001226; padding: 15px 20px; font-weight: bold; border-radius: 8px; display: inline-block; width: 100%;'>DESBLOQUEAR LAUDO COMPLETO (IA) →</div></a></div>", unsafe_allow_html=True)
-    with bt2:
-        # Link do WhatsApp
-        whatsapp_link = "https://wa.me/5581982602018?text=Ola!%20Acabei%20de%20fazer%20o%20Diagnostico%20LIDERUM%20e%20gostaria%20de%20falar%20sobre%20as%20soluções."
-        st.link_button("💬 FALAR COM NOSSO TIME AGORA", whatsapp_link)
+    # 1. BOTÃO DE CHECKOUT CENTRALIZADO (O MAIOR)
+    st.markdown(f"""
+        <div style='text-align: center; margin-bottom: 25px;'>
+            <a href='https://pay.hotmart.com/SEU_LINK' target='_blank' style='text-decoration: none;'>
+                <div style='background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%); color: #001226; padding: 20px 45px; font-weight: bold; border-radius: 8px; display: inline-block; width: 100%; max-width: 600px; font-size: 20px;'>
+                    ADQUIRIR MEU LAUDO ESTRATÉGICO COMPLETO COM IA →
+                </div>
+            </a>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # 2. BOTÃO FALE COM NOSSA EQUIPE (SUBSTITUINDO O RECOMECAR)
+    wa_url = "https://wa.me/5581982602018?text=Olá!%20Acabei%20de%20fazer%20meu%20Diagnóstico%20LIDERUM%20e%20quero%20conhecer%20as%20soluções."
+    st.markdown(f"""
+        <div style='text-align: left;'>
+            <a href='{wa_url}' target='_blank' style='text-decoration: none;'>
+                <div style='background: rgba(212, 175, 55, 0.1); color: #D4AF37; border: 1px solid #D4AF37; padding: 12px 25px; font-weight: bold; border-radius: 5px; display: inline-block;'>
+                    💬 FALE COM NOSSA EQUIPE
+                </div>
+            </a>
+        </div>
+    """, unsafe_allow_html=True)
