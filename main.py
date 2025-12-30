@@ -9,8 +9,27 @@ st.markdown("""
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@700&display=swap');
     .stApp { background: linear-gradient(180deg, #001f3f 0%, #000c1a 100%); color: #FFFFFF; font-family: 'Montserrat', sans-serif; }
     h1 { color: #D4AF37 !important; font-family: 'Playfair Display', serif !important; text-align: center; }
-    .stForm { background: rgba(255, 255, 255, 0.05) !important; border: 1px solid rgba(212, 175, 55, 0.3) !important; border-radius: 15px !important; padding: 30px !important; }
-    div.stFormSubmitButton > button { background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%) !important; color: #001f3f !important; font-weight: 700 !important; font-size: 20px !important; width: 100% !important; border: none !important; padding: 15px !important; }
+    
+    /* Estilo do Card Centralizado (Simulando Pop-up) */
+    .stForm {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(212, 175, 55, 0.3) !important;
+        border-radius: 15px !important;
+        padding: 30px !important;
+    }
+
+    /* BOTÃO DE LIBERAÇÃO EM DESTAQUE */
+    div.stFormSubmitButton > button {
+        background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%) !important;
+        color: #001f3f !important;
+        font-weight: 700 !important;
+        font-size: 20px !important;
+        width: 100% !important;
+        border: none !important;
+        padding: 15px !important;
+        box-shadow: 0px 4px 15px rgba(212, 175, 55, 0.4) !important;
+    }
+
     .question-text { font-size: 19px !important; color: #FFFFFF !important; margin-top: 20px; }
     div[data-testid="stRadio"] label p { color: #FFFFFF !important; font-size: 20px !important; font-weight: 700 !important; }
     .zone-card { background: rgba(255, 255, 255, 0.05); padding: 25px; border-radius: 5px; border-left: 8px solid #D4AF37; margin-bottom: 20px; text-align: justify; }
@@ -22,7 +41,7 @@ if 'etapa' not in st.session_state: st.session_state.etapa = 'questoes'
 st.markdown("<div style='text-align: center;'><img src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png' width='100'></div>", unsafe_allow_html=True)
 st.title("PROTOCOLO DE GOVERNANÇA PESSOAL LIDERUM")
 
-# DIMENSÕES E PERGUNTAS (45 ITENS)
+# DIMENSÕES E 45 PERGUNTAS (SISTEMA DE CLIQUE 1 A 5)
 dimensoes_info = {
     "Visão e Alinhamento Estratégico": ["Eu tenho clareza sobre meus objetivos nos próximos meses.", "Meus objetivos pessoais e profissionais estão anotados e organizados.", "Eu consigo manter meu foco mesmo diante de distrações externas.", "Eu revisito minha visão de futuro com frequência para me orientar.", "Eu organizo minhas prioridades com base no que é realmente importante."],
     "Recompensa e Reforço Positivo": ["Eu reconheço minhas próprias conquistas, mesmo que pequenas.", "Eu costumo comemorar quando concluo uma etapa de um projeto.", "Eu me elogio por atitudes positivas que tomo no dia a dia.", "Eu consigo sentir orgulho do meu progresso, mesmo que não seja perfeito.", "Eu crio momentos intencionais para celebrar avanços."],
@@ -59,6 +78,7 @@ elif st.session_state.etapa == 'captura':
         st.write("Identificamos oscilações importantes em suas dimensões de performance. Preencha seus dados para visualizar seu Gráfico de Governança:")
         with st.form("leads"):
             st.text_input("Nome Completo", placeholder="Como deseja ser chamado?")
+            st.text_input("E-mail Profissional", placeholder="Seu melhor e-mail")
             st.text_input("WhatsApp (com DDD)", placeholder="(00) 00000-0000")
             st.text_input("Empresa e Cargo", placeholder="Ex: Diretor na Indústria X")
             if st.form_submit_button("LIBERAR DIAGNÓSTICO"):
@@ -66,6 +86,7 @@ elif st.session_state.etapa == 'captura':
                 st.rerun()
 
 elif st.session_state.etapa == 'resultado':
+    # Gráfico de Radar
     categories = list(st.session_state.notas.keys())
     values = list(st.session_state.notas.values())
     fig = go.Figure()
@@ -92,4 +113,5 @@ elif st.session_state.etapa == 'resultado':
     """, unsafe_allow_html=True)
 
     st.markdown("<h4 style='text-align: center;'>DESEJA O LAUDO COMPLETO E O PLANO DE AÇÃO?</h4>", unsafe_allow_html=True)
+    # Aqui futuramente você pode trocar o link do WhatsApp pelo link da Eduzz/Kiwify
     st.link_button("💎 SOLICITAR ACESSO AO LAUDO ESTRATÉGICO", "https://wa.me/5581986245870")
