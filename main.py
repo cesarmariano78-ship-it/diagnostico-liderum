@@ -7,7 +7,7 @@ import random
 import re
 from streamlit_gsheets import GSheetsConnection
 
-# 1. FUNÇÃO DE LIMPEZA DA CHAVE (Proteção contra erro de Base64/65 caracteres)
+# 1. FUNÇÃO DE SEGURANÇA (Limpa a chave para evitar erro de Base64)
 def sanitize_private_key(pem: str) -> str:
     if not pem: return ""
     pem = pem.replace("\ufeff", "").replace("\r\n", "\n").replace("\r", "\n").strip()
@@ -34,7 +34,7 @@ if 'etapa' not in st.session_state: st.session_state.etapa = 'questoes'
 
 st.title("PROTOCOLO DE GOVERNANÇA PESSOAL LIDERUM")
 
-# LISTA COMPLETA DE CATEGORIAS E PERGUNTAS (45 ITENS)
+# LISTA DE TODAS AS 45 PERGUNTAS
 questoes_lista = [
     ("Visão e Alinhamento Estratégico", ["Eu tenho clareza sobre meus objetivos nos próximos meses.", "Meus objetivos pessoais e profissionais estão anotados.", "Mantenho meu foco mesmo com distrações externas.", "Revisito minha visão de futuro com frequência.", "Organizo minhas prioridades pelo que é importante."]),
     ("Recompensa e Reforço Positivo", ["Reconheço minhas próprias conquistas.", "Comemoro quando concluo uma etapa.", "Me elogio por atitudes positivas.", "Sinto orgulho do meu progresso.", "Crio momentos para celebrar avanços."]),
@@ -49,8 +49,8 @@ questoes_lista = [
 
 # ETAPA 1: QUESTÕES
 if st.session_state.etapa == 'questoes':
-    # BOTÃO DE ATALHO PARA TESTE
-    if st.button("🧪 MODO TESTE: PREENCHER TUDO AUTOMATICAMENTE"):
+    # ATALHO PARA VOCÊ NÃO TER QUE CLICAR 45 VEZES NOS TESTES
+    if st.button("🧪 MODO DESENVOLVEDOR: PULAR PARA CADASTRO"):
         for i in range(45): st.session_state[f"q_{i}"] = random.randint(3, 5)
         st.session_state.total = sum(st.session_state[f"q_{i}"] for i in range(45))
         st.session_state.etapa = 'captura'
@@ -72,7 +72,7 @@ if st.session_state.etapa == 'questoes':
             st.rerun()
         else: st.error("⚠️ Responda todas as 45 questões.")
 
-# ETAPA 2: CAPTURA E GRAVAÇÃO (RESOLUÇÃO DO ERRO 'SPREADSHEET')
+# ETAPA 2: CAPTURA E GRAVAÇÃO
 elif st.session_state.etapa == 'captura':
     col1, col2, col3 = st.columns([1, 1.8, 1])
     with col2:
@@ -83,44 +83,32 @@ elif st.session_state.etapa == 'captura':
             
             if st.form_submit_button("LIBERAR MEU RESULTADO"):
                 if all([nome, email, whatsapp, cargo]):
-                    t = st.session_state.total
-                    z = "ZONA DE ELITE" if t > 200 else "ZONA DE OSCILAÇÃO" if t > 122 else "ZONA DE SOBREVIVÊNCIA"
                     try:
-                        # --- SOLUÇÃO CIRÚRGICA ---
-                        # 1. Pega os dados brutos do Secrets
-                        raw_creds = dict(st.secrets["connections"]["gsheets"])
+                        # Prepara credenciais e limpa a chave
+                        c = dict(st.secrets["connections"]["gsheets"])
+                        c["private_key"] = sanitize_private_key(c["private_key"])
+                        if "type" in c: del c["type"]
                         
-                        # 2. SEPARA o link da planilha das credenciais (Isso evita o erro 'unexpected argument')
-                        spreadsheet_url = raw_creds.pop("spreadsheet", None)
+                        conn = st.connection("gsheets", type=GSheetsConnection, **c)
+                        df = conn.read(worksheet="Sheet1")
                         
-                        # 3. Limpa a chave privada
-                        raw_creds["private_key"] = sanitize_private_key(raw_creds["private_key"])
-                        
-                        # 4. Remove a etiqueta 'type' duplicada
-                        if "type" in raw_creds: del raw_creds["type"]
-                        
-                        # 5. Conecta usando os blocos separados
-                        conn = st.connection("gsheets", type=GSheetsConnection, **raw_creds)
-                        
-                        # 6. Grava na aba Sheet1 usando o URL que separamos
-                        df_existente = conn.read(spreadsheet=spreadsheet_url, worksheet="Sheet1")
                         nova = pd.DataFrame([{
-                            "Data": datetime.datetime.now().strftime("%d/%m/%Y %H:%M"), 
-                            "Nome": nome, "Email": email, "WhatsApp": whatsapp, 
-                            "Cargo": cargo, "Pontuacao_Total": t, "Zona": z
+                            "Data": datetime.datetime.now().strftime("%d/%m/%Y %H:%M"),
+                            "Nome": nome, "Email": email, "WhatsApp": whatsapp, "Cargo": cargo,
+                            "Pontuacao_Total": st.session_state.total, "Zona": "Analise"
                         }])
-                        conn.update(spreadsheet=spreadsheet_url, worksheet="Sheet1", data=pd.concat([df_existente, nova], ignore_index=True))
                         
+                        conn.update(worksheet="Sheet1", data=pd.concat([df, nova], ignore_index=True))
                         st.session_state.etapa = 'resultado'
                         st.rerun()
                     except Exception as e:
-                        st.error(f"❌ ERRO FINAL: {e}")
+                        st.error(f"❌ Erro ao salvar: {e}")
                 else: st.warning("Preencha todos os campos.")
 
 # ETAPA 3: SUCESSO
 elif st.session_state.etapa == 'resultado':
-    st.success("✅ FUNCIONOU! Verifique sua planilha.")
-    st.write(f"Pontuação: {st.session_state.total}")
+    st.success("✅ Dados enviados com sucesso!")
+    st.write(f"Pontuação Total: {st.session_state.total}")
     if st.button("RECOMEÇAR"):
         st.session_state.etapa = 'questoes'
         st.rerun()
