@@ -18,7 +18,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # URL EXTRAÍDA DA SUA IMAGEM (image_dd0739.png)
-URL_WEBHOOK = "https://script.google.com/macros/s/AKfycbwrbNk635ZiqpX0U7TRvkYfTQJsC3sO6m4KbBFEDruHLiaGDmhEax0wsd6FIkNlovM/exec"
+URL_WEBHOOK = "https://script.google.com/macros/s/AKfycbwrbNk635ZiqpX0U7TRvkYfTQJsC3sO6m4KbBFEDruHLiaGDmhEax0wsd6FlKnIovM/exec"
 
 if 'etapa' not in st.session_state: st.session_state.etapa = 'questoes'
 
