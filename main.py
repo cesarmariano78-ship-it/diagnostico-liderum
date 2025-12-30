@@ -5,7 +5,7 @@ import datetime
 import pandas as pd
 from streamlit_gsheets import GSheetsConnection
 
-# 1. SETUP VISUAL LIDERUM
+# 1. SETUP VISUAL LIDERUM (CORRIGINDO VISIBILIDADE DOS CAMPOS)
 st.set_page_config(page_title="Protocolo LIDERUM", layout="wide")
 
 st.markdown("""
@@ -14,7 +14,10 @@ st.markdown("""
     .stApp { background-color: #000c1a; color: #FFFFFF; font-family: 'Montserrat', sans-serif; }
     h1 { color: #D4AF37 !important; font-family: 'Playfair Display', serif !important; text-align: center; font-size: 2.8rem !important; }
     
-    /* ESTILO DOS BOTÕES DE RESPOSTA */
+    /* CORRIGINDO VISIBILIDADE DOS LABELS (NOMES DOS CAMPOS) */
+    label { color: #FFFFFF !important; font-size: 18px !important; font-weight: 600 !important; }
+    
+    /* ESTILO DOS BOTÕES DE RESPOSTA (RÁDIO) */
     div[data-testid="stRadio"] label p { color: #FFFFFF !important; font-size: 24px !important; font-weight: 800 !important; }
     div[role="radiogroup"] label { 
         background-color: #001f3f !important; 
@@ -33,7 +36,7 @@ st.markdown("""
     }
     
     .question-text { font-size: 20px !important; color: #FFFFFF !important; margin-top: 25px; border-bottom: 1px solid rgba(212, 175, 55, 0.1); padding-bottom: 5px; }
-    .zone-card { background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 12px; border-left: 10px solid #D4AF37; margin-top: 20px; line-height: 1.6; }
+    .zone-card { background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 12px; border-left: 12px solid #D4AF37; margin-top: 20px; line-height: 1.6; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -42,7 +45,7 @@ if 'etapa' not in st.session_state:
 
 st.title("PROTOCOLO DE GOVERNANÇA PESSOAL LIDERUM")
 
-# CATEGORIAS
+# LISTA DE QUESTÕES
 questoes_lista = [
     ("Visão e Alinhamento Estratégico", ["Eu tenho clareza sobre meus objetivos nos próximos meses.", "Meus objetivos pessoais e profissionais estão anotados.", "Mantenho meu foco mesmo com distrações externas.", "Revisito minha visão de futuro com frequência.", "Organizo minhas prioridades pelo que é importante."]),
     ("Recompensa e Reforço Positivo", ["Reconheço minhas próprias conquistas.", "Comemoro quando concluo uma etapa.", "Me elogio por atitudes positivas.", "Sinto orgulho do meu progresso.", "Crio momentos para celebrar avanços."]),
@@ -51,21 +54,21 @@ questoes_lista = [
     ("Modelagem e Expansão de Repertório", ["Tenho consciência de comportamentos a mudar.", "Busco aprender com quem admiro.", "Replico métodos que funcionam para outros.", "Observo e mudo pensamentos limitantes.", "Incorporo novas habilidades com rapidez."]),
     ("Gestão da Narrativa e Mindset", ["Minha voz interna me incentiva.", "Percebo e ressignifico pensamentos punitivos.", "Converso comigo com respeito e firmeza.", "Silencio pensamentos sabotadores.", "Meu diálogo interno ajuda minhas ações."]),
     ("Arquitetura de Sistemas de Crenças", ["Acredito que sou capaz de aprender e evoluir sempre.", "Percebo quando ajo por crenças limitantes.", "Mudo minha realidade mudando crenças.", "Tenho crenças fortes sobre minha liderança.", "Identifico a origem das minhas crenças."]),
-    ("Padrão de Entrega e Excelência", ["Me esforço para entregar o máximo.", "Percebo evolução na qualidade das entregas.", "Mantenho comprometimento sob pressão.", "Tenho clareza de pontos fortes e de melhoria.", "Entrego além do básico sempre."]),
+    ("Padrão de Entrega e Excelência", ["Me esforço para entregar o máximo.", "Percebo evolução na qualidade das entregas.", "Mantenho comprometimento sem pressão.", "Tenho clareza de pontos fortes e de melhoria.", "Entrego além do básico sempre."]),
     ("Postura Ativa e Protagonismo", ["Assumo responsabilidade pelas escolhas.", "Evito colocar culpa em fatores externos.", "Ajo com rapidez para mudar o que controlo.", "Encaro desafios como oportunidades.", "Olho para mim antes de culpar o ambiente."])
 ]
 
-# ETAPA 1: RESPOSTAS
+# ETAPA 1: QUESTÕES
 if st.session_state.etapa == 'questoes':
     q_idx = 0
     for cat, perguntas in questoes_lista:
-        with st.expander(f"✨ DIMENSÃO: {cat.upper()}"):
+        with st.expander(f"✨ AVALIAR: {cat.upper()}"):
             for p in perguntas:
                 st.markdown(f"<p class='question-text'>{p}</p>", unsafe_allow_html=True)
                 st.radio(f"R_{q_idx}", [1, 2, 3, 4, 5], index=None, horizontal=True, key=f"q_{q_idx}", label_visibility="collapsed")
                 q_idx += 1
     
-    if st.button("PROCESSAR MEU DIAGNÓSTICO"):
+    if st.button("FINALIZAR E PROCESSAR DIAGNÓSTICO"):
         respondidas = sum(1 for i in range(45) if st.session_state.get(f"q_{i}") is not None)
         if respondidas == 45:
             notas_finais = {}
@@ -79,79 +82,66 @@ if st.session_state.etapa == 'questoes':
             st.session_state.etapa = 'captura'
             st.rerun()
         else:
-            st.error(f"Atenção: Você respondeu {respondidas} de 45 questões. Por favor, preencha todas para continuar.")
+            st.error(f"⚠️ Atenção: Você respondeu {respondidas} de 45 questões. Revise os blocos acima.")
 
-# ETAPA 2: CAPTURA E TEATRO DE VALOR
+# ETAPA 2: CAPTURA (CORRIGIDA)
 elif st.session_state.etapa == 'captura':
     col1, col2, col3 = st.columns([1, 1.8, 1])
     with col2:
-        st.markdown("<h3 style='text-align: center;'>✅ AVALIAÇÃO CONCLUÍDA!</h3>", unsafe_allow_html=True)
-        st.markdown("<p style='text-align: center;'>Identificamos o seu padrão de liderança. Informe seus dados para gerar o laudo estratégico.</p>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align: center;'>🔒 RESULTADO DISPONÍVEL!</h3>", unsafe_allow_html=True)
         with st.form("lead_form"):
             nome = st.text_input("Nome Completo")
-            email = st.text_input("E-mail Profissional")
+            email = st.text_input("E-mail Estratégico")
             whatsapp = st.text_input("WhatsApp")
-            cargo = st.text_input("Empresa / Cargo")
+            cargo = st.text_input("Empresa e Cargo")
             
-            if st.form_submit_button("GERAR MEU LAUDO AGORA"):
+            if st.form_submit_button("LIBERAR MEU RESULTADO"):
                 if all([nome, email, whatsapp, cargo]):
-                    # Gravação silenciosa na planilha
+                    t = st.session_state.total
+                    # LÓGICA DE DEFINIÇÃO (CORREÇÃO DO ERRO DE VARIÁVEL)
+                    if t <= 122: 
+                        z, c, tx = "ZONA DE SOBREVIVÊNCIA", "🔴", "Sua pontuação indica que você está operando em Zona de Risco. Para te tranquilizar, quero dizer que isso é mais comum do que você imagina, até mesmo em líderes experientes. Você está pronto para ajustar alguns pontos e crescer de forma exponencial? Assuma o controle! Ao solicitar seu laudo completo, você terá acesso à estrutura detalhada que traz consciência e um plano de ação com ferramentas e exercícios práticos para desenvolver as áreas que hoje travam sua evolução."
+                    elif t <= 200: 
+                        z, c, tx = "ZONA DE OSCILAÇÃO", "🟠", "Você possui as competências necessárias, mas está preso em um ciclo de oscilação. Você sente que 'está quase lá', mas o peso operacional constante trava seu próximo salto de faturamento e liberdade. Para prosperar de forma sustentável, você precisa identificar quais são as dimensões que estão agindo como seu 'freio de mão invisível'. Ao adquirir nosso laudo completo, você recebe o diagnóstico profundo e o Plano de Ação Estratégico com ferramentas práticas para romper essa barreira."
+                    else: 
+                        z, c, tx = "ZONA DE ELITE", "🌟", "Parabéns! Sua pontuação o coloca em um patamar muito acima da média do mercado. Porém, a autoliderança em alto nível exige manutenção constante para não se tornar complacente. Para você que já performa no topo, nosso Laudo Premium oferece a estrutura de Diagnóstico de Detalhe, revelando as micro-oportunidades de expansão em cada área e as ferramentas de blindagem para que sua performance nunca oscile, mesmo sob extrema pressão."
+                    
+                    st.session_state.res_zona, st.session_state.res_cor, st.session_state.res_txt = z, c, tx
+
+                    # GRAVAÇÃO NA PLANILHA
                     try:
                         conn = st.connection("gsheets", type=GSheetsConnection)
-                        df_existente = conn.read(worksheet="Sheet1")
-                        nova = pd.DataFrame([{"Data": datetime.datetime.now().strftime("%d/%m/%Y %H:%M"), "Nome": nome, "Email": email, "WhatsApp": whatsapp, "Cargo": cargo, "Total": st.session_state.total}])
-                        conn.update(worksheet="Sheet1", data=pd.concat([df_existente, nova], ignore_index=True))
+                        df_old = conn.read(worksheet="Sheet1")
+                        nova = pd.DataFrame([{"Data": datetime.datetime.now().strftime("%d/%m/%Y %H:%M"), "Nome": nome, "Email": email, "WhatsApp": whatsapp, "Cargo": cargo, "Total": t, "Zona": z}])
+                        conn.update(worksheet="Sheet1", data=pd.concat([df_old, nova], ignore_index=True))
                     except: pass
-
+                    
                     # TEATRO DE VALOR (10 SEGUNDOS)
-                    bar = st.progress(0)
-                    msgs = ["Analisando padrões...", "Cruzando dados de governança...", "Gerando mapa estratégico..."]
-                    for i, m in enumerate(msgs):
-                        st.write(f"_{m}_")
-                        time.sleep(3.3)
-                        bar.progress((i + 1) * 33)
+                    with st.spinner('Processando laudo...'):
+                        time.sleep(10)
                     
                     st.session_state.etapa = 'resultado'
                     st.rerun()
                 else:
-                    st.warning("Preencha todos os campos para liberar o laudo.")
+                    st.warning("Preencha todos os campos.")
 
-# ETAPA 3: RESULTADO FINAL (O LAUDO)
+# ETAPA 3: LAUDO ROBUSTO
 elif st.session_state.etapa == 'resultado':
     st.markdown("<h2 style='text-align: center; color: #D4AF37;'>SEU MAPA ESTRATÉGICO DE PERFORMANCE</h2>", unsafe_allow_html=True)
     
-    # Gráfico de Radar
+    # Radar Chart
     fig = go.Figure()
     fig.add_trace(go.Scatterpolar(
         r=list(st.session_state.notas.values()) + [list(st.session_state.notas.values())[0]],
         theta=list(st.session_state.notas.keys()) + [list(st.session_state.notas.keys())[0]],
-        fill='toself', fillcolor='rgba(212, 175, 55, 0.4)', line=dict(color='#D4AF37', width=5)
+        fill='toself', fillcolor='rgba(212, 175, 55, 0.4)', line=dict(color='#D4AF37', width=6)
     ))
     fig.update_layout(
         polar=dict(radialaxis=dict(visible=True, range=[0, 25], color="white")),
-        showlegend=False, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=550
+        showlegend=False, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=650
     )
     st.plotly_chart(fig, use_container_width=True)
 
-    # LÓGICA DE TEXTO DEFINIDA POR VOCÊ
-    t = st.session_state.total
-    if t <= 122:
-        status, cor = "ZONA DE SOBREVIVÊNCIA", "🔴"
-        texto = "Sua pontuação indica que você está operando em Zona de Risco. Para te tranquilizar, quero dizer que isso é mais comum do que você imagina, até mesmo em líderes experientes. Você está pronto para ajustar alguns pontos e crescer de forma exponencial? Assuma o controle! Ao solicitar seu laudo completo, você terá acesso à estrutura detalhada que traz consciência e um plano de ação com ferramentas e exercícios práticos para desenvolver as áreas que hoje travam sua evolução."
-    elif t <= 200:
-        status, cor = "ZONA DE OSCILAÇÃO", "🟠"
-        texto = "Você possui as competências necessárias, mas está preso em um ciclo de oscilação. Você sente que 'está quase lá', mas o peso operacional constante trava seu próximo salto de faturamento e liberdade. Para prosperar de forma sustentável, você precisa identificar quais são as dimensões que estão agindo como seu 'freio de mão invisível'. Ao adquirir nosso laudo completo, você recebe o diagnóstico profundo e o Plano de Ação Estratégico com ferramentas práticas para romper essa barreira."
-    else:
-        status, cor = "ZONA DE ELITE", "🌟"
-        texto = "Parabéns! Sua pontuação o coloca em um patamar muito acima da média do mercado. Porém, a autoliderança em alto nível exige manutenção constante para não se tornar complacente. Para você que já performa no topo, nosso Laudo Premium oferece a estrutura de Diagnóstico de Detalhe, revelando as micro-oportunidades de expansão em cada área e as ferramentas de blindagem para que sua performance nunca oscile, mesmo sob extrema pressão."
-
-    # Exibição do Laudo
-    st.markdown(f"""
-    <div class='zone-card'>
-        <h2 style='color: #D4AF37; margin:0;'>{cor} STATUS: {status}</h2>
-        <p style='margin-top:20px; font-size: 21px;'>{texto}</p>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown(f"<div class='zone-card'><h2 style='color: #D4AF37; margin:0;'>{st.session_state.res_cor} STATUS: {st.session_state.res_zona}</h2><p style='margin-top:20px; font-size: 21px;'>{st.session_state.res_txt}</p></div>", unsafe_allow_html=True)
     
-    st.markdown("---")
     st.link_button("💎 SOLICITAR ACESSO AO LAUDO COMPLETO (IA)", "https://wa.me/5581986245870", use_container_width=True)
