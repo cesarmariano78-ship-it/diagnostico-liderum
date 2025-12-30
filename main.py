@@ -4,34 +4,39 @@ import time
 import datetime
 from streamlit_gsheets import GSheetsConnection
 
-# 1. ESTÉTICA LIDERUM (VISIBILIDADE TOTAL)
+# 1. ESTÉTICA METÁLICA (AJUSTE DE VISIBILIDADE DOS NÚMEROS)
 st.set_page_config(page_title="Protocolo LIDERUM", layout="wide")
 
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@700&display=swap');
-    
     .stApp { background: linear-gradient(180deg, #001f3f 0%, #000c1a 100%); color: #FFFFFF; font-family: 'Montserrat', sans-serif; }
-    h1 { color: #D4AF37 !important; font-family: 'Playfair Display', serif !important; text-align: center; font-size: 35px !important; }
+    h1 { color: #D4AF37 !important; font-family: 'Playfair Display', serif !important; text-align: center; }
     
-    /* VISIBILIDADE DOS NÚMEROS 1 A 5 */
-    div[data-testid="stRadio"] label p { color: #FFFFFF !important; font-size: 22px !important; font-weight: 700 !important; }
-    div[role="radiogroup"] label { background: rgba(255, 255, 255, 0.1) !important; padding: 10px 20px !important; border-radius: 5px; margin-right: 10px; border: 1px solid #D4AF37; }
+    /* CORREÇÃO: NÚMEROS 1 A 5 BRANCOS E VISÍVEIS */
+    div[data-testid="stRadio"] label p { color: #FFFFFF !important; font-size: 24px !important; font-weight: 700 !important; }
+    div[role="radiogroup"] label { 
+        background: rgba(212, 175, 55, 0.15) !important; 
+        padding: 15px 30px !important; 
+        border-radius: 10px; 
+        margin-right: 15px; 
+        border: 2px solid #D4AF37 !important; 
+    }
+    div[role="radiogroup"] label:hover { background: rgba(212, 175, 55, 0.3) !important; }
 
-    /* FORMULÁRIO CENTRALIZADO */
-    .stForm { background: rgba(255, 255, 255, 0.05) !important; border: 1px solid rgba(212, 175, 55, 0.4) !important; border-radius: 15px !important; padding: 30px !important; }
-    label[data-testid="stWidgetLabel"] p { color: #FFFFFF !important; font-weight: 700 !important; }
+    /* CARD DE CAPTURA CENTRALIZADO */
+    .stForm { background: rgba(255, 255, 255, 0.05) !important; border: 1px solid rgba(212, 175, 55, 0.4) !important; border-radius: 15px !important; padding: 35px !important; }
+    label[data-testid="stWidgetLabel"] p { color: #FFFFFF !important; font-weight: 700 !important; font-size: 18px !important; }
 
     /* BOTÃO DOURADO */
     .stButton>button, div.stFormSubmitButton > button {
         background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%) !important;
-        color: #001226 !important; font-weight: 700 !important; font-size: 18px !important;
-        width: 100% !important; border: none !important; padding: 12px !important;
-        box-shadow: 0px 4px 15px rgba(212, 175, 55, 0.5) !important; text-transform: uppercase;
+        color: #001226 !important; font-weight: 700 !important; font-size: 20px !important;
+        width: 100% !important; border: none !important; padding: 15px !important;
+        box-shadow: 0px 4px 20px rgba(212, 175, 55, 0.6) !important; text-transform: uppercase;
     }
-
-    .question-text { font-size: 19px !important; color: #FFFFFF !important; margin-top: 20px; }
-    .zone-card { background: rgba(255, 255, 255, 0.05); padding: 25px; border-radius: 10px; border-left: 10px solid #D4AF37; margin-top: 20px; }
+    .question-text { font-size: 21px !important; color: #FFFFFF !important; margin-top: 30px; font-weight: 500; }
+    .zone-card { background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 12px; border-left: 10px solid #D4AF37; margin-bottom: 30px; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -52,7 +57,6 @@ dimensoes_info = {
     "Postura Ativa e Protagonismo": ["Eu assumo responsabilidade pelas minhas escolhas e resultados.", "Evito colocar culpa em fatores externos.", "Ajo com rapidez para mudar o que está sob meu controle.", "Encaro desafios como oportunidades de crescimento.", "Costumo olhar para mim antes de culpar o ambiente."]
 }
 
-# ETAPA 1: PERGUNTAS
 if st.session_state.etapa == 'questoes':
     for dim, perguntas in dimensoes_info.items():
         with st.expander(f"✨ AVALIAR: {dim.upper()}"):
@@ -67,34 +71,31 @@ if st.session_state.etapa == 'questoes':
             st.session_state.etapa = 'captura'
             st.rerun()
         else:
-            st.error("⚠️ Responda todas as 45 questões antes de prosseguir.")
+            st.error("⚠️ O Protocolo exige 100% de preenchimento para garantir a precisão do laudo.")
 
-# ETAPA 2: CAPTURA DE DADOS
 elif st.session_state.etapa == 'captura':
-    col1, col2, col3 = st.columns([1, 2, 1])
+    col1, col2, col3 = st.columns([1, 1.8, 1])
     with col2:
-        st.markdown("<h3 style='text-align: center;'>🔒 RESULTADO DISPONÍVEL!</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align: center;'>🔒 MAPA DE PERFORMANCE DISPONÍVEL!</h3>", unsafe_allow_html=True)
         with st.form("lead_form"):
             nome = st.text_input("Nome Completo")
             email = st.text_input("E-mail Estratégico")
             whatsapp = st.text_input("WhatsApp com DDD")
             cargo = st.text_input("Empresa e Cargo")
-            if st.form_submit_button("LIBERAR MEU RESULTADO AGORA"):
-                if nome and email and whatsapp and cargo:
-                    # Lógica de Zona ANTES de salvar
+            if st.form_submit_button("LIBERAR MEU RESULTADO"):
+                if all([nome, email, whatsapp, cargo]):
+                    # CÁLCULO DAS VARIÁVEIS DO LAUDO (EVITA NAME ERROR)
                     total = st.session_state.total
                     if total <= 122:
-                        zona, cor, txt = "ZONA DE SOBREVIVÊNCIA", "🔴", "Sua pontuação indica que você está operando em Zona de Risco..."
+                        zona, cor, txt = "ZONA DE SOBREVIVÊNCIA", "🔴", "Sua pontuação indica Zona de Risco. Mas isso é comum até em líderes experientes. Está pronto para crescer exponencialmente? Assuma o controle! Ao solicitar seu laudo completo, você terá acesso à estrutura detalhada que traz consciência e um plano de ação prático."
                     elif total <= 200:
-                        zona, cor, txt = "ZONA DE OSCILAÇÃO", "🟠", "Você possui as competências necessárias, mas está preso em um ciclo de oscilação..."
+                        zona, cor, txt = "ZONA DE OSCILAÇÃO", "🟠", "Você possui as competências necessárias, mas está preso em um ciclo de oscilação. O peso operacional trava seu salto. Identifique as dimensões que são seu 'freio de mão invisível' com nosso laudo completo e plano de ação."
                     else:
-                        zona, cor, txt = "ZONA DE ELITE", "🌟", "Parabéns! Sua pontuação coloca você em um patamar muito acima do mercado..."
+                        zona, cor, txt = "ZONA DE ELITE", "🌟", "Parabéns! Sua pontuação coloca você em um patamar muito acima do mercado. Porém, a autoliderança em alto nível exige manutenção constante. O laudo premium revela micro-oportunidades de expansão."
                     
-                    st.session_state.res_zona = zona
-                    st.session_state.res_cor = cor
-                    st.session_state.res_txt = txt
+                    st.session_state.res_zona, st.session_state.res_cor, st.session_state.res_txt = zona, cor, txt
 
-                    # Tenta salvar no Google Sheets
+                    # TENTA SALVAR NA PLANILHA
                     try:
                         conn = st.connection("gsheets", type=GSheetsConnection)
                         nova_linha = {
@@ -103,32 +104,35 @@ elif st.session_state.etapa == 'captura':
                             "Pontuacao_Total": total, "Zona": zona
                         }
                         conn.create(data=[nova_linha])
-                    except: pass
+                    except Exception as e:
+                        st.warning("Diagnóstico gerado localmente. (Erro de sincronização de banco de dados)")
                     
-                    with st.spinner('Gerando Mapa de Governança...'):
-                        time.sleep(10) # Ritual de 10 segundos
+                    # ANIMAÇÃO DE RITUAL
+                    place = st.empty()
+                    for m in ["Processando dados...", "Cruzando dimensões...", "Gerando seu Mapa de Elite..."]:
+                        place.info(f"⏳ {m}")
+                        time.sleep(3.5)
                     st.session_state.etapa = 'resultado'
                     st.rerun()
                 else:
                     st.warning("Preencha todos os campos para prosseguir.")
 
-# ETAPA 3: RESULTADO FINAL
 elif st.session_state.etapa == 'resultado':
     st.markdown("<h2 style='text-align: center; color: #D4AF37;'>SEU MAPA ESTRATÉGICO DE PERFORMANCE</h2>", unsafe_allow_html=True)
     
-    # Gráfico
+    # RADAR DE LUXO
     categories = list(st.session_state.notas.keys())
     values = list(st.session_state.notas.values())
     fig = go.Figure()
-    fig.add_trace(go.Scatterpolar(r=values + [values[0]], theta=categories + [categories[0]], fill='toself', fillcolor='rgba(212, 175, 55, 0.4)', line=dict(color='#D4AF37', width=5)))
-    fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 25], color="white")), showlegend=False, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=600)
+    fig.add_trace(go.Scatterpolar(r=values + [values[0]], theta=categories + [categories[0]], fill='toself', fillcolor='rgba(212, 175, 55, 0.4)', line=dict(color='#D4AF37', width=6), marker=dict(size=12, color='white', line=dict(color='#D4AF37', width=2))))
+    fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 25], color="white", gridcolor="rgba(255,255,255,0.1)"), angularaxis=dict(tickfont=dict(size=14, color="white", family="Montserrat"))), showlegend=False, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=650)
     st.plotly_chart(fig, use_container_width=True)
 
-    # Exibe o laudo sem erro
+    # CARD FINAL (SEM PREÇO)
     st.markdown(f"""
     <div class='zone-card'>
         <h2 style='color: #D4AF37; margin:0;'>{st.session_state.res_cor} STATUS: {st.session_state.res_zona}</h2>
-        <p style='margin-top:15px; font-size: 19px;'>{st.session_state.res_txt}</p>
+        <p style='margin-top:15px; font-size: 20px; line-height: 1.6;'>{st.session_state.res_txt}</p>
     </div>
     """, unsafe_allow_html=True)
     st.link_button("💎 SOLICITAR ACESSO AO LAUDO ESTRATÉGICO", "https://wa.me/5581986245870")
