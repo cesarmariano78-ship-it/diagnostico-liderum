@@ -2,41 +2,54 @@ import streamlit as st
 import plotly.graph_objects as go
 import time
 
-# 1. ENGENHARIA VISUAL LIDERUM (MÁXIMO IMPACTO)
+# 1. ARQUITETURA VISUAL LIDERUM (ALTA PERFORMANCE)
 st.set_page_config(page_title="Protocolo LIDERUM", layout="wide")
 
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@700&display=swap');
+    
     .stApp { background: linear-gradient(180deg, #001f3f 0%, #000c1a 100%); color: #FFFFFF; font-family: 'Montserrat', sans-serif; }
-    h1 { color: #D4AF37 !important; font-family: 'Playfair Display', serif !important; text-align: center; font-size: 40px !important; }
+    h1 { color: #D4AF37 !important; font-family: 'Playfair Display', serif !important; text-align: center; font-size: 38px !important; margin-bottom: 0px; }
     
-    /* CARD CENTRALIZADO */
-    .stForm { background: rgba(255, 255, 255, 0.05) !important; border: 1px solid rgba(212, 175, 55, 0.3) !important; border-radius: 15px !important; padding: 40px !important; }
+    /* FORMULÁRIO CENTRALIZADO ESTILO CARD */
+    .stForm { 
+        background: rgba(255, 255, 255, 0.05) !important; 
+        border: 1px solid rgba(212, 175, 55, 0.4) !important; 
+        border-radius: 15px !important; 
+        padding: 40px !important;
+    }
     
-    /* BOTÃO DOURADO VISÍVEL */
-    .stButton>button {
+    /* LABELS DO FORMULÁRIO EM BRANCO PURO */
+    label[data-testid="stWidgetLabel"] p { color: #FFFFFF !important; font-weight: 700 !important; font-size: 16px !important; }
+
+    /* BOTÃO DOURADO DE ALTA VISIBILIDADE */
+    .stButton>button, div.stFormSubmitButton > button {
         background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%) !important;
         color: #001226 !important;
         font-weight: 700 !important;
-        font-size: 22px !important;
+        font-size: 18px !important;
         width: 100% !important;
         border: none !important;
-        box-shadow: 0px 5px 20px rgba(212, 175, 55, 0.5) !important;
+        padding: 15px !important;
+        box-shadow: 0px 4px 15px rgba(212, 175, 55, 0.5) !important;
         text-transform: uppercase;
-        letter-spacing: 2px;
+        visibility: visible !important;
     }
 
-    .question-text { font-size: 20px !important; color: #FFFFFF !important; margin-top: 25px; text-shadow: 1px 1px 2px black; }
+    /* PERGUNTAS E BOTÕES 1-5 */
+    .question-text { font-size: 20px !important; color: #FFFFFF !important; margin-top: 30px; font-weight: 500; }
     div[data-testid="stRadio"] label p { color: #FFFFFF !important; font-size: 22px !important; font-weight: 700 !important; }
-    div[role="radiogroup"] label { background: rgba(255, 255, 255, 0.1) !important; padding: 12px 25px !important; border-radius: 8px; margin-right: 15px; }
+    div[role="radiogroup"] label { background: rgba(255, 255, 255, 0.1) !important; padding: 12px 25px !important; border-radius: 8px; margin-right: 15px; border: 1px solid rgba(212, 175, 55, 0.2); }
+    
+    /* ZONA CARD */
     .zone-card { background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 10px; border-left: 10px solid #D4AF37; margin-bottom: 30px; }
     </style>
     """, unsafe_allow_html=True)
 
 if 'etapa' not in st.session_state: st.session_state.etapa = 'questoes'
 
-st.markdown("<div style='text-align: center;'><img src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png' width='100'></div>", unsafe_allow_html=True)
+st.markdown("<div style='text-align: center;'><img src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png' width='80'></div>", unsafe_allow_html=True)
 st.title("PROTOCOLO DE GOVERNANÇA PESSOAL LIDERUM")
 
 # 2. DIMENSÕES E PERGUNTAS (45 ITENS)
@@ -58,82 +71,66 @@ if st.session_state.etapa == 'questoes':
         with st.expander(f"✨ AVALIAR: {dim.upper()}"):
             for p in perguntas:
                 st.markdown(f"<p class='question-text'>{p}</p>", unsafe_allow_html=True)
-                st.radio(f"Nota para {p}", [1, 2, 3, 4, 5], index=None, horizontal=True, key=p)
+                # index=None força o preenchimento
+                st.radio(f"{p}", [1, 2, 3, 4, 5], index=None, horizontal=True, key=p, label_visibility="collapsed")
     
     if st.button("FINALIZAR E PROCESSAR DIAGNÓSTICO"):
-        # VERIFICAÇÃO RIGOROSA
-        todas_respondidas = True
-        for dim, perguntas in dimensoes_info.items():
-            for p in perguntas:
-                if st.session_state.get(p) is None:
-                    todas_respondidas = False
-                    break
-        
-        if todas_respondidas:
-            notas_finais = {dim: sum(st.session_state.get(p) for p in perguntas) for dim, perguntas in dimensoes_info.items()}
-            st.session_state.notas = notas_finais
-            st.session_state.total = sum(notas_finais.values())
+        if all(st.session_state.get(p) is not None for dim in dimensoes_info.values() for p in dim):
+            st.session_state.notas = {dim: sum(st.session_state.get(p) for p in perguntas) for dim, perguntas in dimensoes_info.items()}
+            st.session_state.total = sum(st.session_state.notas.values())
             st.session_state.etapa = 'captura'
             st.rerun()
         else:
-            st.error("⚠️ O Protocolo exige 100% de preenchimento para garantir a precisão científica do seu laudo.")
+            st.error("⚠️ O Protocolo exige 100% de preenchimento para garantir a precisão do laudo.")
 
 elif st.session_state.etapa == 'captura':
-    col1, col2, col3 = st.columns([1, 1.5, 1])
+    col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        st.markdown("<h3 style='text-align: center;'>🔒 SEU MAPA ESTÁ PRONTO!</h3>", unsafe_allow_html=True)
-        st.write("Insira seus dados para liberar o acesso ao Gráfico de Governança:")
-        with st.form("leads"):
-            st.text_input("Nome Completo", key="form_nome")
-            st.text_input("E-mail Estratégico", key="form_email")
-            st.text_input("WhatsApp (DDD)", key="form_whatsapp")
-            st.text_input("Empresa e Cargo", key="form_cargo")
-            if st.form_submit_button("LIBERAR MEU RESULTADO AGORA"):
-                if all([st.session_state.form_nome, st.session_state.form_email, st.session_state.form_whatsapp, st.session_state.form_cargo]):
-                    with st.spinner('Analisando correlações... Gerando Mapa de Governança...'):
-                        time.sleep(3) # O suspense que gera valor
+        st.markdown("<h3 style='text-align: center;'>🔒 MAPA DE GOVERNANÇA DISPONÍVEL!</h3>", unsafe_allow_html=True)
+        with st.form("lead_form"):
+            st.text_input("Nome Completo", key="l_nome")
+            st.text_input("E-mail Estratégico", key="l_email")
+            st.text_input("WhatsApp com DDD", key="l_whatsapp")
+            st.text_input("Empresa e Cargo", key="l_cargo")
+            if st.form_submit_button("LIBERAR MEU RESULTADO"):
+                if all([st.session_state.l_nome, st.session_state.l_email, st.session_state.l_whatsapp, st.session_state.l_cargo]):
+                    # RITUAL DE ANTECIPAÇÃO (10 SEGUNDOS)
+                    place = st.empty()
+                    msgs = ["Calibrando dimensões...", "Cruzando 45 pontos de dados...", "Identificando padrões de sabotagem...", "Sincronizando modelos de autoliderança...", "Finalizando seu Mapa de Governança..."]
+                    for m in msgs:
+                        place.info(f"⏳ {m}")
+                        time.sleep(2)
                     st.session_state.etapa = 'resultado'
                     st.rerun()
                 else:
                     st.warning("Preencha todos os campos para prosseguir.")
 
 elif st.session_state.etapa == 'resultado':
-    st.markdown("<h2 style='text-align: center; color: #D4AF37;'>MAPA DE GOVERNANÇA PESSOAL</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #D4AF37;'>SEU MAPA ESTRATÉGICO DE PERFORMANCE</h2>", unsafe_allow_html=True)
     
-    # 3. GRÁFICO "GLOW UP" COM CORES DINÂMICAS
     categories = list(st.session_state.notas.keys())
     values = list(st.session_state.notas.values())
     
-    # Define a cor baseada na performance total
+    # DINÂMICA DE CORES PREMIUM
     total = st.session_state.total
-    if total <= 122: color_hex, glow = '#CD7F32', 'rgba(205, 127, 50, 0.4)' # Bronze
-    elif total <= 200: color_hex, glow = '#D4AF37', 'rgba(212, 175, 55, 0.4)' # Ouro
-    else: color_hex, glow = '#FFD700', 'rgba(255, 215, 0, 0.6)' # Ouro Brilhante
-
-    fig = go.Figure()
-    fig.add_trace(go.Scatterpolar(
-        r=values + [values[0]], theta=categories + [categories[0]],
-        fill='toself', fillcolor=glow,
-        line=dict(color=color_hex, width=4),
-        marker=dict(size=10, color='white', line=dict(color=color_hex, width=2))
-    ))
+    color_hex = '#FFD700' if total > 200 else '#D4AF37' if total > 122 else '#CD7F32'
     
-    fig.update_layout(
-        polar=dict(
-            radialaxis=dict(visible=True, range=[0, 25], color="white", gridcolor="rgba(255,255,255,0.1)"),
-            angularaxis=dict(tickfont=dict(size=13, color="white", family="Montserrat"))
-        ),
-        showlegend=False, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=650
-    )
+    fig = go.Figure()
+    fig.add_trace(go.Scatterpolar(r=values + [values[0]], theta=categories + [categories[0]], fill='toself', 
+                                  fillcolor='rgba(212, 175, 55, 0.4)', line=dict(color=color_hex, width=5),
+                                  marker=dict(size=12, color='white', line=dict(color=color_hex, width=2))))
+    fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 25], color="white", gridcolor="rgba(255,255,255,0.1)"),
+                                 angularaxis=dict(tickfont=dict(size=14, color="white", family="Montserrat"))),
+                      showlegend=False, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=650)
     st.plotly_chart(fig, use_container_width=True)
 
-    # TEXTOS DE ZONA (Conforme sua revisão)
+    # LAUDOS ESTRATÉGICOS (SEM PREÇO)
     if total <= 122:
-        status, cor_emoji, texto = "ZONA DE SOBREVIVÊNCIA", "🔴", "Sua pontuação indica Zona de Risco. Mas isso é comum até em líderes experientes. Está pronto para crescer exponencialmente? Assuma o controle! O laudo detalhado (R$ 47) traz o plano de ação prático."
+        zona, cor, txt = "ZONA DE SOBREVIVÊNCIA", "🔴", "Sua pontuação indica que você está operando em Zona de Risco. Mas, para te tranquilizar, quero dizer que isso é mais comum do que você imagina, até mesmo em líderes experientes. Você está pronto para ajustar alguns pontos e crescer de forma exponencial? Assuma o controle! Ao solicitar seu laudo completo, você terá acesso à estrutura detalhada que traz consciência e um plano de ação com ferramentas práticas para desenvolver as áreas que hoje te atrapalham."
     elif total <= 200:
-        status, cor_emoji, texto = "ZONA DE OSCILAÇÃO", "🟠", "Você possui as competências, mas está preso no ciclo de oscilação. O peso operacional trava seu salto. Identifique as dimensões que são seu 'freio de mão invisível' com nosso laudo completo e plano de ação."
+        zona, cor, txt = "ZONA DE OSCILAÇÃO", "🟠", "Você possui as competências necessárias, mas está preso em um ciclo de oscilação. Você sente que 'está quase lá', mas o peso operacional constante trava seu próximo salto. Para prosperar de forma sustentável, você precisa identificar quais são as dimensões que estão agindo como seu 'freio de mão invisível'. Ao adquirir nosso laudo completo, você recebe o diagnóstico profundo e o Plano de Ação Estratégico com ferramentas práticas para você decolar."
     else:
-        status, cor_emoji, texto = "ZONA DE ELITE", "🌟", "Parabéns! Performance muito acima do mercado. Mas autoliderança exige manutenção constante. O laudo premium revela micro-oportunidades de expansão para você nunca oscilar."
+        zona, cor, txt = "ZONA DE ELITE", "🌟", "Parabéns! Sua pontuação coloca você em um patamar muito acima do mercado. Porém, a autoliderança em alto nível exige manutenção constante para não se tornar complacente. Para você que já performa no topo, nosso Laudo Premium oferece a estrutura de Diagnóstico de Detalhe, revelando as micro-oportunidades de expansão em cada área e as ferramentas de blindagem para que sua performance nunca oscile."
 
-    st.markdown(f"<div class='zone-card'><h2 style='color: #D4AF37; margin:0;'>{cor_emoji} {status}</h2><p style='margin-top:15px; font-size: 18px;'>{texto}</p></div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='zone-card'><h2 style='color: #D4AF37; margin:0;'>{cor} STATUS: {zona}</h2><p style='margin-top:15px; font-size: 19px;'>{txt}</p></div>", unsafe_allow_html=True)
     st.link_button("💎 SOLICITAR ACESSO AO LAUDO ESTRATÉGICO", "https://wa.me/5581986245870")
