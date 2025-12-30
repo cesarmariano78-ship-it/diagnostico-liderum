@@ -20,12 +20,11 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# INICIALIZAÇÃO DE ESTADO
 if 'etapa' not in st.session_state: st.session_state.etapa = 'questoes'
 if 'total' not in st.session_state: st.session_state.total = 0
 
-# URL VALIDADA (Extraída da sua imagem image_dd0739.png)
-URL_WEBHOOK = "https://script.google.com/macros/s/AKfycbwrbNk635ZiqpX0U7TRvkYfTQJsC3sO6m4KbBFEDruHLiaGDmhEax0wsd6FIkNlovM/exec"
+# URL FORNECIDA POR VOCÊ AGORA
+URL_WEBHOOK = "https://script.google.com/macros/s/AKfycbwrbNk635ZiqpX0U7TRvkYfTQJsC3sO6m4KbBFEDruHLiaGDmhEax0wsd6FlKnIovM/exec"
 
 st.title("PROTOCOLO DE GOVERNANÇA PESSOAL LIDERUM")
 
@@ -63,7 +62,7 @@ if st.session_state.etapa == 'questoes':
             st.session_state.etapa = 'captura'; st.rerun()
         else: st.error("⚠️ Responda todas as 45 questões.")
 
-# --- ETAPA 2: CAPTURA (COM DIAGNÓSTICO DE ERRO) ---
+# --- ETAPA 2: CAPTURA ---
 elif st.session_state.etapa == 'captura':
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
@@ -76,50 +75,4 @@ elif st.session_state.etapa == 'captura':
             if st.form_submit_button("LIBERAR ACESSO AO RESULTADO"):
                 if all([nome, email, whatsapp, cargo]):
                     t = st.session_state.total
-                    z = "ELITE" if t > 200 else "OSCILAÇÃO" if t > 122 else "SOBREVIVÊNCIA"
-                    st.session_state.zona, st.session_state.nome_usuario = z, nome
-                    payload = {"nome": nome, "email": email, "whatsapp": whatsapp, "cargo": cargo, "pontos": t, "zona": z}
-                    
-                    try:
-                        # AGORA O SITE VAI TE DIZER SE O GOOGLE ACEITOU
-                        response = requests.post(URL_WEBHOOK, json=payload, timeout=15)
-                        if response.status_code == 200:
-                            st.session_state.etapa = 'resultado'
-                            st.rerun()
-                        else:
-                            # Se der erro, ele mostra o código aqui embaixo
-                            st.error(f"O Google recusou os dados (Erro {response.status_code}). Verifique se a implantação está como 'Qualquer Pessoa'.")
-                            if st.button("Ver Resultado Mesmo Assim"):
-                                st.session_state.etapa = 'resultado'; st.rerun()
-                    except Exception as e:
-                        st.error(f"Falha de conexão: {e}")
-                else: st.warning("Preencha todos os campos.")
-
-# --- ETAPA 3: LAUDO GRATUITO RESTAURADO ---
-elif st.session_state.etapa == 'resultado':
-    st.markdown(f"## Análise Individual: {st.session_state.nome_usuario}")
-    col_l, col_r = st.columns([1.2, 0.8])
-    with col_l:
-        categories = ['Visão', 'Recompensa', 'Análise', 'Governança', 'Modelagem', 'Narrativa', 'Crenças', 'Excelência', 'Postura']
-        fig = go.Figure()
-        fig.add_trace(go.Scatterpolar(r=st.session_state.scores, theta=categories, fill='toself', fillcolor='rgba(212, 175, 55, 0.3)', line=dict(color='#D4AF37')))
-        fig.update_layout(polar=dict(bgcolor="rgba(0,12,26,1)", radialaxis=dict(visible=True, range=[0, 25], color="white")), showlegend=False, paper_bgcolor="rgba(0,0,0,0)", font=dict(color="white", size=12))
-        st.plotly_chart(fig, use_container_width=True)
-    with col_r:
-        st.markdown(f"### Pontuação: <span class='highlight'>{st.session_state.total} / 225</span>", unsafe_allow_html=True)
-        st.markdown(f"### Zona: <span class='highlight'>{st.session_state.zona}</span>", unsafe_allow_html=True)
-        st.write("---")
-        st.markdown("<div class='laudo-container'>", unsafe_allow_html=True)
-        if st.session_state.zona == "ELITE":
-            st.markdown("**DIRECIONAMENTO ESTRATÉGICO:** Governança de alto nível. O desafio é a constância absoluta.")
-        elif st.session_state.zona == "OSCILAÇÃO":
-            st.markdown("**DIRECIONAMENTO ESTRATÉGICO:** Performance inconstante. Necessário estabilizar pilares básicos.")
-        else:
-            st.markdown("**DIRECIONAMENTO ESTRATÉGICO:** Estado crítico. Intervenção imediata necessária.")
-        st.markdown("</div>", unsafe_allow_html=True)
-    st.write("---")
-    # CTA Sutil
-    st.markdown("<h3 style='text-align: center;'>Próximo Passo Estratégico</h3>", unsafe_allow_html=True)
-    link_pagamento = "https://pay.hotmart.com/SEU_LINK"
-    st.markdown(f"<div style='text-align: center;'><a href='{link_pagamento}' target='_blank' style='text-decoration: none;'><div style='background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%); color: #001226; padding: 15px 30px; font-weight: bold; border-radius: 5px; display: inline-block;'>ADQUIRIR MEU LAUDO ESTRATÉGICO COMPLETO COM IA →</div></a></div>", unsafe_allow_html=True)
-    if st.button("RECOMEÇAR"): st.session_state.etapa = 'questoes'; st.rerun()
+                    z = "ELITE" if t > 20
