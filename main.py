@@ -1,3 +1,5 @@
+Olha, eu acho que eu sugerei um caminho para facilitar, eu vou copiar aqui o código que é o código atual, ok, você registra ele, segura, em seguida eu copio e colo novamente o bloco de informações que precisam ser inseridas sem mexer na estrutura física, no layout, nada, não pode mexer na experiência do cliente, tudo isso precisa acontecer no back, ok?
+
 import streamlit as st
 import plotly.graph_objects as go
 import requests
@@ -9,36 +11,28 @@ import datetime
 # ---------------------------------------
 st.set_page_config(page_title="Protocolo LIDERUM", layout="wide")
 
-URL_WEBHOOK = "https://script.google.com/macros/s/AKfycbzpgNSVxPbMgFG_yk5UNvucWROJzN6VUlpv5mVeW-gUw4ZySZOwLzhOa6lr1oVfWYo/exec"
+URL_WEBHOOK = "https://script.google.com/macros/s/AKfycbzpgNSVxPbMgFG_yk5UN5vucWROJzN6VUlpv5mVeW-gUw4ZySZOwLzhOa6lr1oVfWYo/exec"
+
 
 # ---------------------------------------
-# EVENT DISPATCH (PADRÃO OBRIGATÓRIO)
-# ---------------------------------------
-def dispatch_event(event_name, etapa="", submission_id=""):
-    payload = {
-        "event_name": event_name,
-        "etapa": etapa,
-        "submission_id": submission_id
-    }
-    try:
-        requests.post(URL_WEBHOOK, json=payload, timeout=5)
-    except:
-        pass
-
-# ---------------------------------------
-# CSS
+# CSS (mantém estética + corrige inputs)
 # ---------------------------------------
 st.markdown("""
 <style>
 .stApp { background-color: #000c1a; color: #FFFFFF; }
 .top-banner { background-color: #000c1a; height: 50px; width: 100%; border-bottom: 1px solid rgba(212, 175, 55, 0.2); margin-bottom: 20px; }
+
 div[data-testid="stMetric"] {
   background-color: rgba(212, 175, 55, 0.05);
   border: 1px solid #D4AF37;
   padding: 15px;
   border-radius: 10px;
 }
+
+/* Tipografia global */
 label, p, span, div { color: #FFFFFF !important; font-size: 18px !important; }
+
+/* Botões */
 .stButton>button {
   background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%) !important;
   color: #001226 !important;
@@ -48,14 +42,19 @@ label, p, span, div { color: #FFFFFF !important; font-size: 18px !important; }
   border-radius: 8px;
   font-size: 18px !important;
 }
+
+/* Cards */
 .card {
   background-color: rgba(255,255,255,0.03);
   border: 1px solid rgba(212,175,55,0.25);
   padding: 22px;
   border-radius: 14px;
 }
+
 .small { font-size: 15px !important; color: rgba(255,255,255,0.75) !important; }
 .highlight { color: #D4AF37 !important; font-weight: bold; }
+
+/* Questões: mais destaque */
 .question-card {
   background-color: rgba(255,255,255,0.03);
   border: 1px solid rgba(212,175,55,0.18);
@@ -69,6 +68,8 @@ label, p, span, div { color: #FFFFFF !important; font-size: 18px !important; }
   color: #FFFFFF !important;
   margin: 0 0 10px 0;
 }
+
+/* Laudo */
 .laudo-container {
   background-color: rgba(255, 255, 255, 0.03);
   padding: 28px;
@@ -77,18 +78,26 @@ label, p, span, div { color: #FFFFFF !important; font-size: 18px !important; }
   margin-top: 10px;
   line-height: 1.7;
 }
+
+/* Inputs: corrigir texto digitado (estava branco no branco) */
 div[data-testid="stTextInput"] input,
 div[data-testid="stTextInput"] textarea {
-  color: #001226 !important;
-  background: #FFFFFF !important;
+  color: #001226 !important;      /* texto digitado escuro */
+  background: #FFFFFF !important; /* fundo branco */
   border-radius: 8px !important;
 }
+
+/* Placeholder */
 div[data-testid="stTextInput"] input::placeholder {
   color: rgba(0,18,38,0.55) !important;
 }
+
+/* Label dos inputs */
 div[data-testid="stTextInput"] label {
   color: #FFFFFF !important;
 }
+
+/* Botão do FORM (submit) - garante contraste */
 button[kind="primary"] {
   background: rgba(212,175,55,0.18) !important;
   border: 1px solid #D4AF37 !important;
@@ -107,12 +116,6 @@ button[kind="primary"]:hover {
 if "etapa" not in st.session_state:
     st.session_state.etapa = "intro"
 
-if "event_aberto" not in st.session_state:
-    st.session_state.event_aberto = False
-
-if "event_oferta" not in st.session_state:
-    st.session_state.event_oferta = False
-
 if "total" not in st.session_state:
     st.session_state.total = 0
 
@@ -129,14 +132,7 @@ if "answers_json" not in st.session_state:
     st.session_state.answers_json = [None] * 45
 
 # ---------------------------------------
-# EVENTO: diagnostico_aberto
-# ---------------------------------------
-if not st.session_state.event_aberto:
-    dispatch_event("diagnostico_aberto", etapa="inicio", submission_id="")
-    st.session_state.event_aberto = True
-
-# ---------------------------------------
-# DADOS
+# DADOS (9 dimensões + 45 perguntas DEFINIDAS)
 # ---------------------------------------
 dimensoes = [
     ("CLAREZA", "Capacidade de manter direção, prioridades e foco mesmo diante de pressão, excesso de demandas e ruído externo.", [
@@ -216,10 +212,11 @@ def simular_processamento():
     with st.spinner("Aguarde…"):
         for m in msgs:
             box.markdown(f"<p class='small'>🔎 {m}</p>", unsafe_allow_html=True)
-            time.sleep(2.4)
+            time.sleep(2.4)  # ~12s
     box.empty()
 
 def calcular_zona(total: int) -> str:
+    # Mantive seus thresholds (MVP). Depois refinamos.
     if total > 200:
         return "ELITE"
     if total > 122:
@@ -233,7 +230,7 @@ st.markdown('<div class="top-banner"></div>', unsafe_allow_html=True)
 st.title("PROTOCOLO LIDERUM")
 
 # ---------------------------------------
-# INTRO
+# ETAPA 0: INTRO (texto seu, sem “cara de IA”)
 # ---------------------------------------
 if st.session_state.etapa == "intro":
     col1, col2 = st.columns([1.35, 0.65])
@@ -244,6 +241,28 @@ if st.session_state.etapa == "intro":
         st.markdown("""
 Este diagnóstico não é um teste, nem um julgamento sobre quem você é.  
 Ele foi criado para ajudar você a observar com mais clareza como está hoje sua forma de conduzir decisões, emoções, comportamento e direção.
+
+Não existem respostas certas ou erradas. O valor deste processo está na honestidade das suas respostas, não na pontuação final.  
+**Quanto mais real você for, mais preciso será o seu resultado.**
+        """)
+        st.markdown("</div>", unsafe_allow_html=True)
+
+        st.markdown("<div class='card' style='margin-top:16px;'>", unsafe_allow_html=True)
+        st.markdown("### Como responder")
+        st.markdown("""
+- Use a escala de 1 a 5 considerando **como você age na maior parte do tempo**, e não em dias excepcionais.  
+- Evite responder pelo que você gostaria de ser. Responda pelo que você realmente faz.  
+- Se ficar em dúvida entre duas notas, **escolha a menor**.  
+
+Este diagnóstico mede **consistência**, não intenção.
+        """)
+        st.markdown("</div>", unsafe_allow_html=True)
+
+        st.markdown("<div class='card' style='margin-top:16px;'>", unsafe_allow_html=True)
+        st.markdown("### Privacidade e sigilo")
+        st.markdown("""
+Suas respostas são confidenciais e utilizadas exclusivamente para gerar seu diagnóstico e direcionamento personalizado.  
+Nenhuma informação será compartilhada ou utilizada fora desse contexto.
         """)
         st.markdown("</div>", unsafe_allow_html=True)
 
@@ -254,35 +273,47 @@ Ele foi criado para ajudar você a observar com mais clareza como está hoje sua
             st.markdown(f"**{nome}:** <span class='small'>{desc}</span>", unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
+    st.markdown("")
     if st.button("INICIAR MEU DIAGNÓSTICO"):
-        dispatch_event("diagnostico_iniciado", etapa="inicio", submission_id="")
         st.session_state.etapa = "questoes"
         st.rerun()
 
 # ---------------------------------------
-# QUESTÕES
+# ETAPA 1: QUESTÕES
 # ---------------------------------------
 elif st.session_state.etapa == "questoes":
+    st.markdown("<p class='small'>Instrução: clique em cada dimensão para abrir as perguntas. Responda todas as 45 para liberar o diagnóstico.</p>", unsafe_allow_html=True)
+
     q_idx = 0
     respondidas = 0
 
     for dim_nome, dim_desc, perguntas in dimensoes:
         with st.expander(f"✨ DIMENSÃO: {dim_nome}"):
+            st.markdown(f"<p class='small'>{dim_desc}</p>", unsafe_allow_html=True)
             for p in perguntas:
+                st.markdown("<div class='question-card'>", unsafe_allow_html=True)
+                st.markdown(f"<p class='question-text'>{p}</p>", unsafe_allow_html=True)
                 st.radio(
-                    p,
+                    f"R_{q_idx}",
                     [1, 2, 3, 4, 5],
                     index=None,
+                    horizontal=True,
                     key=f"q_{q_idx}",
-                    horizontal=True
+                    label_visibility="collapsed"
                 )
+                st.markdown("</div>", unsafe_allow_html=True)
+
                 if st.session_state.get(f"q_{q_idx}") is not None:
                     respondidas += 1
                 q_idx += 1
 
+    st.markdown(f"<p class='small'>Progresso: <span class='highlight'>{respondidas}/45</span> respostas concluídas.</p>", unsafe_allow_html=True)
+
     if st.button("PROCESSAR MEU DIAGNÓSTICO"):
         if respondidas == 45:
             st.session_state.answers_json = [int(st.session_state[f"q_{i}"]) for i in range(45)]
+
+            # soma a cada 5 perguntas = 1 dimensão
             st.session_state.scores = [
                 sum(st.session_state[f"q_{j}"] for j in range(i, i + 5))
                 for i in range(0, 45, 5)
@@ -290,66 +321,186 @@ elif st.session_state.etapa == "questoes":
             st.session_state.total = sum(st.session_state.scores)
             st.session_state.etapa = "captura"
             st.rerun()
+        else:
+            st.error("⚠️ Responda todas as 45 questões para liberar o laudo.")
 
 # ---------------------------------------
-# CAPTURA
+# ETAPA 2: CAPTURA
 # ---------------------------------------
 elif st.session_state.etapa == "captura":
-    with st.form("lead_form"):
-        nome = st.text_input("Nome completo")
-        email = st.text_input("E-mail")
-        whatsapp = st.text_input("WhatsApp")
-        empresa = st.text_input("Empresa")
-        cargo = st.text_input("Cargo")
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.markdown("<h3 style='text-align: center; color: #D4AF37;'>🔒 DIAGNÓSTICO CONCLUÍDO</h3>", unsafe_allow_html=True)
+        st.markdown("<p class='small' style='text-align:center;'>Preencha seus dados para liberar seu Radar e sua Zona.</p>", unsafe_allow_html=True)
 
-        submit = st.form_submit_button("LIBERAR MEU LAUDO AGORA", type="primary")
+        with st.form("lead_form"):
+            nome = st.text_input("Nome completo")
+            email = st.text_input("E-mail")
+            whatsapp = st.text_input("WhatsApp")
+            empresa = st.text_input("Empresa")
+            cargo = st.text_input("Cargo")
 
-        if submit and all([nome, email, whatsapp, empresa, cargo]):
-            total = int(st.session_state.total)
-            zona = calcular_zona(total)
-            st.session_state.zona = zona
-            st.session_state.nome_usuario = nome
+            submit = st.form_submit_button("LIBERAR MEU LAUDO AGORA", type="primary")
 
-            simular_processamento()
+            if submit:
+                if all([nome, email, whatsapp, empresa, cargo]):
+                    total = int(st.session_state.total)
+                    zona = calcular_zona(total)
 
-            dispatch_event(
-                "diagnostico_concluido",
-                etapa="resultado",
-                submission_id=""
-            )
+                    st.session_state.zona = zona
+                    st.session_state.nome_usuario = nome
 
-            st.session_state.etapa = "resultado"
-            st.rerun()
+                    payload = {
+                        "timestamp": datetime.datetime.utcnow().isoformat(),
+                        "nome": nome,
+                        "email": email,
+                        "whatsapp": whatsapp,
+                        "empresa": empresa,
+                        "cargo": cargo,
+                        "pontos_total": total,
+                        "zona": zona,
+                        "scores_dimensoes": st.session_state.scores,
+                        "answers_json": [int(v) for v in st.session_state.answers_json]
+                    }
+
+                    # efeito robusto (12s)
+                    simular_processamento()
+
+                    try:
+                        requests.post(URL_WEBHOOK, json=payload, timeout=12)
+                    except:
+                        pass
+
+                    st.session_state.etapa = "resultado"
+                    st.rerun()
+                else:
+                    st.warning("Por favor, preencha todos os campos.")
 
 # ---------------------------------------
-# RESULTADO
+# ETAPA 3: LAUDO
 # ---------------------------------------
 elif st.session_state.etapa == "resultado":
-    if not st.session_state.event_oferta:
-        dispatch_event(
-            "oferta_laudo_exibida",
-            etapa="resultado",
-            submission_id=""
+    st.markdown(f"### Análise Individual: <span class='highlight'>{st.session_state.nome_usuario.upper()}</span>", unsafe_allow_html=True)
+
+    c1, c2 = st.columns(2)
+    with c1:
+        st.metric("Pontuação Total", f"{st.session_state.total} / 225")
+    with c2:
+        st.metric("Zona de Governança", st.session_state.zona)
+
+    st.write("---")
+
+    col_l, col_r = st.columns([1.2, 0.8])
+
+    with col_l:
+        categorias_radar = [d[0].split(" (")[0] for d in dimensoes]  # remove sufixos p/ radar ficar limpo
+        fig = go.Figure()
+        fig.add_trace(go.Scatterpolar(
+            r=st.session_state.scores,
+            theta=categorias_radar,
+            fill="toself",
+            fillcolor="rgba(212, 175, 55, 0.35)",
+            line=dict(color="#D4AF37", width=4)
+        ))
+        fig.update_layout(
+            polar=dict(
+                bgcolor="rgba(0,12,26,1)",
+                radialaxis=dict(visible=True, range=[0, 25], color="#888", gridcolor="rgba(212,175,55,0.1)")
+            ),
+            showlegend=False,
+            paper_bgcolor="rgba(0,0,0,0)",
+            height=600,
+            margin=dict(l=80, r=80, t=20, b=20),
+            font=dict(color="white", size=16)
         )
-        st.session_state.event_oferta = True
+        st.plotly_chart(fig, use_container_width=True)
 
-    st.metric("Pontuação Total", f"{st.session_state.total} / 225")
-    st.metric("Zona de Governança", st.session_state.zona)
+    with col_r:
+        st.markdown("<div class='laudo-container'>", unsafe_allow_html=True)
+        st.markdown("### 🔍 Direcionamento Estratégico")
 
-    dispatch_event(
-        "clique_laudo",
-        etapa="resultado",
-        submission_id=""
-    )
+        nome = st.session_state.nome_usuario
+        zona = st.session_state.zona
 
-    st.markdown("""
-    <div style='text-align: center; margin-bottom: 20px;'>
-        <a href='https://pay.hotmart.com/SEU_LINK' target='_blank' style='text-decoration: none;'>
-            <div style='background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%);
-                        color: #001226; padding: 18px 40px; font-weight: 900; border-radius: 10px;
-                        display: inline-block; width: 100%; max-width: 680px; font-size: 20px;'>
-                ADQUIRIR LAUDO COMPLETO COM IA →
-            </div>
-        </a>
-    </div>
+        if zona == "ELITE":
+            st.markdown(f"""
+<span class='highlight'>{nome}</span>, seus resultados indicam uma **Zona de Elite**.  
+Seu risco aqui não é falta de capacidade — é **cegueira por eficiência** e queda de base por excesso de confiança.
+
+O foco agora é **blindar constância** e proteger o essencial: clareza, rotina e autorresponsabilidade.  
+Quem está no topo não pode relaxar no fundamento.
+            """, unsafe_allow_html=True)
+
+        elif zona == "OSCILAÇÃO":
+            st.markdown(f"""
+<span class='highlight'>{nome}</span>, você está na zona de **Oscilação**.  
+Você alterna entre períodos de alta entrega e momentos de queda.
+
+Normalmente isso acontece por instabilidade em **autogestão + regulação cognitiva**, e impacto direto no ritmo operacional.  
+O objetivo aqui é **estabilizar execução** e reduzir dependência de emoção para agir.
+            """, unsafe_allow_html=True)
+
+        else:
+            st.markdown(f"""
+<span class='highlight'>{nome}</span>, você está em **Modo de Sobrevivência**.  
+Isso costuma aparecer quando a governança pessoal colapsa: energia, agenda e disciplina entram em modo reativo.
+
+Aqui a intervenção precisa ser **simples e vital**: não é fazer mais — é fazer o certo, com método e priorização.
+            """, unsafe_allow_html=True)
+
+        st.markdown("</div>", unsafe_allow_html=True)
+
+        st.markdown("<div class='card' style='margin-top:14px;'>", unsafe_allow_html=True)
+        st.markdown("### O que você recebe no Laudo Completo (IA)")
+        st.markdown("""
+- Leitura aprofundada das 9 dimensões (forças, riscos e travas)  
+- Interpretação objetiva da sua zona (o que está causando isso)  
+- Plano de ação prático (7 dias + 30 dias) com foco em execução  
+- Priorização: **o que atacar primeiro** para subir de nível  
+        """)
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    st.write("---")
+    st.markdown("<h3 style='text-align: center;'>Próximo Passo</h3>", unsafe_allow_html=True)
+    st.write("Se você quiser profundidade e um plano objetivo, o Laudo Completo vai direto ao ponto — com priorização e execução.")
+
+    # CTA Pagamento
+    st.markdown(f"""
+        <div style='text-align: center; margin-bottom: 20px;'>
+            <a href='https://pay.hotmart.com/SEU_LINK' target='_blank' style='text-decoration: none;'>
+                <div style='background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%);
+                            color: #001226; padding: 18px 40px; font-weight: 900; border-radius: 10px;
+                            display: inline-block; width: 100%; max-width: 680px; font-size: 20px;'>
+                    ADQUIRIR LAUDO COMPLETO COM IA →
+                </div>
+            </a>
+        </div>
     """, unsafe_allow_html=True)
+
+    # CTA WhatsApp (ok manter)
+    wa_url = "https://wa.me/5581982602018?text=Olá!%20Acabei%20de%20fazer%20meu%20Diagnóstico%20LIDERUM%20e%20quero%20conhecer%20as%20soluções."
+    st.markdown(f"""
+        <div style='text-align: left; margin-bottom: 10px;'>
+            <a href='{wa_url}' target='_blank' style='text-decoration: none;'>
+                <div style='background: rgba(212, 175, 55, 0.10); color: #D4AF37;
+                            border: 1px solid #D4AF37; padding: 12px 22px; font-weight: 900;
+                            border-radius: 8px; display: inline-block;'>
+                    FALE COM NOSSA EQUIPE
+                </div>
+            </a>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Refazer (mantive discreto — você decide depois se remove)
+    st.markdown("<p class='small'>Se quiser refazer com mais calma:</p>", unsafe_allow_html=True)
+    if st.button("Refazer diagnóstico"):
+        for i in range(45):
+            if f"q_{i}" in st.session_state:
+                st.session_state[f"q_{i}"] = None
+        st.session_state.total = 0
+        st.session_state.scores = [0] * 9
+        st.session_state.zona = ""
+        st.session_state.nome_usuario = ""
+        st.session_state.answers_json = [None] * 45
+        st.session_state.etapa = "intro"
+        st.rerun()
