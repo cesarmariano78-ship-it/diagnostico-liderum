@@ -1,7 +1,9 @@
+import streamlit as st
 import plotly.graph_objects as go
 import requests
 import time
 import datetime
+import uuid
 
 # ---------------------------------------
 # CONFIG
@@ -9,7 +11,7 @@ import datetime
 st.set_page_config(page_title="Protocolo LIDERUM", layout="wide")
 
 URL_WEBHOOK = "https://script.google.com/macros/s/AKfycbzpgNSVxPbMgFG_yk5UN5vucWROJzN6VUlpv5mVeW-gUw4ZySZOwLzhOa6lr1oVfWYo/exec"
-
+APP_VERSION = "mvp-0.1"
 
 # ---------------------------------------
 # CSS (mantém estética + corrige inputs)
@@ -127,6 +129,41 @@ if "nome_usuario" not in st.session_state:
 
 if "answers_json" not in st.session_state:
     st.session_state.answers_json = [None] * 45
+
+if "submission_id" not in st.session_state:
+    st.session_state.submission_id = ""
+
+if "sent_events" not in st.session_state:
+    st.session_state.sent_events = set()
+
+# ---------------------------------------
+# TRACKING (mínimo, dedupe, falha silenciosa)
+# ---------------------------------------
+def _now_utc_iso():
+    return datetime.datetime.utcnow().isoformat()
+
+def _send_event(event_name: str, etapa: str = "", meta: dict | None = None):
+    try:
+        submission_id = st.session_state.submission_id or ""
+        dedupe_key = f"{event_name}:{submission_id}"
+        if dedupe_key in st.session_state.sent_events:
+            return
+
+        payload = {
+            "type": "event",
+            "event_name": event_name,
+            "timestamp": _now_utc_iso(),
+            "submission_id": submission_id,
+            "app_version": APP_VERSION,
+            "etapa": etapa,
+        }
+        if isinstance(meta, dict) and meta:
+            payload["meta"] = meta
+
+        requests.post(URL_WEBHOOK, json=payload, timeout=6)
+        st.session_state.sent_events.add(dedupe_key)
+    except:
+        pass
 
 # ---------------------------------------
 # DADOS (9 dimensões + 45 perguntas DEFINIDAS)
@@ -272,6 +309,9 @@ Nenhuma informação será compartilhada ou utilizada fora desse contexto.
 
     st.markdown("")
     if st.button("INICIAR MEU DIAGNÓSTICO"):
+        if not st.session_state.submission_id:
+            st.session_state.submission_id = str(uuid.uuid4())
+        _send_event("diagnostico_iniciado", etapa="intro")
         st.session_state.etapa = "questoes"
         st.rerun()
 
@@ -316,6 +356,11 @@ elif st.session_state.etapa == "questoes":
                 for i in range(0, 45, 5)
             ]
             st.session_state.total = sum(st.session_state.scores)
+
+            if not st.session_state.submission_id:
+                st.session_state.submission_id = str(uuid.uuid4())
+            _send_event("diagnostico_concluido", etapa="questoes")
+
             st.session_state.etapa = "captura"
             st.rerun()
         else:
@@ -347,8 +392,12 @@ elif st.session_state.etapa == "captura":
                     st.session_state.zona = zona
                     st.session_state.nome_usuario = nome
 
+                    if not st.session_state.submission_id:
+                        st.session_state.submission_id = str(uuid.uuid4())
+
                     payload = {
                         "timestamp": datetime.datetime.utcnow().isoformat(),
+                        "submission_id": st.session_state.submission_id,
                         "nome": nome,
                         "email": email,
                         "whatsapp": whatsapp,
@@ -363,10 +412,18 @@ elif st.session_state.etapa == "captura":
                     # efeito robusto (12s)
                     simular_processamento()
 
+                    ok = False
                     try:
-                        requests.post(URL_WEBHOOK, json=payload, timeout=12)
+                        r = requests.post(URL_WEBHOOK, json=payload, timeout=12)
+                        if r is not None and getattr(r, "status_code", 0) == 200:
+                            txt = (r.text or "").strip().upper()
+                            if "OK" in txt:
+                                ok = True
                     except:
                         pass
+
+                    if ok:
+                        _send_event("lead_enviado", etapa="captura")
 
                     st.session_state.etapa = "resultado"
                     st.rerun()
@@ -500,4 +557,6 @@ Aqui a intervenção precisa ser **simples e vital**: não é fazer mais — é 
         st.session_state.nome_usuario = ""
         st.session_state.answers_json = [None] * 45
         st.session_state.etapa = "intro"
+        st.session_state.submission_id = ""
+        st.session_state.sent_events = set()
         st.rerun()
