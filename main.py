@@ -126,6 +126,9 @@ if "zona" not in st.session_state:
 if "nome_usuario" not in st.session_state:
     st.session_state.nome_usuario = ""
 
+if "answers_json" not in st.session_state:
+    st.session_state.answers_json = [None] * 45
+
 # ---------------------------------------
 # DADOS (9 dimensões + 45 perguntas DEFINIDAS)
 # ---------------------------------------
@@ -306,6 +309,8 @@ elif st.session_state.etapa == "questoes":
 
     if st.button("PROCESSAR MEU DIAGNÓSTICO"):
         if respondidas == 45:
+            st.session_state.answers_json = [int(st.session_state[f"q_{i}"]) for i in range(45)]
+
             # soma a cada 5 perguntas = 1 dimensão
             st.session_state.scores = [
                 sum(st.session_state[f"q_{j}"] for j in range(i, i + 5))
@@ -343,7 +348,6 @@ elif st.session_state.etapa == "captura":
                     st.session_state.zona = zona
                     st.session_state.nome_usuario = nome
 
-                    # MVP: manda lead + totais (depois vamos mandar também respostas/dimensões)
                     payload = {
                         "timestamp": datetime.datetime.utcnow().isoformat(),
                         "nome": nome,
@@ -353,9 +357,9 @@ elif st.session_state.etapa == "captura":
                         "cargo": cargo,
                         "pontos_total": total,
                         "zona": zona,
-                        "scores_dimensoes": st.session_state.scores,  # já ajuda MUITO na automação
-                       "answers_json": [st.session_state.get(f"q_{i}") for i in range(45)],
-}
+                        "scores_dimensoes": st.session_state.scores,
+                        "answers_json": [int(v) for v in st.session_state.answers_json]
+                    }
 
                     # efeito robusto (12s)
                     simular_processamento()
@@ -495,5 +499,6 @@ Aqui a intervenção precisa ser **simples e vital**: não é fazer mais — é 
         st.session_state.scores = [0] * 9
         st.session_state.zona = ""
         st.session_state.nome_usuario = ""
+        st.session_state.answers_json = [None] * 45
         st.session_state.etapa = "intro"
         st.rerun()
