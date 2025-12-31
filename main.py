@@ -15,15 +15,20 @@ URL_WEBHOOK = "https://script.google.com/macros/s/AKfycbzpgNSVxPbMgFG_yk5UN5vucW
 # EVENT TRACKING
 # ---------------------------------------
 def send_event(event_name, etapa="", submission_id=""):
+    flag_key = f"_event_sent__{event_name}"
+    if st.session_state.get(flag_key):
+        return
+    st.session_state[flag_key] = True
+
     payload = {
         "event_name": event_name,
         "etapa": etapa,
         "submission_id": submission_id
     }
-    requests.post(URL_WEBHOOK, json=payload, timeout=5)
-
-# A) App abriu
-send_event("diagnostico_aberto", etapa="inicio")
+    try:
+        requests.post(URL_WEBHOOK, json=payload, timeout=5)
+    except Exception:
+        pass
 
 # ---------------------------------------
 # CSS
@@ -56,6 +61,9 @@ if "nome_usuario" not in st.session_state:
 
 if "submission_id" not in st.session_state:
     st.session_state.submission_id = ""
+
+# A) App abriu (1x por sessão)
+send_event("diagnostico_aberto", etapa="inicio")
 
 # ---------------------------------------
 # DADOS
