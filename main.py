@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.graph_objects as go
 import requests
-import time  # <- novo (para simular processamento com mensagens)
+import time
 
 # 1. IDENTIDADE VISUAL LIDERUM (Dark Blue & Gold)
 st.set_page_config(page_title="Protocolo LIDERUM", layout="wide")
@@ -11,15 +11,41 @@ st.markdown("""
     .top-banner { background-color: #000c1a; height: 50px; width: 100%; border-bottom: 1px solid rgba(212, 175, 55, 0.2); margin-bottom: 20px; }
     div[data-testid="stMetric"] { background-color: rgba(212, 175, 55, 0.05); border: 1px solid #D4AF37; padding: 15px; border-radius: 10px; }
     label, p, span, div { color: #FFFFFF !important; font-size: 18px !important; }
-    .stButton>button {
+
+    /* Botões (inclui submit de form) */
+    .stButton>button, button[kind="primary"] {
         background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%) !important;
-        color: #001226 !important; width: 100%; font-weight: bold; padding: 15px; border-radius: 8px; font-size: 18px !important;
+        color: #001226 !important;
+        width: 100%;
+        font-weight: bold;
+        padding: 15px;
+        border-radius: 8px;
+        font-size: 18px !important;
+        border: none !important;
     }
+
+    /* Perguntas */
     .question-text { font-size: 19px !important; color: #FFFFFF !important; margin-top: 20px; border-bottom: 1px solid rgba(212, 175, 55, 0.1); padding-bottom: 10px; }
+
+    /* Blocos */
     .laudo-container { background-color: rgba(255, 255, 255, 0.03); padding: 35px; border-radius: 15px; border-left: 6px solid #D4AF37; margin-top: 25px; line-height: 1.7; }
     .highlight { color: #D4AF37 !important; font-weight: bold; }
     .card { background-color: rgba(255,255,255,0.03); border: 1px solid rgba(212,175,55,0.25); padding: 22px; border-radius: 14px; }
     .small { font-size: 15px !important; color: rgba(255,255,255,0.75) !important; }
+
+    /* Inputs: corrigir texto branco em campo branco (ilegível) */
+    div[data-baseweb="input"] input {
+        background-color: #FFFFFF !important;
+        color: #001226 !important;
+    }
+    div[data-baseweb="textarea"] textarea {
+        background-color: #FFFFFF !important;
+        color: #001226 !important;
+    }
+    div[data-baseweb="input"] input::placeholder,
+    div[data-baseweb="textarea"] textarea::placeholder {
+        color: rgba(0,18,38,0.55) !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -27,7 +53,7 @@ st.markdown("""
 # ESTADO
 # -----------------------------
 if 'etapa' not in st.session_state:
-    st.session_state.etapa = 'intro'   # <- novo: tela de recepção
+    st.session_state.etapa = 'intro'
 if 'total' not in st.session_state:
     st.session_state.total = 0
 if 'scores' not in st.session_state:
@@ -43,7 +69,7 @@ st.markdown('<div class="top-banner"></div>', unsafe_allow_html=True)
 st.title("PROTOCOLO DE GOVERNANÇA PESSOAL LIDERUM")
 
 # -----------------------------
-# DADOS
+# DADOS (MANTIDOS)
 # -----------------------------
 questoes_lista = [
     ("Visão e Alinhamento Estratégico", ["Eu tenho clareza sobre meus objetivos nos próximos meses.", "Meus objetivos pessoais e profissionais estão anotados.", "Mantenho meu foco mesmo com distrações externas.", "Revisito minha visão de futuro com frequência.", "Organizo minhas prioridades pelo que é importante."]),
@@ -55,18 +81,6 @@ questoes_lista = [
     ("Arquitetura de Sistemas de Crenças", ["Acredito que sou capaz de aprender e evoluir sempre.", "Percebo quando ajo por crenças limitantes.", "Mudo minha realidade mudando crenças.", "Tenho crenças fortes sobre minha liderança.", "Identifico a origem das minhas crenças."]),
     ("Padrão de Entrega e Excelência", ["Me esforço para entregar o máximo.", "Percebo evolução na qualidade das entregas.", "Mantenho comprometimento sob pressão.", "Tenho clareza de pontos fortes e de melhoria.", "Entrego além do básico sempre."]),
     ("Postura Ativa e Protagonismo", ["Assumo responsabilidade pelas escolhas.", "Evito colocar culpa em fatores externos.", "Ajo com rapidez para mudar o que controlo.", "Encaro desafios como oportunidades.", "Olho para mim antes de culpar o ambiente."])
-]
-
-dimensoes_resumo = [
-    ("Visão & Alinhamento", "Clareza de objetivos, prioridades e direção."),
-    ("Recompensa", "Reforço positivo, motivação e sustentação emocional."),
-    ("Consciência de Padrões", "Autopercepção, ajustes e aprendizado sem culpa."),
-    ("Disciplina Operacional", "Rotina, execução e constância no que importa."),
-    ("Modelagem", "Aprender com referências e expandir repertório."),
-    ("Narrativa Interna", "Diálogo interno, autocontrole e mentalidade."),
-    ("Crenças", "Crenças limitantes vs. crenças fortalecedoras."),
-    ("Excelência", "Padrão de entrega, qualidade e consistência sob pressão."),
-    ("Protagonismo", "Responsabilidade, ação e postura ativa.")
 ]
 
 def simular_processamento():
@@ -85,39 +99,41 @@ def simular_processamento():
     placeholder.empty()
 
 # -----------------------------
-# ETAPA 0: INTRO (novo)
+# ETAPA 0: INTRO (ATUALIZADA)
 # -----------------------------
 if st.session_state.etapa == 'intro':
-    col1, col2 = st.columns([1.2, 0.8])
-    with col1:
-        st.markdown("<div class='card'>", unsafe_allow_html=True)
-        st.markdown("### Bem-vindo ao seu Diagnóstico de Governança Pessoal")
-        st.markdown("""
-        **O que é:** um protocolo rápido para mapear como você está dirigindo sua energia, foco e disciplina nas últimas semanas.  
-        **Tempo:** 6 a 9 minutos.  
-        **Como responder:** marque de **1 a 5** (sendo 1 = raramente / 5 = quase sempre).  
-        **Importante:** responda no seu estado real, não no ideal.
-        """)
-        st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("<div class='card'>", unsafe_allow_html=True)
+    st.markdown("### Bem-vindo ao Protocolo LIDERUM")
+    st.markdown("""
+Este diagnóstico não é um teste, nem um julgamento sobre quem você é.  
+Ele foi criado para ajudar você a observar com mais clareza como está hoje sua forma de conduzir decisões, emoções, comportamento e direção.
 
-        st.markdown("<div class='card' style='margin-top:16px;'>", unsafe_allow_html=True)
-        st.markdown("### O que você vai receber")
-        st.markdown("""
-        - Um **Radar** com suas 9 dimensões
-        - Sua **Zona de Governança** (visão macro do momento)
-        - Um **direcionamento inicial** para subir de nível
-        """)
-        st.markdown("</div>", unsafe_allow_html=True)
+Não existem respostas certas ou erradas. O valor deste processo está na honestidade das suas respostas, não na pontuação final.  
+Quanto mais **sincero** você for, mais preciso será o seu resultado.
+""")
+    st.markdown("</div>", unsafe_allow_html=True)
 
-    with col2:
-        st.markdown("<div class='card'>", unsafe_allow_html=True)
-        st.markdown("### As 9 dimensões (visão rápida)")
-        for nome, desc in dimensoes_resumo:
-            st.markdown(f"**{nome}:** <span class='small'>{desc}</span>", unsafe_allow_html=True)
-        st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("<div class='card' style='margin-top:16px;'>", unsafe_allow_html=True)
+    st.markdown("### Como responder às perguntas")
+    st.markdown("""
+- Use a escala de 1 a 5 considerando como você age na maior parte do tempo, e não em dias excepcionais.  
+- Evite responder pelo que você gostaria de ser. Responda pelo que você realmente faz.  
+- Se ficar em dúvida entre duas notas, escolha a menor.
+
+Este diagnóstico mede consistência, não intenção.
+""")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("<div class='card' style='margin-top:16px;'>", unsafe_allow_html=True)
+    st.markdown("### Privacidade e sigilo")
+    st.markdown("""
+Suas respostas são confidenciais e utilizadas exclusivamente para gerar seu diagnóstico e direcionamento personalizado.  
+Nenhuma informação será compartilhada ou utilizada fora desse contexto.
+""")
+    st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown("")
-    if st.button("COMEÇAR AGORA"):
+    if st.button("INICIAR MEU DIAGNÓSTICO"):
         st.session_state.etapa = 'questoes'
         st.rerun()
 
@@ -168,20 +184,28 @@ elif st.session_state.etapa == 'captura':
 
         with st.form("lead_form"):
             nome = st.text_input("Nome Completo")
-            email = st.text_input("E-mail Estratégico")
+            email = st.text_input("E-mail")
             whatsapp = st.text_input("WhatsApp")
-            cargo = st.text_input("Empresa / Cargo")
+            empresa = st.text_input("Empresa")
+            cargo = st.text_input("Cargo")
 
             if st.form_submit_button("LIBERAR MEU LAUDO AGORA"):
-                if all([nome, email, whatsapp, cargo]):
+                if all([nome, email, whatsapp, empresa, cargo]):
                     t = st.session_state.total
                     z = "ELITE" if t > 200 else "OSCILAÇÃO" if t > 122 else "SOBREVIVÊNCIA"
                     st.session_state.zona = z
                     st.session_state.nome_usuario = nome
 
-                    payload = {"nome": nome, "email": email, "whatsapp": whatsapp, "cargo": cargo, "pontos": t, "zona": z}
+                    payload = {
+                        "nome": nome,
+                        "email": email,
+                        "whatsapp": whatsapp,
+                        "empresa": empresa,
+                        "cargo": cargo,
+                        "pontos": t,
+                        "zona": z
+                    }
 
-                    # SIMULA PROCESSAMENTO (robustez percebida)
                     simular_processamento()
 
                     try:
@@ -239,63 +263,36 @@ elif st.session_state.etapa == 'resultado':
 
         if st.session_state.zona == "ELITE":
             st.markdown(f"""<span class='highlight'>{st.session_state.nome_usuario}</span>, seus resultados indicam uma **Governança de Elite**.
-            O foco agora é **blindar constância** e evitar a cegueira da eficiência. Autoliderança é processo vivo: quem está no topo não pode relaxar na base.""", unsafe_allow_html=True)
+            O foco agora é **blindar constância** e evitar a cegueira da eficiência. Quem está no topo não pode relaxar na base.""", unsafe_allow_html=True)
         elif st.session_state.zona == "OSCILAÇÃO":
             st.markdown(f"""<span class='highlight'>{st.session_state.nome_usuario}</span>, você está na zona de **Oscilação**.
-            Sua performance alterna entre picos e quedas. O ponto crítico costuma ser **ritmo operacional + narrativa interna**. O objetivo aqui é estabilizar execução e reduzir dependência de estímulo emocional.""", unsafe_allow_html=True)
+            Sua performance alterna entre picos e quedas. O ponto crítico costuma ser **ritmo operacional + narrativa interna**. Aqui, o objetivo é estabilizar execução e reduzir dependência emocional.""", unsafe_allow_html=True)
         else:
             st.markdown(f"""<span class='highlight'>{st.session_state.nome_usuario}</span>, você está em **Modo de Sobrevivência**.
-            Isso sugere colapso de governança (agenda, energia e disciplina). A intervenção precisa ser simples, imediata e vital: **não é fazer mais, é fazer o certo, com método.**""", unsafe_allow_html=True)
+            Isso sugere colapso de governança (agenda, energia e disciplina). A intervenção precisa ser simples e vital: **não é fazer mais, é fazer o certo, com método.**""", unsafe_allow_html=True)
 
         st.markdown("</div>", unsafe_allow_html=True)
 
         st.markdown("<div class='card' style='margin-top:14px;'>", unsafe_allow_html=True)
         st.markdown("### O que você recebe no Laudo Completo (IA)")
         st.markdown("""
-        - Leitura aprofundada das 9 dimensões (forças, riscos e travas)
-        - Interpretação objetiva da sua Zona + o que está causando isso
-        - Plano de ação prático (7 dias + 30 dias) com foco em execução
-        - Priorização: **o que atacar primeiro** para subir de nível
-        """)
+- Leitura aprofundada das 9 dimensões (forças, riscos e travas)  
+- Interpretação objetiva da sua zona (o que está causando isso)  
+- Plano de ação prático (7 dias + 30 dias) com foco em execução  
+- Priorização: o que atacar primeiro para subir de nível  
+""")
         st.markdown("</div>", unsafe_allow_html=True)
 
     st.write("---")
-    st.markdown("<h3 style='text-align: center;'>Próximo Passo Estratégico</h3>", unsafe_allow_html=True)
-    st.write("Este laudo mostra seu cenário atual. Para subir de nível, você precisa de profundidade e execução guiada.")
+    st.markdown("<h3 style='text-align: center;'>Próximo Passo</h3>", unsafe_allow_html=True)
+    st.write("Se você quer o plano completo (com ações), acesse abaixo.")
 
-    # BOTÃO DE CHECKOUT CENTRALIZADO
     st.markdown(f"""
         <div style='text-align: center; margin-bottom: 25px;'>
             <a href='https://pay.hotmart.com/SEU_LINK' target='_blank' style='text-decoration: none;'>
                 <div style='background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%); color: #001226; padding: 20px 45px; font-weight: bold; border-radius: 8px; display: inline-block; width: 100%; max-width: 600px; font-size: 20px;'>
-                    ADQUIRIR MEU LAUDO ESTRATÉGICO COMPLETO COM IA →
+                    ADQUIRIR MEU LAUDO COMPLETO (R$47)
                 </div>
             </a>
         </div>
     """, unsafe_allow_html=True)
-
-    # BOTÃO FALE COM NOSSA EQUIPE
-    wa_url = "https://wa.me/5581982602018?text=Olá!%20Acabei%20de%20fazer%20meu%20Diagnóstico%20LIDERUM%20e%20quero%20conhecer%20as%20soluções."
-    st.markdown(f"""
-        <div style='text-align: left; margin-bottom: 12px;'>
-            <a href='{wa_url}' target='_blank' style='text-decoration: none;'>
-                <div style='background: rgba(212, 175, 55, 0.1); color: #D4AF37; border: 1px solid #D4AF37; padding: 12px 25px; font-weight: bold; border-radius: 5px; display: inline-block;'>
-                    💬 FALE COM NOSSA EQUIPE
-                </div>
-            </a>
-        </div>
-    """, unsafe_allow_html=True)
-
-    # REFAZER (discreto)
-    st.markdown("<p class='small'>Se quiser refazer o protocolo com mais calma:</p>", unsafe_allow_html=True)
-    if st.button("Refazer diagnóstico"):
-        # Limpa respostas
-        for i in range(45):
-            if f"q_{i}" in st.session_state:
-                st.session_state[f"q_{i}"] = None
-        st.session_state.total = 0
-        st.session_state.scores = [0]*9
-        st.session_state.zona = ""
-        st.session_state.nome_usuario = ""
-        st.session_state.etapa = 'intro'
-        st.rerun()
