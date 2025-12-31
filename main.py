@@ -9,7 +9,8 @@ import datetime
 # ---------------------------------------
 st.set_page_config(page_title="Protocolo LIDERUM", layout="wide")
 
-URL_WEBHOOK = "https://script.google.com/macros/s/AKfycbwrbNk635ZiqpX0U7TRvkYfTQJsC3sO6m4KbBFEDruHLiaGDmhEax0wsd6FlKnIovM/exec"
+URL_WEBHOOK = "https://script.google.com/macros/s/AKfycbzpgNSVxPbMgFG_yk5UN5vucWROJzN6VUlpv5mVeW-gUw4ZySZOwLzhOa6lr1oVfWYo/exec"
+
 
 # ---------------------------------------
 # CSS (mantém estética + corrige inputs)
