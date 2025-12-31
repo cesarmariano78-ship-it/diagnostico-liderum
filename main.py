@@ -1,6 +1,3 @@
-Olha, eu acho que eu sugerei um caminho para facilitar, eu vou copiar aqui o código que é o código atual, ok, você registra ele, segura, em seguida eu copio e colo novamente o bloco de informações que precisam ser inseridas sem mexer na estrutura física, no layout, nada, não pode mexer na experiência do cliente, tudo isso precisa acontecer no back, ok?
-
-import streamlit as st
 import plotly.graph_objects as go
 import requests
 import time
