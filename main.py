@@ -354,8 +354,8 @@ elif st.session_state.etapa == "captura":
                         "pontos_total": total,
                         "zona": zona,
                         "scores_dimensoes": st.session_state.scores,  # já ajuda MUITO na automação
-                        # "respostas": [st.session_state.get(f"q_{i}") for i in range(45)],  # deixei comentado para MVP (a gente liga quando arrumar planilha)
-                    }
+                       "answers_json": [st.session_state.get(f"q_{i}") for i in range(45)],
+
 
                     # efeito robusto (12s)
                     simular_processamento()
