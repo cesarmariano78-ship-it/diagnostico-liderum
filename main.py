@@ -15,11 +15,6 @@ URL_WEBHOOK = "https://script.google.com/macros/s/AKfycbzpgNSVxPbMgFG_yk5UN5vucW
 # EVENT TRACKING
 # ---------------------------------------
 def send_event(event_name, etapa="", submission_id=""):
-    flag_key = f"_event_sent__{event_name}"
-    if st.session_state.get(flag_key):
-        return
-    st.session_state[flag_key] = True
-
     payload = {
         "event_name": event_name,
         "etapa": etapa,
@@ -62,8 +57,19 @@ if "nome_usuario" not in st.session_state:
 if "submission_id" not in st.session_state:
     st.session_state.submission_id = ""
 
+if "evt_diagnostico_aberto" not in st.session_state:
+    st.session_state.evt_diagnostico_aberto = False
+
+if "evt_diagnostico_iniciado" not in st.session_state:
+    st.session_state.evt_diagnostico_iniciado = False
+
+if "evt_oferta_laudo_exibida" not in st.session_state:
+    st.session_state.evt_oferta_laudo_exibida = False
+
 # A) App abriu (1x por sessão)
-send_event("diagnostico_aberto", etapa="inicio")
+if not st.session_state.evt_diagnostico_aberto:
+    send_event("diagnostico_aberto", etapa="inicio")
+    st.session_state.evt_diagnostico_aberto = True
 
 # ---------------------------------------
 # DADOS
@@ -98,7 +104,9 @@ st.title("PROTOCOLO LIDERUM")
 # ---------------------------------------
 if st.session_state.etapa == "intro":
     if st.button("INICIAR MEU DIAGNÓSTICO"):
-        send_event("diagnostico_iniciado", etapa="inicio")  # B)
+        if not st.session_state.evt_diagnostico_iniciado:
+            send_event("diagnostico_iniciado", etapa="inicio")  # B)
+            st.session_state.evt_diagnostico_iniciado = True
         st.session_state.etapa = "questoes"
         st.rerun()
 
@@ -160,7 +168,10 @@ elif st.session_state.etapa == "captura":
                 "scores_dimensoes": st.session_state.scores,
                 "answers_json": answers_json
             }
-            requests.post(URL_WEBHOOK, json=payload, timeout=10)
+            try:
+                requests.post(URL_WEBHOOK, json=payload, timeout=10)
+            except Exception:
+                pass
 
             st.session_state.etapa = "resultado"
             st.rerun()
@@ -169,11 +180,13 @@ elif st.session_state.etapa == "captura":
 # RESULTADO
 # ---------------------------------------
 elif st.session_state.etapa == "resultado":
-    send_event(
-        "oferta_laudo_exibida",
-        etapa="resultado",
-        submission_id=st.session_state.submission_id
-    )  # D)
+    if not st.session_state.evt_oferta_laudo_exibida:
+        send_event(
+            "oferta_laudo_exibida",
+            etapa="resultado",
+            submission_id=st.session_state.submission_id
+        )  # D)
+        st.session_state.evt_oferta_laudo_exibida = True
 
     st.write("Oferta do Laudo")
 
