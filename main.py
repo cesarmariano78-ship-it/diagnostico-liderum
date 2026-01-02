@@ -4,6 +4,7 @@ import requests
 import time
 import datetime
 import uuid
+import random
 
 # ---------------------------------------
 # CONFIG
@@ -166,6 +167,14 @@ def _send_event(event_name: str, etapa: str = "", meta: dict | None = None):
         pass
 
 # ---------------------------------------
+# TESTE (preencher 45 respostas em 1 clique - discreto e sem quebrar UX)
+# ---------------------------------------
+def _preencher_respostas_aleatorias():
+    # Preenche as 45 respostas (1..5) diretamente no session_state dos radios
+    for i in range(45):
+        st.session_state[f"q_{i}"] = random.randint(1, 5)
+
+# ---------------------------------------
 # DADOS (9 dimensões + 45 perguntas DEFINIDAS)
 # ---------------------------------------
 dimensoes = [
@@ -320,6 +329,15 @@ Nenhuma informação será compartilhada ou utilizada fora desse contexto.
 # ---------------------------------------
 elif st.session_state.etapa == "questoes":
     st.markdown("<p class='small'>Instrução: clique em cada dimensão para abrir as perguntas. Responda todas as 45 para liberar o diagnóstico.</p>", unsafe_allow_html=True)
+
+    # Botão de TESTE (discreto) para acelerar validações internas
+    # - Não altera fluxo, layout principal nem navegação
+    # - Apenas preenche os 45 radios no session_state
+    top_l, top_r = st.columns([0.88, 0.12])
+    with top_r:
+        if st.button("TESTE", help="Preenche as 45 respostas aleatoriamente (uso interno)."):
+            _preencher_respostas_aleatorias()
+            st.rerun()
 
     q_idx = 0
     respondidas = 0
