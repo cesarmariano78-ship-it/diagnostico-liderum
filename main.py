@@ -5,6 +5,7 @@ import time
 import datetime
 import uuid
 import random
+import urllib.parse
 
 # ---------------------------------------
 # CONFIG
@@ -14,6 +15,7 @@ st.set_page_config(page_title="Protocolo LIDERUM", layout="wide")
 URL_WEBHOOK = "https://script.google.com/macros/s/AKfycbzpgNSVxPbMgFG_yk5UN5vucWROJzN6VUlpv5mVeW-gUw4ZySZOwLzhOa6lr1oVfWYo/exec"
 APP_VERSION = "mvp-0.1"
 
+# Checkout Eduzz (base)
 EDUZZ_CHECKOUT_BASE = "https://sun.eduzz.com/7977E15B9E"
 
 # ---------------------------------------
@@ -84,8 +86,8 @@ label, p, span, div { color: #FFFFFF !important; font-size: 18px !important; }
 /* Inputs: corrigir texto digitado (estava branco no branco) */
 div[data-testid="stTextInput"] input,
 div[data-testid="stTextInput"] textarea {
-  color: #001226 !important;      /* texto digitado escuro */
-  background: #FFFFFF !important; /* fundo branco */
+  color: #001226 !important;
+  background: #FFFFFF !important;
   border-radius: 8px !important;
 }
 
@@ -265,6 +267,11 @@ def calcular_zona(total: int) -> str:
     if total > 122:
         return "OSCILAÇÃO"
     return "SOBREVIVÊNCIA"
+
+def _build_eduzz_checkout_url(submission_id: str) -> str:
+    # Envia o submission_id no utm_content (path confirmado: data.utm.utm_content)
+    q = {"utm_content": submission_id or ""}
+    return f"{EDUZZ_CHECKOUT_BASE}?{urllib.parse.urlencode(q)}"
 
 # ---------------------------------------
 # HEADER
@@ -446,6 +453,12 @@ elif st.session_state.etapa == "captura":
 # ETAPA 3: LAUDO
 # ---------------------------------------
 elif st.session_state.etapa == "resultado":
+    # Garante submission_id para o link de checkout
+    if not st.session_state.submission_id:
+        st.session_state.submission_id = str(uuid.uuid4())
+
+    checkout_url = _build_eduzz_checkout_url(st.session_state.submission_id)
+
     st.markdown(f"### Análise Individual: <span class='highlight'>{st.session_state.nome_usuario.upper()}</span>", unsafe_allow_html=True)
 
     c1, c2 = st.columns(2)
@@ -530,10 +543,7 @@ Aqui a intervenção precisa ser **simples e vital**: não é fazer mais — é 
     st.markdown("<h3 style='text-align: center;'>Próximo Passo</h3>", unsafe_allow_html=True)
     st.write("Se você quiser profundidade e um plano objetivo, o Laudo Completo vai direto ao ponto — com priorização e execução.")
 
-    # CTA Pagamento (Eduzz + submission_id)
-    sid = st.session_state.submission_id or ""
-    checkout_url = f"{EDUZZ_CHECKOUT_BASE}?submission_id={sid}"
-
+    # CTA Pagamento (Eduzz + submission_id em utm_content)
     st.markdown(f"""
         <div style='text-align: center; margin-bottom: 20px;'>
             <a href='{checkout_url}' target='_blank' style='text-decoration: none;'>
@@ -546,7 +556,7 @@ Aqui a intervenção precisa ser **simples e vital**: não é fazer mais — é 
         </div>
     """, unsafe_allow_html=True)
 
-    # CTA WhatsApp (ok manter)
+    # CTA WhatsApp
     wa_url = "https://wa.me/5581982602018?text=Olá!%20Acabei%20de%20fazer%20meu%20Diagnóstico%20LIDERUM%20e%20quero%20conhecer%20as%20soluções."
     st.markdown(f"""
         <div style='text-align: left; margin-bottom: 10px;'>
