@@ -1,3 +1,4 @@
+```python
 import streamlit as st
 import plotly.graph_objects as go
 import requests
@@ -13,6 +14,8 @@ st.set_page_config(page_title="Protocolo LIDERUM", layout="wide")
 
 URL_WEBHOOK = "https://script.google.com/macros/s/AKfycbzpgNSVxPbMgFG_yk5UN5vucWROJzN6VUlpv5mVeW-gUw4ZySZOwLzhOa6lr1oVfWYo/exec"
 APP_VERSION = "mvp-0.1"
+
+EDUZZ_CHECKOUT_BASE = "https://sun.eduzz.com/7977E15B9E"
 
 # ---------------------------------------
 # CSS (mantém estética + corrige inputs)
@@ -170,7 +173,6 @@ def _send_event(event_name: str, etapa: str = "", meta: dict | None = None):
 # TESTE (preencher 45 respostas em 1 clique - discreto e sem quebrar UX)
 # ---------------------------------------
 def _preencher_respostas_aleatorias():
-    # Preenche as 45 respostas (1..5) diretamente no session_state dos radios
     for i in range(45):
         st.session_state[f"q_{i}"] = random.randint(1, 5)
 
@@ -255,11 +257,10 @@ def simular_processamento():
     with st.spinner("Aguarde…"):
         for m in msgs:
             box.markdown(f"<p class='small'>🔎 {m}</p>", unsafe_allow_html=True)
-            time.sleep(2.4)  # ~12s
+            time.sleep(2.4)
     box.empty()
 
 def calcular_zona(total: int) -> str:
-    # Mantive seus thresholds (MVP). Depois refinamos.
     if total > 200:
         return "ELITE"
     if total > 122:
@@ -273,7 +274,7 @@ st.markdown('<div class="top-banner"></div>', unsafe_allow_html=True)
 st.title("PROTOCOLO LIDERUM")
 
 # ---------------------------------------
-# ETAPA 0: INTRO (texto seu, sem “cara de IA”)
+# ETAPA 0: INTRO
 # ---------------------------------------
 if st.session_state.etapa == "intro":
     col1, col2 = st.columns([1.35, 0.65])
@@ -330,9 +331,6 @@ Nenhuma informação será compartilhada ou utilizada fora desse contexto.
 elif st.session_state.etapa == "questoes":
     st.markdown("<p class='small'>Instrução: clique em cada dimensão para abrir as perguntas. Responda todas as 45 para liberar o diagnóstico.</p>", unsafe_allow_html=True)
 
-    # Botão de TESTE (discreto) para acelerar validações internas
-    # - Não altera fluxo, layout principal nem navegação
-    # - Apenas preenche os 45 radios no session_state
     top_l, top_r = st.columns([0.88, 0.12])
     with top_r:
         if st.button("TESTE", help="Preenche as 45 respostas aleatoriamente (uso interno)."):
@@ -367,8 +365,6 @@ elif st.session_state.etapa == "questoes":
     if st.button("PROCESSAR MEU DIAGNÓSTICO"):
         if respondidas == 45:
             st.session_state.answers_json = [int(st.session_state[f"q_{i}"]) for i in range(45)]
-
-            # soma a cada 5 perguntas = 1 dimensão
             st.session_state.scores = [
                 sum(st.session_state[f"q_{j}"] for j in range(i, i + 5))
                 for i in range(0, 45, 5)
@@ -427,7 +423,6 @@ elif st.session_state.etapa == "captura":
                         "answers_json": [int(v) for v in st.session_state.answers_json]
                     }
 
-                    # efeito robusto (12s)
                     simular_processamento()
 
                     ok = False
@@ -465,7 +460,7 @@ elif st.session_state.etapa == "resultado":
     col_l, col_r = st.columns([1.2, 0.8])
 
     with col_l:
-        categorias_radar = [d[0].split(" (")[0] for d in dimensoes]  # remove sufixos p/ radar ficar limpo
+        categorias_radar = [d[0].split(" (")[0] for d in dimensoes]
         fig = go.Figure()
         fig.add_trace(go.Scatterpolar(
             r=st.session_state.scores,
@@ -536,10 +531,13 @@ Aqui a intervenção precisa ser **simples e vital**: não é fazer mais — é 
     st.markdown("<h3 style='text-align: center;'>Próximo Passo</h3>", unsafe_allow_html=True)
     st.write("Se você quiser profundidade e um plano objetivo, o Laudo Completo vai direto ao ponto — com priorização e execução.")
 
-    # CTA Pagamento
+    # CTA Pagamento (Eduzz + submission_id)
+    sid = st.session_state.submission_id or ""
+    checkout_url = f"{EDUZZ_CHECKOUT_BASE}?submission_id={sid}"
+
     st.markdown(f"""
         <div style='text-align: center; margin-bottom: 20px;'>
-            <a href='https://pay.hotmart.com/SEU_LINK' target='_blank' style='text-decoration: none;'>
+            <a href='{checkout_url}' target='_blank' style='text-decoration: none;'>
                 <div style='background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%);
                             color: #001226; padding: 18px 40px; font-weight: 900; border-radius: 10px;
                             display: inline-block; width: 100%; max-width: 680px; font-size: 20px;'>
@@ -563,7 +561,6 @@ Aqui a intervenção precisa ser **simples e vital**: não é fazer mais — é 
         </div>
     """, unsafe_allow_html=True)
 
-    # Refazer (mantive discreto — você decide depois se remove)
     st.markdown("<p class='small'>Se quiser refazer com mais calma:</p>", unsafe_allow_html=True)
     if st.button("Refazer diagnóstico"):
         for i in range(45):
@@ -578,3 +575,4 @@ Aqui a intervenção precisa ser **simples e vital**: não é fazer mais — é 
         st.session_state.submission_id = ""
         st.session_state.sent_events = set()
         st.rerun()
+```
