@@ -1,4 +1,3 @@
-```python
 import streamlit as st
 import plotly.graph_objects as go
 import requests
@@ -575,4 +574,3 @@ Aqui a intervenção precisa ser **simples e vital**: não é fazer mais — é 
         st.session_state.submission_id = ""
         st.session_state.sent_events = set()
         st.rerun()
-```
