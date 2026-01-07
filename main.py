@@ -952,6 +952,12 @@ st.markdown("</div>", unsafe_allow_html=True)
 # CTA CHECKOUT — LAUDO COMPLETO
 # -------------------------------
 st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
+st.markdown(
+    "<p style='text-align:center; font-size:16px; opacity:0.85; margin-bottom:10px;'>"
+    "Se você quer clareza prática sobre onde intervir primeiro — este é o próximo passo."
+    "</p>",
+    unsafe_allow_html=True
+)
 
 st.markdown(
     f"""
