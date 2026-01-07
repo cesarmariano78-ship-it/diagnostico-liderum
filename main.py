@@ -111,6 +111,52 @@ button[kind="primary"] {
 button[kind="primary"]:hover {
   background: rgba(212,175,55,0.28) !important;
 }
+/* =========================
+   MOLDURA GLOBAL — fina + verde Brasil
+   ========================= */
+:root { --br-green: #009C3B; }
+
+div.block-container {
+  border: 1px solid var(--br-green) !important;
+  border-radius: 10px !important;
+  padding: 18px 18px 28px 18px !important;
+}
+
+/* =========================
+   BOTÃO EXPANDIR LAUDO (verde Brasil)
+   ========================= */
+details.laudo-details > summary {
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+
+  background: var(--br-green);
+  color: #ffffff;
+  border: 1px solid rgba(0,0,0,0.15);
+  border-radius: 10px;
+
+  padding: 16px 18px;
+  font-weight: 900;
+  font-size: 19.8px; /* ~10% maior */
+  text-align: center;
+}
+
+details.laudo-details > summary::-webkit-details-marker {
+  display: none;
+}
+
+details.laudo-details[open] > summary {
+  filter: brightness(0.95);
+}
+
+.laudo-body {
+  margin-top: 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(212,175,55,0.20);
+  border-radius: 12px;
+  padding: 18px;
+  line-height: 1.7;
+}
 </style>
 """, unsafe_allow_html=True)
 
