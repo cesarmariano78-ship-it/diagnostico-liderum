@@ -36,7 +36,7 @@ div[data-testid="stMetric"] {
 /* Tipografia global */
 label, p, span, div { color: #FFFFFF !important; font-size: 18px !important; }
 
-/* Botões (default) */
+/* Botões */
 .stButton>button {
   background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%) !important;
   color: #001226 !important;
@@ -45,13 +45,6 @@ label, p, span, div { color: #FFFFFF !important; font-size: 18px !important; }
   padding: 15px;
   border-radius: 8px;
   font-size: 18px !important;
-}
-
-/* Botão pequeno (refazer) */
-.small-btn .stButton>button {
-  padding: 10px 14px !important;
-  font-size: 15px !important;
-  border-radius: 8px !important;
 }
 
 /* Cards */
@@ -90,21 +83,25 @@ label, p, span, div { color: #FFFFFF !important; font-size: 18px !important; }
   line-height: 1.7;
 }
 
-/* Inputs */
+/* Inputs: corrigir texto digitado (estava branco no branco) */
 div[data-testid="stTextInput"] input,
 div[data-testid="stTextInput"] textarea {
   color: #001226 !important;
   background: #FFFFFF !important;
   border-radius: 8px !important;
 }
+
+/* Placeholder */
 div[data-testid="stTextInput"] input::placeholder {
   color: rgba(0,18,38,0.55) !important;
 }
+
+/* Label dos inputs */
 div[data-testid="stTextInput"] label {
   color: #FFFFFF !important;
 }
 
-/* Botão do FORM (submit) */
+/* Botão do FORM (submit) - garante contraste */
 button[kind="primary"] {
   background: rgba(212,175,55,0.18) !important;
   border: 1px solid #D4AF37 !important;
@@ -174,14 +171,14 @@ def _send_event(event_name: str, etapa: str = "", meta: dict | None = None):
         pass
 
 # ---------------------------------------
-# TESTE
+# TESTE (preencher 45 respostas em 1 clique - discreto e sem quebrar UX)
 # ---------------------------------------
 def _preencher_respostas_aleatorias():
     for i in range(45):
         st.session_state[f"q_{i}"] = random.randint(1, 5)
 
 # ---------------------------------------
-# DADOS
+# DADOS (9 dimensões + 45 perguntas DEFINIDAS)
 # ---------------------------------------
 dimensoes = [
     ("CLAREZA", "Capacidade de manter direção, prioridades e foco mesmo diante de pressão, excesso de demandas e ruído externo.", [
@@ -272,8 +269,201 @@ def calcular_zona(total: int) -> str:
     return "SOBREVIVÊNCIA"
 
 def _build_eduzz_checkout_url(submission_id: str) -> str:
+    # Envia o submission_id no utm_content (path confirmado: data.utm.utm_content)
     q = {"utm_content": submission_id or ""}
     return f"{EDUZZ_CHECKOUT_BASE}?{urllib.parse.urlencode(q)}"
+
+def _texto_laudo_expandido(nome: str, total: int, zona: str) -> str:
+    # TEXTO IDÊNTICO AO DOCUMENTO (apenas com preenchimento de variáveis)
+    if zona == "OSCILAÇÃO":
+        return f"""PROTOCOLO LIDERUM
+
+Análise Individual: {nome}
+
+Pontuação Total: {total} / 225
+Zona de Governança: {zona}
+
+🔍 Direcionamento Estratégico
+Zona de Governança: OSCILAÇÃO
+
+{nome}, seu padrão atual é de Oscilação.
+
+Isso significa que você alterna entre períodos de boa entrega e momentos de queda, perda de foco ou desaceleração — mesmo tendo capacidade e repertório.
+
+Na prática, o problema não está na sua competência, mas na instabilidade da sua autogestão e da regulação cognitiva, o que impacta diretamente:
+
+constância de execução
+
+clareza de prioridade
+
+ritmo operacional
+
+O efeito mais comum desse padrão é simples:
+você até sabe o que fazer, mas não sustenta o mesmo nível de ação por tempo suficiente para gerar resultados consistentes.
+
+O objetivo aqui não é motivar.
+É estabilizar sua forma de se governar, para que a execução deixe de depender de emoção, contexto ou “fase boa”.
+
+⚠️ O ponto de atenção
+
+Quando a Oscilação não é tratada, ela costuma gerar:
+
+muitos recomeços e pouca continuidade
+
+decisões instáveis ou adiadas
+
+desgaste mental desnecessário
+
+sensação de esforço alto com retorno irregular
+
+Seu gráfico mostra tendências.
+O que ainda falta é clareza prática sobre onde intervir primeiro.
+
+📌 Próximo passo lógico
+Laudo Completo + Plano de Ação
+Este diagnóstico apresenta tendências gerais da sua governança pessoal.
+O Laudo Completo aprofunda essa leitura e transforma o retrato em direção prática, mostrando:
+• o que sustenta seu padrão atual
+• onde estão os principais pontos de atenção
+• quais decisões e ajustes geram maior impacto agora
+Você recebe uma leitura clara das 9 dimensões, com:
+• interpretação objetiva da sua zona de governança
+• priorização estratégica (o que atacar primeiro)
+• plano de ação prático:
+o 7 dias para organização e foco
+o 30 dias para consolidação e consistência
+O objetivo não é fazer mais.
+É agir com critério, clareza e execução sustentada, no nível que você está hoje.
+________________________________________
+🔶 QUERO MEU LAUDO COMPLETO + PLANO DE AÇÃO →
+Entrega imediata por e-mail • leitura direta • confidencial
+________________________________________
+Precisa de ajuda ou tem dúvidas?
+Fale com nossa equipe.
+Se quiser refazer o diagnóstico com mais calma:
+Refazer diagnóstico
+"""
+    if zona == "ELITE":
+        return f"""PROTOCOLO LIDERUM
+
+Análise Individual: {nome}
+
+Pontuação Total: {total} / 225
+Zona de Governança: {zona}
+
+🔍 Direcionamento Estratégico
+Zona de Governança: ELITE
+
+{nome}, seus resultados indicam que você está na Zona de Elite.
+
+Isso significa que sua governança pessoal já opera em um nível elevado.
+Você apresenta clareza, capacidade de execução e autonomia para conduzir sua vida com consistência acima da média.
+
+O principal ponto de atenção nessa zona não é capacidade, nem esforço.
+É a manutenção do nível ao longo do tempo.
+
+Pessoas na Zona de Elite costumam executar bem, tomar boas decisões e sustentar resultados — mas podem operar no automático, deixando de revisar fundamentos essenciais como:
+
+clareza contínua
+
+rotina funcional
+
+autorresponsabilidade ativa
+
+Aqui, o trabalho não é corrigir falhas evidentes.
+É refinar decisões, proteger o essencial e elevar a precisão da execução, para que o desempenho não dependa de contexto, fase ou excesso de carga.
+
+Quem opera nesse nível não pode relaxar no fundamento —
+porque é justamente o fundamento que sustenta a elite.
+
+O objetivo agora é claro:
+blindar constância, reduzir desgaste e transformar competência em impacto sustentado.
+
+📌 Próximo passo lógico
+Laudo Completo + Plano de Ação
+Este diagnóstico apresenta tendências gerais da sua governança pessoal.
+O Laudo Completo aprofunda essa leitura e transforma o retrato em direção prática, mostrando:
+• o que sustenta seu padrão atual
+• onde estão os principais pontos de atenção
+• quais decisões e ajustes geram maior impacto agora
+Você recebe uma leitura clara das 9 dimensões, com:
+• interpretação objetiva da sua zona de governança
+• priorização estratégica (o que atacar primeiro)
+• plano de ação prático:
+o 7 dias para organização e foco
+o 30 dias para consolidação e consistência
+O objetivo não é fazer mais.
+É agir com critério, clareza e execução sustentada, no nível que você está hoje.
+________________________________________
+🔶 QUERO MEU LAUDO COMPLETO + PLANO DE AÇÃO →
+Entrega imediata por e-mail • leitura direta • confidencial
+________________________________________
+Precisa de ajuda ou tem dúvidas?
+Fale com nossa equipe.
+Se quiser refazer o diagnóstico com mais calma:
+Refazer diagnóstico
+"""
+    # SOBREVIVÊNCIA
+    return f"""PROTOCOLO LIDERUM
+
+Análise Individual: {nome}
+
+Pontuação Total: {total} / 225
+Zona de Governança: {zona}
+
+🔍 Direcionamento Estratégico
+Zona de Governança: SOBREVIVÊNCIA
+
+{nome}, você está na Zona de Sobrevivência.
+
+Isso indica que sua governança pessoal está operando no limite.
+Energia, clareza, rotina e disciplina entraram em modo reativo, fazendo com que você funcione mais para apagar incêndios do que para construir avanço real.
+
+Nesse estado, a vida passa a ser conduzida por urgências, demandas externas e cansaço acumulado.
+Decisões deixam de ser estratégicas e passam a ser defensivas.
+
+Normalmente, esse padrão aparece quando autogestão, clareza e regulação cognitiva estão fragilizadas ao mesmo tempo, gerando:
+
+baixa previsibilidade
+
+dificuldade de priorização
+
+execução inconsistente
+
+desgaste emocional elevado
+
+Aqui, não é hora de fazer mais.
+É hora de estancar perda de energia, reorganizar o essencial e recuperar capacidade mínima de condução.
+
+O objetivo inicial na Zona de Sobrevivência é simples e vital:
+parar o colapso, restaurar estabilidade básica e criar espaço interno para decisões melhores.
+
+Sem isso, qualquer tentativa de evolução vira mais peso — e não solução.
+
+📌 Próximo passo lógico
+Laudo Completo + Plano de Ação
+Este diagnóstico apresenta tendências gerais da sua governança pessoal.
+O Laudo Completo aprofunda essa leitura e transforma o retrato em direção prática, mostrando:
+• o que sustenta seu padrão atual
+• onde estão os principais pontos de atenção
+• quais decisões e ajustes geram maior impacto agora
+Você recebe uma leitura clara das 9 dimensões, com:
+• interpretação objetiva da sua zona de governança
+• priorização estratégica (o que atacar primeiro)
+• plano de ação prático:
+o 7 dias para organização e foco
+o 30 dias para consolidação e consistência
+O objetivo não é fazer mais.
+É agir com critério, clareza e execução sustentada, no nível que você está hoje.
+________________________________________
+🔶 QUERO MEU LAUDO COMPLETO + PLANO DE AÇÃO →
+Entrega imediata por e-mail • leitura direta • confidencial
+________________________________________
+Precisa de ajuda ou tem dúvidas?
+Fale com nossa equipe.
+Se quiser refazer o diagnóstico com mais calma:
+Refazer diagnóstico
+"""
 
 # ---------------------------------------
 # HEADER
@@ -285,10 +475,12 @@ st.title("PROTOCOLO LIDERUM")
 # ETAPA 0: INTRO
 # ---------------------------------------
 if st.session_state.etapa == "intro":
+    # Layout mais limpo, CTA mais alto, texto reorganizado + CTA replicado no final
     col_c = st.columns([1, 2.2, 1])[1]
     with col_c:
         st.markdown("<div class='card'>", unsafe_allow_html=True)
 
+        # BLOCO 1 — Headline
         st.markdown("## PROTOCOLO LIDERUM")
         st.markdown("### Diagnóstico de Governança Pessoal")
         st.markdown("""
@@ -298,6 +490,7 @@ e onde ela está quebrando sua constância, foco e execução.
 
         st.markdown("<div style='height:14px;'></div>", unsafe_allow_html=True)
 
+        # BLOCO 4 — CTA principal (alto)
         if st.button("Iniciar diagnóstico gratuito"):
             if not st.session_state.submission_id:
                 st.session_state.submission_id = str(uuid.uuid4())
@@ -311,6 +504,7 @@ e onde ela está quebrando sua constância, foco e execução.
         st.markdown("<hr style='border: none; border-top: 1px solid rgba(212,175,55,0.18);'/>", unsafe_allow_html=True)
         st.markdown("<div style='height:10px;'></div>", unsafe_allow_html=True)
 
+        # BLOCO 2 — Reenquadramento rápido
         st.markdown("### Antes de começar")
         st.markdown("""
 Este diagnóstico não é um teste psicológico, nem um julgamento sobre quem você é.  
@@ -321,6 +515,7 @@ Ele foi criado para ajudar você a observar com mais clareza como está hoje a s
 
         st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
 
+        # BLOCO 3 — Por que isso importa
         st.markdown("### Por que isso importa")
         st.markdown("""
 Muitas pessoas são competentes, estudam, se esforçam —  
@@ -331,12 +526,14 @@ Este diagnóstico existe para revelar exatamente isso.
 
         st.markdown("<div style='height:10px;'></div>", unsafe_allow_html=True)
 
+        # BLOCO 6 — Privacidade (encurtado)
         st.markdown("### Privacidade e sigilo")
         st.markdown("""
 Suas respostas são confidenciais e usadas exclusivamente para gerar seu diagnóstico e direcionamento personalizado.  
 Nenhuma informação será compartilhada.
         """)
 
+        # CTA repetido no final (mesma ação, key diferente para não conflitar)
         st.markdown("<div style='height:14px;'></div>", unsafe_allow_html=True)
         st.markdown("<hr style='border: none; border-top: 1px solid rgba(212,175,55,0.18);'/>", unsafe_allow_html=True)
         st.markdown("<div style='height:14px;'></div>", unsafe_allow_html=True)
@@ -356,6 +553,7 @@ Nenhuma informação será compartilhada.
 # ETAPA 1: QUESTÕES
 # ---------------------------------------
 elif st.session_state.etapa == "questoes":
+    # BLOCO 5 — Como responder (agora na página 2)
     st.markdown("<div class='card'>", unsafe_allow_html=True)
     st.markdown("### Como responder")
     st.markdown("""
@@ -485,12 +683,16 @@ elif st.session_state.etapa == "captura":
 # ETAPA 3: LAUDO
 # ---------------------------------------
 elif st.session_state.etapa == "resultado":
+    # Garante submission_id para o link de checkout
     if not st.session_state.submission_id:
         st.session_state.submission_id = str(uuid.uuid4())
 
     checkout_url = _build_eduzz_checkout_url(st.session_state.submission_id)
 
-    st.markdown(f"### Análise Individual: <span class='highlight'>{st.session_state.nome_usuario.upper()}</span>", unsafe_allow_html=True)
+    st.markdown(
+        f"### Análise Individual: <span class='highlight'>{st.session_state.nome_usuario.upper()}</span>",
+        unsafe_allow_html=True
+    )
 
     c1, c2 = st.columns(2)
     with c1:
@@ -502,7 +704,6 @@ elif st.session_state.etapa == "resultado":
 
     col_l, col_r = st.columns([1.2, 0.8])
 
-    # Radar reduzido (~80%)
     with col_l:
         categorias_radar = [d[0].split(" (")[0] for d in dimensoes]
         fig = go.Figure()
@@ -510,127 +711,137 @@ elif st.session_state.etapa == "resultado":
             r=st.session_state.scores,
             theta=categorias_radar,
             fill="toself",
-            fillcolor="rgba(212, 175, 55, 0.22)",
-            line=dict(color="#D4AF37", width=3)
+            fillcolor="rgba(212, 175, 55, 0.35)",
+            line=dict(color="#D4AF37", width=4)
         ))
         fig.update_layout(
             polar=dict(
                 bgcolor="rgba(0,12,26,1)",
-                radialaxis=dict(visible=True, range=[0, 25], color="#888", gridcolor="rgba(212,175,55,0.08)")
+                radialaxis=dict(visible=True, range=[0, 25], color="#888", gridcolor="rgba(212,175,55,0.1)")
             ),
             showlegend=False,
             paper_bgcolor="rgba(0,0,0,0)",
-            height=480,
-            margin=dict(l=60, r=60, t=10, b=10),
-            font=dict(color="white", size=15)
+            height=600,
+            margin=dict(l=80, r=80, t=20, b=20),
+            font=dict(color="white", size=16)
         )
         st.plotly_chart(fig, use_container_width=True)
 
     with col_r:
+        # Resumo visível (curto) + Expander com TEXTO COMPLETO (idêntico ao documento)
         st.markdown("<div class='laudo-container'>", unsafe_allow_html=True)
         st.markdown("### 🔍 Direcionamento Estratégico")
 
         nome = st.session_state.nome_usuario
         zona = st.session_state.zona
+        total = int(st.session_state.total)
 
         if zona == "ELITE":
             st.markdown(f"""
-<span class='highlight'>{nome}</span>, seus resultados indicam uma **Zona de Elite**.  
-Seu risco aqui não é falta de capacidade — é **cegueira por eficiência** e queda de base por excesso de confiança.
-
-O foco agora é **blindar constância** e proteger o essencial: clareza, rotina e autorresponsabilidade.  
-Quem está no topo não pode relaxar no fundamento.
-            """, unsafe_allow_html=True)
-
+<span class='highlight'>{nome.upper()}</span>, você está na zona de <span class='highlight'>Elite</span>.
+""", unsafe_allow_html=True)
         elif zona == "OSCILAÇÃO":
             st.markdown(f"""
-<span class='highlight'>{nome}</span>, você está na zona de **Oscilação**.  
-Você alterna entre períodos de alta entrega e momentos de queda.
-
-Normalmente isso acontece por instabilidade em **autogestão + regulação cognitiva**, e impacto direto no ritmo operacional.  
-O objetivo aqui é **estabilizar execução** e reduzir dependência de emoção para agir.
-            """, unsafe_allow_html=True)
-
+<span class='highlight'>{nome.upper()}</span>, você está na zona de <span class='highlight'>Oscilação</span>.
+""", unsafe_allow_html=True)
         else:
             st.markdown(f"""
-<span class='highlight'>{nome}</span>, você está em **Modo de Sobrevivência**.  
-Isso costuma aparecer quando a governança pessoal colapsa: energia, agenda e disciplina entram em modo reativo.
-
-Aqui a intervenção precisa ser **simples e vital**: não é fazer mais — é fazer o certo, com método e priorização.
-            """, unsafe_allow_html=True)
+<span class='highlight'>{nome.upper()}</span>, você está na zona de <span class='highlight'>Sobrevivência</span>.
+""", unsafe_allow_html=True)
 
         st.markdown("</div>", unsafe_allow_html=True)
 
+        with st.expander("📄 Clique aqui para expandir e ler o seu Laudo"):
+            st.markdown(_texto_laudo_expandido(nome=nome, total=total, zona=zona))
+
+        # Card de valor (sem “IA”)
         st.markdown("<div class='card' style='margin-top:14px;'>", unsafe_allow_html=True)
-        st.markdown("### O que você recebe no Laudo Completo (IA)")
+        st.markdown("### O que você recebe no Laudo Completo + Plano de Ação")
         st.markdown("""
-- Leitura aprofundada das 9 dimensões (forças, riscos e travas)  
-- Interpretação objetiva da sua zona (o que está causando isso)  
-- Plano de ação prático (7 dias + 30 dias) com foco em execução  
-- Priorização: **o que atacar primeiro** para subir de nível  
+Este diagnóstico apresenta tendências gerais da sua governança pessoal.  
+O Laudo Completo aprofunda essa leitura e transforma o retrato em direção prática, mostrando:  
+• o que sustenta seu padrão atual  
+• onde estão os principais pontos de atenção  
+• quais decisões e ajustes geram maior impacto agora  
+
+Você recebe uma leitura clara das 9 dimensões, com:  
+• interpretação objetiva da sua zona de governança  
+• priorização estratégica (o que atacar primeiro)  
+• plano de ação prático:  
+o 7 dias para organização e foco  
+o 30 dias para consolidação e consistência  
+
+O objetivo não é fazer mais.  
+É agir com critério, clareza e execução sustentada, no nível que você está hoje.
         """)
         st.markdown("</div>", unsafe_allow_html=True)
 
     st.write("---")
 
-    # Próximo passo centralizado
-    st.markdown("<h3 style='text-align: center;'>Próximo Passo</h3>", unsafe_allow_html=True)
+    # Próximo Passo (texto alinhado ao seu documento)
+    st.markdown("<h3 style='text-align: center;'>Próximo passo lógico</h3>", unsafe_allow_html=True)
+
     st.markdown(
-        "<p style='text-align:center; margin-top:-6px;'>"
-        "Se você quiser profundidade e um plano objetivo, o Laudo Completo vai direto ao ponto — com priorização e execução."
+        "<p style='text-align:center;'>"
+        "Laudo Completo + Plano de Ação<br>"
+        "Este diagnóstico apresenta tendências gerais da sua governança pessoal. "
+        "O Laudo Completo aprofunda essa leitura e transforma o retrato em direção prática."
         "</p>",
         unsafe_allow_html=True
     )
 
-    # CTA maior e centralizado
+    # CTA Pagamento (Eduzz + submission_id em utm_content) — texto atualizado (sem “IA”)
     st.markdown(f"""
-        <div style='text-align: center; margin: 18px 0 10px 0;'>
+        <div style='text-align: center; margin-bottom: 10px;'>
             <a href='{checkout_url}' target='_blank' style='text-decoration: none;'>
                 <div style='background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%);
-                            color: #001226; padding: 20px 44px; font-weight: 900; border-radius: 12px;
-                            display: inline-block; width: 100%; max-width: 760px; font-size: 21px;'>
+                            color: #001226; padding: 20px 44px; font-weight: 900; border-radius: 10px;
+                            display: inline-block; width: 100%; max-width: 760px; font-size: 22px;'>
                     QUERO MEU LAUDO COMPLETO + PLANO DE AÇÃO →
                 </div>
             </a>
-            <p class='small' style='margin-top:12px; text-align:center;'>
-                Entrega imediata por e-mail • leitura direta • confidencial
-            </p>
         </div>
     """, unsafe_allow_html=True)
 
-    # Linha inferior: Refazer (esquerda, menor) | WhatsApp (direita)
-    left, right = st.columns([1, 1])
+    st.markdown(
+        "<p class='small' style='text-align:center; margin-top:0;'>"
+        "Entrega imediata por e-mail • leitura direta • confidencial"
+        "</p>",
+        unsafe_allow_html=True
+    )
 
+    # Linha final: botões laterais (mantém seu layout atual; não altera tracking)
+    # CTA WhatsApp (direita)
+    wa_url = "https://wa.me/5581982602018?text=Olá!%20Acabei%20de%20fazer%20meu%20Diagnóstico%20LIDERUM%20e%20quero%20conhecer%20as%20soluções."
+
+    left, right = st.columns([1, 1])
     with left:
-        st.markdown("<div class='small-btn'>", unsafe_allow_html=True)
-        c_reset = st.columns([0.5, 0.5])[0]  # ~50% de largura
-        with c_reset:
-            if st.button("Refazer diagnóstico", key="refazer_diag"):
-                for i in range(45):
-                    if f"q_{i}" in st.session_state:
-                        st.session_state[f"q_{i}"] = None
-                st.session_state.total = 0
-                st.session_state.scores = [0] * 9
-                st.session_state.zona = ""
-                st.session_state.nome_usuario = ""
-                st.session_state.answers_json = [None] * 45
-                st.session_state.etapa = "intro"
-                st.session_state.submission_id = ""
-                st.session_state.sent_events = set()
-                st.rerun()
-        st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown("<p class='small'>Se quiser refazer o diagnóstico com mais calma:</p>", unsafe_allow_html=True)
+        # botão streamlit (se você já ajustou 50%/posição via layout, mantenha do seu jeito)
+        if st.button("Refazer diagnóstico"):
+            for i in range(45):
+                if f"q_{i}" in st.session_state:
+                    st.session_state[f"q_{i}"] = None
+            st.session_state.total = 0
+            st.session_state.scores = [0] * 9
+            st.session_state.zona = ""
+            st.session_state.nome_usuario = ""
+            st.session_state.answers_json = [None] * 45
+            st.session_state.etapa = "intro"
+            st.session_state.submission_id = ""
+            st.session_state.sent_events = set()
+            st.rerun()
 
     with right:
-        wa_url = "https://wa.me/5581982602018?text=Olá!%20Acabei%20de%20fazer%20meu%20Diagnóstico%20LIDERUM%20e%20quero%20conhecer%20as%20soluções."
+        st.markdown("<p class='small' style='text-align:right;'>Precisa de ajuda ou tem dúvidas?</p>", unsafe_allow_html=True)
         st.markdown(f"""
-            <div style='text-align: right;'>
+            <div style='text-align: right; margin-bottom: 10px;'>
                 <a href='{wa_url}' target='_blank' style='text-decoration: none;'>
                     <div style='background: rgba(212, 175, 55, 0.10); color: #D4AF37;
-                                border: 1px solid #D4AF37; padding: 10px 16px; font-weight: 900;
-                                border-radius: 8px; display: inline-block; font-size: 15px;'>
-                        Fale com nossa equipe
+                                border: 1px solid #D4AF37; padding: 12px 22px; font-weight: 900;
+                                border-radius: 8px; display: inline-block;'>
+                        FALE COM NOSSA EQUIPE
                     </div>
                 </a>
             </div>
         """, unsafe_allow_html=True)
-
