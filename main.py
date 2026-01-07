@@ -737,6 +737,66 @@ elif st.session_state.etapa == "resultado":
       }
     </style>
     """, unsafe_allow_html=True)
+      # Garante submission_id e gera checkout_url (somente ETAPA 3)
+    if not st.session_state.submission_id:
+        st.session_state.submission_id = str(uuid.uuid4())
+
+    checkout_url = _build_eduzz_checkout_url(st.session_state.submission_id)
+
+  # CTA CHECKOUT — LAUDO COMPLETO
+# -------------------------------
+st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
+st.markdown(
+    "<p style='text-align:center; font-size:16px; opacity:0.85; margin-bottom:10px;'>"
+    "Se você quer clareza prática sobre onde intervir primeiro — este é o próximo passo."
+    "</p>",
+    unsafe_allow_html=True
+)
+
+st.markdown(
+    f"""
+    <div style='text-align: center; margin: 22px 0 6px 0;'>
+        <a href='{checkout_url}' target='_blank' style='text-decoration: none;'>
+            <div style='
+                background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%);
+                color: #001226;
+                padding: 22px 44px;
+                font-weight: 900;
+                border-radius: 10px;
+                display: inline-block;
+                width: 100%;
+                max-width: 760px;
+                font-size: 22px;
+            '>
+                QUERO MEU LAUDO COMPLETO + PLANO DE AÇÃO →
+            </div>
+        </a>
+    </div>
+
+    <div style='text-align:center; margin-bottom: 24px;'>
+        <span class='small'>Entrega imediata por e-mail • leitura direta • confidencial</span>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+
+
+# Rodapé: WhatsApp
+wa_url = "https://wa.me/5581986245870?text=Olá!%20Acabei%20de%20fazer%20meu%20Diagnóstico%20LIDERUM%20e%20quero%20conhecer%20as%20soluções."
+
+left, right = st.columns(2)
+
+with right:
+    st.markdown(
+        f"""
+        <a href="{wa_url}" target="_blank" style="text-decoration:none;">
+            <div class="btn-outline-brasil">Fale com nossa equipe</div>
+        </a>
+        """,
+        unsafe_allow_html=True
+    )
+
 
     # Garante submission_id para o link de checkout
     if not st.session_state.submission_id:
@@ -955,59 +1015,6 @@ if not st.session_state.submission_id:
 checkout_url = _build_eduzz_checkout_url(st.session_state.submission_id)
 
 # -------------------------------
-# CTA CHECKOUT — LAUDO COMPLETO
-# -------------------------------
-st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
-st.markdown(
-    "<p style='text-align:center; font-size:16px; opacity:0.85; margin-bottom:10px;'>"
-    "Se você quer clareza prática sobre onde intervir primeiro — este é o próximo passo."
-    "</p>",
-    unsafe_allow_html=True
-)
-
-st.markdown(
-    f"""
-    <div style='text-align: center; margin: 22px 0 6px 0;'>
-        <a href='{checkout_url}' target='_blank' style='text-decoration: none;'>
-            <div style='
-                background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%);
-                color: #001226;
-                padding: 22px 44px;
-                font-weight: 900;
-                border-radius: 10px;
-                display: inline-block;
-                width: 100%;
-                max-width: 760px;
-                font-size: 22px;
-            '>
-                QUERO MEU LAUDO COMPLETO + PLANO DE AÇÃO →
-            </div>
-        </a>
-    </div>
-
-    <div style='text-align:center; margin-bottom: 24px;'>
-        <span class='small'>Entrega imediata por e-mail • leitura direta • confidencial</span>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-
-
-# Rodapé: WhatsApp
-wa_url = "https://wa.me/5581986245870?text=Olá!%20Acabei%20de%20fazer%20meu%20Diagnóstico%20LIDERUM%20e%20quero%20conhecer%20as%20soluções."
-
-left, right = st.columns(2)
-
-with right:
-    st.markdown(
-        f"""
-        <a href="{wa_url}" target="_blank" style="text-decoration:none;">
-            <div class="btn-outline-brasil">Fale com nossa equipe</div>
-        </a>
-        """,
-        unsafe_allow_html=True
-    )
 
    
 
