@@ -967,7 +967,7 @@ st.markdown(
 )
 
 
-        # CTA Checkout (texto atualizado e sem “IA”)
+     # CTA Checkout (texto atualizado e sem “IA”)
     st.markdown(
         f"""
         <div style='text-align: center; margin: 18px 0 6px 0;'>
@@ -986,6 +986,7 @@ st.markdown(
         """,
         unsafe_allow_html=True,
     )
+
 
 
     # Rodapé: dois botões (mesmo layout), WhatsApp atualizado
