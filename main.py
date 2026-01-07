@@ -948,12 +948,13 @@ E receba também a leitura clara das 9 dimensões com:
 O objetivo não é fazer mais.
 É agir com critério, clareza e execução sustentada, no nível que você está hoje.
         """)
-        st.markdown("</div>", unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)
 
- st.markdown(
+st.markdown(
     "<hr style='border:none; border-top:0.5px solid #1DB954; opacity:0.6;'>",
     unsafe_allow_html=True
 )
+
 
 
 
