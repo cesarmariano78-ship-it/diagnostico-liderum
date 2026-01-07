@@ -47,13 +47,14 @@ label, p, span, div { color: #FFFFFF !important; font-size: 18px !important; }
   font-size: 18px !important;
 }
 
-/* Cards */
+/* Cards – moldura fina verde Brasil */
 .card {
-  background-color: rgba(255,255,255,0.03);
-  border: 1px solid rgba(212,175,55,0.25);
+  background-color: rgba(255,255,255,0.02);
+  border: 0.5px solid #1DB954; /* verde Brasil */
   padding: 22px;2px
-  border-radius: 14px;
+  border-radius: 12px;
 }
+
 
 .small { font-size: 15px !important; color: rgba(255,255,255,0.75) !important; }
 .highlight { color: #D4AF37 !important; font-weight: bold; }
@@ -526,7 +527,8 @@ Nenhuma informação será compartilhada.
 
         # CTA repetido no final (mesma ação, key diferente para não conflitar)
         st.markdown("<div style='height:14px;'></div>", unsafe_allow_html=True)
-        st.markdown("<hr style='border: none; border-top: 1px solid rgba(212,175,55,0.18);'/>", unsafe_allow_html=True)
+        st.markdown(<hr style="border: none; border-top: 0.5px solid #1DB954; opacity: 0.6;">
+, unsafe_allow_html=True)
         st.markdown("<div style='height:14px;'></div>", unsafe_allow_html=True)
 
         if st.button("Iniciar diagnóstico gratuito", key="cta_intro_bottom"):
@@ -941,7 +943,11 @@ O objetivo não é fazer mais.
         """)
         st.markdown("</div>", unsafe_allow_html=True)
 
-    st.write("---")
+ st.markdown(
+    "<hr style='border:none; border-top:0.5px solid #1DB954; opacity:0.6;'>",
+    unsafe_allow_html=True
+)
+
 
     # Centraliza texto e CTA principal
     st.markdown("<h3 style='text-align: center;'>Próximo Passo</h3>", unsafe_allow_html=True)
@@ -971,21 +977,7 @@ O objetivo não é fazer mais.
 
     left, right = st.columns(2)
 
-    with left:
-        # Refazer (sem destaque; mesmo estilo outline)
-        if st.button("Refazer diagnóstico", key="btn_refazer_outline"):
-            for i in range(45):
-                if f"q_{i}" in st.session_state:
-                    st.session_state[f"q_{i}"] = None
-            st.session_state.total = 0
-            st.session_state.scores = [0] * 9
-            st.session_state.zona = ""
-            st.session_state.nome_usuario = ""
-            st.session_state.answers_json = [None] * 45
-            st.session_state.etapa = "intro"
-            st.session_state.submission_id = ""
-            st.session_state.sent_events = set()
-            st.rerun()
+   
 
     with right:
         # Fale com nossa equipe (HTML outline)
