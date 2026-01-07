@@ -283,58 +283,82 @@ st.title("PROTOCOLO LIDERUM")
 # ETAPA 0: INTRO
 # ---------------------------------------
 if st.session_state.etapa == "intro":
-    col1, col2 = st.columns([1.35, 0.65])
-
-    with col1:
+    # Layout mais limpo, CTA mais alto, texto reorganizado conforme novo briefing
+    col_c = st.columns([1, 2.2, 1])[1]
+    with col_c:
         st.markdown("<div class='card'>", unsafe_allow_html=True)
-        st.markdown("### Bem-vindo ao Protocolo LIDERUM")
+
+        # BLOCO 1 — Headline
+        st.markdown("## PROTOCOLO LIDERUM")
+        st.markdown("### Diagnóstico de Governança Pessoal")
         st.markdown("""
-Este diagnóstico não é um teste, nem um julgamento sobre quem você é.  
-Ele foi criado para ajudar você a observar com mais clareza como está hoje sua forma de conduzir decisões, emoções, comportamento e direção.
-
-Não existem respostas certas ou erradas. O valor deste processo está na honestidade das suas respostas, não na pontuação final.  
-**Quanto mais real você for, mais preciso será o seu resultado.**
+Descubra, em poucos minutos, onde sua autoliderança está sólida —  
+e onde ela está quebrando sua constância, foco e execução.
         """)
-        st.markdown("</div>", unsafe_allow_html=True)
 
-        st.markdown("<div class='card' style='margin-top:16px;'>", unsafe_allow_html=True)
-        st.markdown("### Como responder")
+        st.markdown("<div style='height:14px;'></div>", unsafe_allow_html=True)
+
+        # BLOCO 4 — CTA principal (alto)
+        if st.button("Iniciar diagnóstico gratuito"):
+            if not st.session_state.submission_id:
+                st.session_state.submission_id = str(uuid.uuid4())
+            _send_event("diagnostico_iniciado", etapa="intro")
+            st.session_state.etapa = "questoes"
+            st.rerun()
+
+        st.markdown("<p class='small'>Leva de 6 a 8 minutos.</p>", unsafe_allow_html=True)
+
+        st.markdown("<div style='height:10px;'></div>", unsafe_allow_html=True)
+        st.markdown("<hr style='border: none; border-top: 1px solid rgba(212,175,55,0.18);'/>", unsafe_allow_html=True)
+        st.markdown("<div style='height:10px;'></div>", unsafe_allow_html=True)
+
+        # BLOCO 2 — Reenquadramento rápido
+        st.markdown("### Antes de começar")
         st.markdown("""
-- Use a escala de 1 a 5 considerando **como você age na maior parte do tempo**, e não em dias excepcionais.  
-- Evite responder pelo que você gostaria de ser. Responda pelo que você realmente faz.  
-- Se ficar em dúvida entre duas notas, **escolha a menor**.  
+Este diagnóstico não é um teste psicológico, nem um julgamento sobre quem você é.  
+Ele foi criado para ajudar você a observar com mais clareza como está hoje a sua forma de conduzir decisões, emoções, comportamento e direção.  
 
-Este diagnóstico mede **consistência**, não intenção.
+**Aqui não se mede intenção. Mede-se consistência.**
         """)
-        st.markdown("</div>", unsafe_allow_html=True)
 
-        st.markdown("<div class='card' style='margin-top:16px;'>", unsafe_allow_html=True)
+        st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
+
+        # BLOCO 3 — Por que isso importa
+        st.markdown("### Por que isso importa")
+        st.markdown("""
+Muitas pessoas são competentes, estudam, se esforçam —  
+mas os resultados oscilam porque a forma de se governar é instável.  
+
+Este diagnóstico existe para revelar exatamente isso.
+        """)
+
+        st.markdown("<div style='height:10px;'></div>", unsafe_allow_html=True)
+
+        # BLOCO 6 — Privacidade (encurtado)
         st.markdown("### Privacidade e sigilo")
         st.markdown("""
-Suas respostas são confidenciais e utilizadas exclusivamente para gerar seu diagnóstico e direcionamento personalizado.  
-Nenhuma informação será compartilhada ou utilizada fora desse contexto.
+Suas respostas são confidenciais e usadas exclusivamente para gerar seu diagnóstico e direcionamento personalizado.  
+Nenhuma informação será compartilhada.
         """)
-        st.markdown("</div>", unsafe_allow_html=True)
 
-    with col2:
-        st.markdown("<div class='card'>", unsafe_allow_html=True)
-        st.markdown("### As 9 dimensões")
-        for nome, desc, _ in dimensoes:
-            st.markdown(f"**{nome}:** <span class='small'>{desc}</span>", unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
-
-    st.markdown("")
-    if st.button("INICIAR MEU DIAGNÓSTICO"):
-        if not st.session_state.submission_id:
-            st.session_state.submission_id = str(uuid.uuid4())
-        _send_event("diagnostico_iniciado", etapa="intro")
-        st.session_state.etapa = "questoes"
-        st.rerun()
 
 # ---------------------------------------
 # ETAPA 1: QUESTÕES
 # ---------------------------------------
 elif st.session_state.etapa == "questoes":
+    # BLOCO 5 — Como responder (agora na página 2)
+    st.markdown("<div class='card'>", unsafe_allow_html=True)
+    st.markdown("### Como responder")
+    st.markdown("""
+- Use a escala de 1 a 5 considerando **como você age na maior parte do tempo**.  
+- Evite responder pelo que gostaria de ser. Responda pelo que você realmente faz.  
+- Se ficar em dúvida entre duas notas, **escolha a menor**.  
+- Este diagnóstico mede **consistência**, não intenção.
+    """)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("<div style='height:10px;'></div>", unsafe_allow_html=True)
     st.markdown("<p class='small'>Instrução: clique em cada dimensão para abrir as perguntas. Responda todas as 45 para liberar o diagnóstico.</p>", unsafe_allow_html=True)
 
     top_l, top_r = st.columns([0.88, 0.12])
