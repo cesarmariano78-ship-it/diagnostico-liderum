@@ -967,21 +967,26 @@ st.markdown(
 )
 
 
-    # CTA Checkout (texto atualizado e sem “IA”)
- st.markdown(f"""
+        # CTA Checkout (texto atualizado e sem “IA”)
+    st.markdown(
+        f"""
         <div style='text-align: center; margin: 18px 0 6px 0;'>
             <a href='{checkout_url}' target='_blank' style='text-decoration: none;'>
                 <div style='background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%);
-                            color: #001226; padding: 22px 44px; font-weight: 900; border-radius: 12px;
+                            color: #001226; padding: 22px 44px; font-weight: 900; border-radius: 10px;
                             display: inline-block; width: 100%; max-width: 760px; font-size: 22px;'>
-                     QUERO MEU LAUDO COMPLETO + PLANO DE AÇÃO →
+                    QUERO MEU LAUDO COMPLETO + PLANO DE AÇÃO →
                 </div>
             </a>
         </div>
+
         <div style='text-align:center; margin-bottom: 22px;'>
             <span class='small'>Entrega imediata por e-mail • leitura direta • confidencial</span>
         </div>
-    """, unsafe_allow_html=True)
+        """,
+        unsafe_allow_html=True,
+    )
+
 
     # Rodapé: dois botões (mesmo layout), WhatsApp atualizado
     wa_url = "https://wa.me/5581986245870?text=Olá!%20Acabei%20de%20fazer%20meu%20Diagnóstico%20LIDERUM%20e%20quero%20conhecer%20as%20soluções."
