@@ -968,7 +968,7 @@ st.markdown(
 
 
     # CTA Checkout (texto atualizado e sem “IA”)
-    st.markdown(f"""
+ st.markdown(f"""
         <div style='text-align: center; margin: 18px 0 6px 0;'>
             <a href='{checkout_url}' target='_blank' style='text-decoration: none;'>
                 <div style='background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%);
