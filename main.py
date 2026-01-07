@@ -927,13 +927,14 @@ Sem isso, qualquer tentativa de evolução vira mais peso — e não solução.
   </div>
 </details>
         """, unsafe_allow_html=True)
-      # =========================
-    # BLOCO QUE ESTAVA "SUMINDO"
-    # (Próximo passo lógico)
-    # =========================
-    st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
+     
 
-    st.markdown("<div class='card' style='margin-top:14px;'>", unsafe_allow_html=True)
+
+        st.markdown("</div>", unsafe_allow_html=True)  # fecha .laudo-container
+          st.markdown("st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
+", unsafe_allow_html=True)
+
+    st.markdown("<div class='card' style='margin-top:32px;'>", unsafe_allow_html=True)
     st.markdown("""
 ### Próximo passo lógico
 Acesse o **Laudo Completo + Plano de Ação** e receba também a leitura clara das 9 dimensões com:
@@ -950,8 +951,6 @@ O objetivo não é fazer mais.
     """)
     st.markdown("</div>", unsafe_allow_html=True)
 
-
-        st.markdown("</div>", unsafe_allow_html=True)  # fecha .laudo-container
 
    
 
