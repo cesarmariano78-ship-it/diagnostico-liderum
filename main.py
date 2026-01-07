@@ -948,6 +948,37 @@ O objetivo não é fazer mais.
 É agir com critério, clareza e execução sustentada, no nível que você está hoje.
         """)
 st.markdown("</div>", unsafe_allow_html=True)
+# -------------------------------
+# CTA CHECKOUT — LAUDO COMPLETO
+# -------------------------------
+st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
+
+st.markdown(
+    f"""
+    <div style='text-align: center; margin: 22px 0 6px 0;'>
+        <a href='{checkout_url}' target='_blank' style='text-decoration: none;'>
+            <div style='
+                background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%);
+                color: #001226;
+                padding: 22px 44px;
+                font-weight: 900;
+                border-radius: 10px;
+                display: inline-block;
+                width: 100%;
+                max-width: 760px;
+                font-size: 22px;
+            '>
+                QUERO MEU LAUDO COMPLETO + PLANO DE AÇÃO →
+            </div>
+        </a>
+    </div>
+
+    <div style='text-align:center; margin-bottom: 24px;'>
+        <span class='small'>Entrega imediata por e-mail • leitura direta • confidencial</span>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
 
 
