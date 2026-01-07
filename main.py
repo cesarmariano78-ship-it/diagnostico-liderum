@@ -319,29 +319,7 @@ sensação de esforço alto com retorno irregular
 Seu gráfico mostra tendências.
 O que ainda falta é clareza prática sobre onde intervir primeiro.
 
-📌 Próximo passo lógico
-Laudo Completo + Plano de Ação
-Este diagnóstico apresenta tendências gerais da sua governança pessoal.
-O Laudo Completo aprofunda essa leitura e transforma o retrato em direção prática, mostrando:
-• o que sustenta seu padrão atual
-• onde estão os principais pontos de atenção
-• quais decisões e ajustes geram maior impacto agora
-Você recebe uma leitura clara das 9 dimensões, com:
-• interpretação objetiva da sua zona de governança
-• priorização estratégica (o que atacar primeiro)
-• plano de ação prático:
-o 7 dias para organização e foco
-o 30 dias para consolidação e consistência
-O objetivo não é fazer mais.
-É agir com critério, clareza e execução sustentada, no nível que você está hoje.
-________________________________________
-🔶 QUERO MEU LAUDO COMPLETO + PLANO DE AÇÃO →
-Entrega imediata por e-mail • leitura direta • confidencial
-________________________________________
-Precisa de ajuda ou tem dúvidas?
-Fale com nossa equipe.
-Se quiser refazer o diagnóstico com mais calma:
-Refazer diagnóstico
+
 """
     if zona == "ELITE":
         return f"""PROTOCOLO LIDERUM
@@ -379,29 +357,7 @@ porque é justamente o fundamento que sustenta a elite.
 O objetivo agora é claro:
 blindar constância, reduzir desgaste e transformar competência em impacto sustentado.
 
-📌 Próximo passo lógico
-Laudo Completo + Plano de Ação
-Este diagnóstico apresenta tendências gerais da sua governança pessoal.
-O Laudo Completo aprofunda essa leitura e transforma o retrato em direção prática, mostrando:
-• o que sustenta seu padrão atual
-• onde estão os principais pontos de atenção
-• quais decisões e ajustes geram maior impacto agora
-Você recebe uma leitura clara das 9 dimensões, com:
-• interpretação objetiva da sua zona de governança
-• priorização estratégica (o que atacar primeiro)
-• plano de ação prático:
-o 7 dias para organização e foco
-o 30 dias para consolidação e consistência
-O objetivo não é fazer mais.
-É agir com critério, clareza e execução sustentada, no nível que você está hoje.
-________________________________________
-🔶 QUERO MEU LAUDO COMPLETO + PLANO DE AÇÃO →
-Entrega imediata por e-mail • leitura direta • confidencial
-________________________________________
-Precisa de ajuda ou tem dúvidas?
-Fale com nossa equipe.
-Se quiser refazer o diagnóstico com mais calma:
-Refazer diagnóstico
+
 """
     # SOBREVIVÊNCIA
     return f"""PROTOCOLO LIDERUM
@@ -440,29 +396,7 @@ parar o colapso, restaurar estabilidade básica e criar espaço interno para dec
 
 Sem isso, qualquer tentativa de evolução vira mais peso — e não solução.
 
-📌 Próximo passo lógico
-Laudo Completo + Plano de Ação
-Este diagnóstico apresenta tendências gerais da sua governança pessoal.
-O Laudo Completo aprofunda essa leitura e transforma o retrato em direção prática, mostrando:
-• o que sustenta seu padrão atual
-• onde estão os principais pontos de atenção
-• quais decisões e ajustes geram maior impacto agora
-Você recebe uma leitura clara das 9 dimensões, com:
-• interpretação objetiva da sua zona de governança
-• priorização estratégica (o que atacar primeiro)
-• plano de ação prático:
-o 7 dias para organização e foco
-o 30 dias para consolidação e consistência
-O objetivo não é fazer mais.
-É agir com critério, clareza e execução sustentada, no nível que você está hoje.
-________________________________________
-🔶 QUERO MEU LAUDO COMPLETO + PLANO DE AÇÃO →
-Entrega imediata por e-mail • leitura direta • confidencial
-________________________________________
-Precisa de ajuda ou tem dúvidas?
-Fale com nossa equipe.
-Se quiser refazer o diagnóstico com mais calma:
-Refazer diagnóstico
+
 """
 
 # ---------------------------------------
