@@ -540,8 +540,7 @@ Nenhuma informação será compartilhada.
         """)
 
         # CTA repetido no final (mesma ação, key diferente para não conflitar)
-        st.markdown("<div style='height:14px;'></div>", unsafe_allow_html=True)
-        st.markdown(
+    st.markdown("<div style='height:14px;'></div>", unsafe_allow_html=True)
     st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
 
 st.markdown("</div>", unsafe_allow_html=True)
