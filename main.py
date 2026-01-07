@@ -36,7 +36,7 @@ div[data-testid="stMetric"] {
 /* Tipografia global */
 label, p, span, div { color: #FFFFFF !important; font-size: 18px !important; }
 
-/* Botões */
+/* Botões (default) */
 .stButton>button {
   background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%) !important;
   color: #001226 !important;
@@ -45,6 +45,13 @@ label, p, span, div { color: #FFFFFF !important; font-size: 18px !important; }
   padding: 15px;
   border-radius: 8px;
   font-size: 18px !important;
+}
+
+/* Botão pequeno (refazer) */
+.small-btn .stButton>button {
+  padding: 10px 14px !important;
+  font-size: 15px !important;
+  border-radius: 8px !important;
 }
 
 /* Cards */
@@ -83,25 +90,21 @@ label, p, span, div { color: #FFFFFF !important; font-size: 18px !important; }
   line-height: 1.7;
 }
 
-/* Inputs: corrigir texto digitado (estava branco no branco) */
+/* Inputs */
 div[data-testid="stTextInput"] input,
 div[data-testid="stTextInput"] textarea {
   color: #001226 !important;
   background: #FFFFFF !important;
   border-radius: 8px !important;
 }
-
-/* Placeholder */
 div[data-testid="stTextInput"] input::placeholder {
   color: rgba(0,18,38,0.55) !important;
 }
-
-/* Label dos inputs */
 div[data-testid="stTextInput"] label {
   color: #FFFFFF !important;
 }
 
-/* Botão do FORM (submit) - garante contraste */
+/* Botão do FORM (submit) */
 button[kind="primary"] {
   background: rgba(212,175,55,0.18) !important;
   border: 1px solid #D4AF37 !important;
@@ -171,14 +174,14 @@ def _send_event(event_name: str, etapa: str = "", meta: dict | None = None):
         pass
 
 # ---------------------------------------
-# TESTE (preencher 45 respostas em 1 clique - discreto e sem quebrar UX)
+# TESTE
 # ---------------------------------------
 def _preencher_respostas_aleatorias():
     for i in range(45):
         st.session_state[f"q_{i}"] = random.randint(1, 5)
 
 # ---------------------------------------
-# DADOS (9 dimensões + 45 perguntas DEFINIDAS)
+# DADOS
 # ---------------------------------------
 dimensoes = [
     ("CLAREZA", "Capacidade de manter direção, prioridades e foco mesmo diante de pressão, excesso de demandas e ruído externo.", [
@@ -269,7 +272,6 @@ def calcular_zona(total: int) -> str:
     return "SOBREVIVÊNCIA"
 
 def _build_eduzz_checkout_url(submission_id: str) -> str:
-    # Envia o submission_id no utm_content (path confirmado: data.utm.utm_content)
     q = {"utm_content": submission_id or ""}
     return f"{EDUZZ_CHECKOUT_BASE}?{urllib.parse.urlencode(q)}"
 
@@ -283,12 +285,10 @@ st.title("PROTOCOLO LIDERUM")
 # ETAPA 0: INTRO
 # ---------------------------------------
 if st.session_state.etapa == "intro":
-    # Layout mais limpo, CTA mais alto, texto reorganizado + CTA replicado no final
     col_c = st.columns([1, 2.2, 1])[1]
     with col_c:
         st.markdown("<div class='card'>", unsafe_allow_html=True)
 
-        # BLOCO 1 — Headline
         st.markdown("## PROTOCOLO LIDERUM")
         st.markdown("### Diagnóstico de Governança Pessoal")
         st.markdown("""
@@ -298,7 +298,6 @@ e onde ela está quebrando sua constância, foco e execução.
 
         st.markdown("<div style='height:14px;'></div>", unsafe_allow_html=True)
 
-        # BLOCO 4 — CTA principal (alto)
         if st.button("Iniciar diagnóstico gratuito"):
             if not st.session_state.submission_id:
                 st.session_state.submission_id = str(uuid.uuid4())
@@ -312,7 +311,6 @@ e onde ela está quebrando sua constância, foco e execução.
         st.markdown("<hr style='border: none; border-top: 1px solid rgba(212,175,55,0.18);'/>", unsafe_allow_html=True)
         st.markdown("<div style='height:10px;'></div>", unsafe_allow_html=True)
 
-        # BLOCO 2 — Reenquadramento rápido
         st.markdown("### Antes de começar")
         st.markdown("""
 Este diagnóstico não é um teste psicológico, nem um julgamento sobre quem você é.  
@@ -323,7 +321,6 @@ Ele foi criado para ajudar você a observar com mais clareza como está hoje a s
 
         st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
 
-        # BLOCO 3 — Por que isso importa
         st.markdown("### Por que isso importa")
         st.markdown("""
 Muitas pessoas são competentes, estudam, se esforçam —  
@@ -334,14 +331,12 @@ Este diagnóstico existe para revelar exatamente isso.
 
         st.markdown("<div style='height:10px;'></div>", unsafe_allow_html=True)
 
-        # BLOCO 6 — Privacidade (encurtado)
         st.markdown("### Privacidade e sigilo")
         st.markdown("""
 Suas respostas são confidenciais e usadas exclusivamente para gerar seu diagnóstico e direcionamento personalizado.  
 Nenhuma informação será compartilhada.
         """)
 
-        # CTA repetido no final (mesma ação, key diferente para não conflitar)
         st.markdown("<div style='height:14px;'></div>", unsafe_allow_html=True)
         st.markdown("<hr style='border: none; border-top: 1px solid rgba(212,175,55,0.18);'/>", unsafe_allow_html=True)
         st.markdown("<div style='height:14px;'></div>", unsafe_allow_html=True)
@@ -361,7 +356,6 @@ Nenhuma informação será compartilhada.
 # ETAPA 1: QUESTÕES
 # ---------------------------------------
 elif st.session_state.etapa == "questoes":
-    # BLOCO 5 — Como responder (agora na página 2)
     st.markdown("<div class='card'>", unsafe_allow_html=True)
     st.markdown("### Como responder")
     st.markdown("""
@@ -491,16 +485,12 @@ elif st.session_state.etapa == "captura":
 # ETAPA 3: LAUDO
 # ---------------------------------------
 elif st.session_state.etapa == "resultado":
-    # Garante submission_id para o link de checkout
     if not st.session_state.submission_id:
         st.session_state.submission_id = str(uuid.uuid4())
 
     checkout_url = _build_eduzz_checkout_url(st.session_state.submission_id)
 
-    st.markdown(
-        f"### Análise Individual: <span class='highlight'>{st.session_state.nome_usuario.upper()}</span>",
-        unsafe_allow_html=True
-    )
+    st.markdown(f"### Análise Individual: <span class='highlight'>{st.session_state.nome_usuario.upper()}</span>", unsafe_allow_html=True)
 
     c1, c2 = st.columns(2)
     with c1:
@@ -512,7 +502,7 @@ elif st.session_state.etapa == "resultado":
 
     col_l, col_r = st.columns([1.2, 0.8])
 
-    # RADAR (80% do tamanho atual)
+    # Radar reduzido (~80%)
     with col_l:
         categorias_radar = [d[0].split(" (")[0] for d in dimensoes]
         fig = go.Figure()
@@ -582,45 +572,38 @@ Aqui a intervenção precisa ser **simples e vital**: não é fazer mais — é 
         st.markdown("</div>", unsafe_allow_html=True)
 
     st.write("---")
-    st.markdown("<h3 style='text-align: center;'>Próximo Passo</h3>", unsafe_allow_html=True)
-    st.write("Se você quiser profundidade e um plano objetivo, o Laudo Completo vai direto ao ponto — com priorização e execução.")
 
-    # CTA Pagamento (texto atualizado)
+    # Próximo passo centralizado
+    st.markdown("<h3 style='text-align: center;'>Próximo Passo</h3>", unsafe_allow_html=True)
+    st.markdown(
+        "<p style='text-align:center; margin-top:-6px;'>"
+        "Se você quiser profundidade e um plano objetivo, o Laudo Completo vai direto ao ponto — com priorização e execução."
+        "</p>",
+        unsafe_allow_html=True
+    )
+
+    # CTA maior e centralizado
     st.markdown(f"""
-        <div style='text-align: center; margin-bottom: 14px;'>
+        <div style='text-align: center; margin: 18px 0 10px 0;'>
             <a href='{checkout_url}' target='_blank' style='text-decoration: none;'>
                 <div style='background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%);
-                            color: #001226; padding: 16px 34px; font-weight: 900; border-radius: 10px;
-                            display: inline-block; width: 100%; max-width: 680px; font-size: 19px;'>
+                            color: #001226; padding: 20px 44px; font-weight: 900; border-radius: 12px;
+                            display: inline-block; width: 100%; max-width: 760px; font-size: 21px;'>
                     QUERO MEU LAUDO COMPLETO + PLANO DE AÇÃO →
                 </div>
             </a>
-            <p class='small' style='margin-top:10px;'>Entrega imediata por e-mail • leitura direta • confidencial</p>
+            <p class='small' style='margin-top:12px; text-align:center;'>
+                Entrega imediata por e-mail • leitura direta • confidencial
+            </p>
         </div>
     """, unsafe_allow_html=True)
 
-    # Botões secundários (rebaixados: menores e sem competir)
-    cols_actions = st.columns([0.42, 0.58])
-    with cols_actions[0]:
-        wa_url = "https://wa.me/5581982602018?text=Olá!%20Acabei%20de%20fazer%20meu%20Diagnóstico%20LIDERUM%20e%20quero%20conhecer%20as%20soluções."
-        st.markdown(f"""
-            <div style='text-align: left; margin-bottom: 6px;'>
-                <a href='{wa_url}' target='_blank' style='text-decoration: none;'>
-                    <div style='background: transparent; color: rgba(212,175,55,0.95);
-                                border: 1px solid rgba(212,175,55,0.85);
-                                padding: 10px 16px; font-weight: 800; border-radius: 8px;
-                                display: inline-block; font-size: 15px;'>
-                        Fale com nossa equipe
-                    </div>
-                </a>
-            </div>
-        """, unsafe_allow_html=True)
+    # Linha inferior: Refazer (esquerda, menor) | WhatsApp (direita)
+    left, right = st.columns([1, 1])
 
-    with cols_actions[1]:
-        st.markdown("<p class='small' style='margin: 4px 0 6px 0;'>Se quiser refazer o diagnóstico com mais calma:</p>", unsafe_allow_html=True)
-
-        # Coluna estreita para o botão não competir com CTA
-        c_reset = st.columns([0.42, 0.58])[0]
+    with left:
+        st.markdown("<div class='small-btn'>", unsafe_allow_html=True)
+        c_reset = st.columns([0.5, 0.5])[0]  # ~50% de largura
         with c_reset:
             if st.button("Refazer diagnóstico", key="refazer_diag"):
                 for i in range(45):
@@ -635,3 +618,18 @@ Aqui a intervenção precisa ser **simples e vital**: não é fazer mais — é 
                 st.session_state.submission_id = ""
                 st.session_state.sent_events = set()
                 st.rerun()
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    with right:
+        wa_url = "https://wa.me/5581982602018?text=Olá!%20Acabei%20de%20fazer%20meu%20Diagnóstico%20LIDERUM%20e%20quero%20conhecer%20as%20soluções."
+        st.markdown(f"""
+            <div style='text-align: right;'>
+                <a href='{wa_url}' target='_blank' style='text-decoration: none;'>
+                    <div style='background: rgba(212, 175, 55, 0.10); color: #D4AF37;
+                                border: 1px solid #D4AF37; padding: 10px 16px; font-weight: 900;
+                                border-radius: 8px; display: inline-block; font-size: 15px;'>
+                        Fale com nossa equipe
+                    </div>
+                </a>
+            </div>
+        """, unsafe_allow_html=True)
