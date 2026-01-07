@@ -948,6 +948,12 @@ O objetivo não é fazer mais.
 É agir com critério, clareza e execução sustentada, no nível que você está hoje.
         """)
 st.markdown("</div>", unsafe_allow_html=True)
+# garante submission_id e gera checkout_url
+if not st.session_state.submission_id:
+    st.session_state.submission_id = str(uuid.uuid4())
+
+checkout_url = _build_eduzz_checkout_url(st.session_state.submission_id)
+
 # -------------------------------
 # CTA CHECKOUT — LAUDO COMPLETO
 # -------------------------------
