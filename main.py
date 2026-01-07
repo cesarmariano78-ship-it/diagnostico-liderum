@@ -543,15 +543,18 @@ Nenhuma informação será compartilhada.
     st.markdown("<div style='height:14px;'></div>", unsafe_allow_html=True)
     st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
 
-st.markdown("</div>", unsafe_allow_html=True)
 
 
-        if st.button("Iniciar diagnóstico gratuito", key="cta_intro_bottom"):
-            if not st.session_state.submission_id:
-                st.session_state.submission_id = str(uuid.uuid4())
-            _send_event("diagnostico_iniciado", etapa="intro")
-            st.session_state.etapa = "questoes"
-            st.rerun()
+col1, col2, col3 = st.columns([1, 2, 1])
+with col2:
+    if st.button("Iniciar diagnóstico gratuito", key="cta_intro_bottom"):
+        if not st.session_state.submission_id:
+            st.session_state.submission_id = str(uuid.uuid4())
+        _send_event("diagnostico_iniciado", etapa="intro")
+        st.session_state.etapa = "questions"
+        st.rerun()
+
+            
 
         st.markdown("<p class='small' style='text-align:center;'>Leva de 6 a 8 minutos.</p>", unsafe_allow_html=True)
 
