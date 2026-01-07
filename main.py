@@ -497,7 +497,10 @@ elif st.session_state.etapa == "resultado":
 
     checkout_url = _build_eduzz_checkout_url(st.session_state.submission_id)
 
-    st.markdown(f"### Análise Individual: <span class='highlight'>{st.session_state.nome_usuario.upper()}</span>", unsafe_allow_html=True)
+    st.markdown(
+        f"### Análise Individual: <span class='highlight'>{st.session_state.nome_usuario.upper()}</span>",
+        unsafe_allow_html=True
+    )
 
     c1, c2 = st.columns(2)
     with c1:
@@ -509,6 +512,7 @@ elif st.session_state.etapa == "resultado":
 
     col_l, col_r = st.columns([1.2, 0.8])
 
+    # RADAR (80% do tamanho atual)
     with col_l:
         categorias_radar = [d[0].split(" (")[0] for d in dimensoes]
         fig = go.Figure()
@@ -516,19 +520,19 @@ elif st.session_state.etapa == "resultado":
             r=st.session_state.scores,
             theta=categorias_radar,
             fill="toself",
-            fillcolor="rgba(212, 175, 55, 0.35)",
-            line=dict(color="#D4AF37", width=4)
+            fillcolor="rgba(212, 175, 55, 0.22)",
+            line=dict(color="#D4AF37", width=3)
         ))
         fig.update_layout(
             polar=dict(
                 bgcolor="rgba(0,12,26,1)",
-                radialaxis=dict(visible=True, range=[0, 25], color="#888", gridcolor="rgba(212,175,55,0.1)")
+                radialaxis=dict(visible=True, range=[0, 25], color="#888", gridcolor="rgba(212,175,55,0.08)")
             ),
             showlegend=False,
             paper_bgcolor="rgba(0,0,0,0)",
-            height=600,
-            margin=dict(l=80, r=80, t=20, b=20),
-            font=dict(color="white", size=16)
+            height=480,
+            margin=dict(l=60, r=60, t=10, b=10),
+            font=dict(color="white", size=15)
         )
         st.plotly_chart(fig, use_container_width=True)
 
@@ -581,44 +585,53 @@ Aqui a intervenção precisa ser **simples e vital**: não é fazer mais — é 
     st.markdown("<h3 style='text-align: center;'>Próximo Passo</h3>", unsafe_allow_html=True)
     st.write("Se você quiser profundidade e um plano objetivo, o Laudo Completo vai direto ao ponto — com priorização e execução.")
 
-    # CTA Pagamento (Eduzz + submission_id em utm_content)
+    # CTA Pagamento (texto atualizado)
     st.markdown(f"""
-        <div style='text-align: center; margin-bottom: 20px;'>
+        <div style='text-align: center; margin-bottom: 14px;'>
             <a href='{checkout_url}' target='_blank' style='text-decoration: none;'>
                 <div style='background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%);
-                            color: #001226; padding: 18px 40px; font-weight: 900; border-radius: 10px;
-                            display: inline-block; width: 100%; max-width: 680px; font-size: 20px;'>
-                    ADQUIRIR LAUDO COMPLETO COM IA →
+                            color: #001226; padding: 16px 34px; font-weight: 900; border-radius: 10px;
+                            display: inline-block; width: 100%; max-width: 680px; font-size: 19px;'>
+                    QUERO MEU LAUDO COMPLETO + PLANO DE AÇÃO →
                 </div>
             </a>
+            <p class='small' style='margin-top:10px;'>Entrega imediata por e-mail • leitura direta • confidencial</p>
         </div>
     """, unsafe_allow_html=True)
 
-    # CTA WhatsApp
-    wa_url = "https://wa.me/5581982602018?text=Olá!%20Acabei%20de%20fazer%20meu%20Diagnóstico%20LIDERUM%20e%20quero%20conhecer%20as%20soluções."
-    st.markdown(f"""
-        <div style='text-align: left; margin-bottom: 10px;'>
-            <a href='{wa_url}' target='_blank' style='text-decoration: none;'>
-                <div style='background: rgba(212, 175, 55, 0.10); color: #D4AF37;
-                            border: 1px solid #D4AF37; padding: 12px 22px; font-weight: 900;
-                            border-radius: 8px; display: inline-block;'>
-                    FALE COM NOSSA EQUIPE
-                </div>
-            </a>
-        </div>
-    """, unsafe_allow_html=True)
+    # Botões secundários (rebaixados: menores e sem competir)
+    cols_actions = st.columns([0.42, 0.58])
+    with cols_actions[0]:
+        wa_url = "https://wa.me/5581982602018?text=Olá!%20Acabei%20de%20fazer%20meu%20Diagnóstico%20LIDERUM%20e%20quero%20conhecer%20as%20soluções."
+        st.markdown(f"""
+            <div style='text-align: left; margin-bottom: 6px;'>
+                <a href='{wa_url}' target='_blank' style='text-decoration: none;'>
+                    <div style='background: transparent; color: rgba(212,175,55,0.95);
+                                border: 1px solid rgba(212,175,55,0.85);
+                                padding: 10px 16px; font-weight: 800; border-radius: 8px;
+                                display: inline-block; font-size: 15px;'>
+                        Fale com nossa equipe
+                    </div>
+                </a>
+            </div>
+        """, unsafe_allow_html=True)
 
-    st.markdown("<p class='small'>Se quiser refazer com mais calma:</p>", unsafe_allow_html=True)
-    if st.button("Refazer diagnóstico"):
-        for i in range(45):
-            if f"q_{i}" in st.session_state:
-                st.session_state[f"q_{i}"] = None
-        st.session_state.total = 0
-        st.session_state.scores = [0] * 9
-        st.session_state.zona = ""
-        st.session_state.nome_usuario = ""
-        st.session_state.answers_json = [None] * 45
-        st.session_state.etapa = "intro"
-        st.session_state.submission_id = ""
-        st.session_state.sent_events = set()
-        st.rerun()
+    with cols_actions[1]:
+        st.markdown("<p class='small' style='margin: 4px 0 6px 0;'>Se quiser refazer o diagnóstico com mais calma:</p>", unsafe_allow_html=True)
+
+        # Coluna estreita para o botão não competir com CTA
+        c_reset = st.columns([0.42, 0.58])[0]
+        with c_reset:
+            if st.button("Refazer diagnóstico", key="refazer_diag"):
+                for i in range(45):
+                    if f"q_{i}" in st.session_state:
+                        st.session_state[f"q_{i}"] = None
+                st.session_state.total = 0
+                st.session_state.scores = [0] * 9
+                st.session_state.zona = ""
+                st.session_state.nome_usuario = ""
+                st.session_state.answers_json = [None] * 45
+                st.session_state.etapa = "intro"
+                st.session_state.submission_id = ""
+                st.session_state.sent_events = set()
+                st.rerun()
