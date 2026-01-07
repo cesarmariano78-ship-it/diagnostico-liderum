@@ -928,14 +928,10 @@ Sem isso, qualquer tentativa de evolução vira mais peso — e não solução.
 </details>
         """, unsafe_allow_html=True)
      
+        st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
 
-
-        st.markdown("</div>", unsafe_allow_html=True)  # fecha .laudo-container
-          st.markdown("st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
-", unsafe_allow_html=True)
-
-    st.markdown("<div class='card' style='margin-top:32px;'>", unsafe_allow_html=True)
-    st.markdown("""
+        st.markdown("<div class='card' style='margin-top:32px;'>", unsafe_allow_html=True)
+        st.markdown("""
 ### Próximo passo lógico
 Acesse o **Laudo Completo + Plano de Ação** e receba também a leitura clara das 9 dimensões com:
 
@@ -948,8 +944,32 @@ Acesse o **Laudo Completo + Plano de Ação** e receba também a leitura clara d
 
 O objetivo não é fazer mais.  
 É agir com critério, clareza e execução sustentada, no nível que você está hoje.
-    """)
-    st.markdown("</div>", unsafe_allow_html=True)
+        """)
+        st.markdown("</div>", unsafe_allow_html=True)
+
+
+        st.markdown("</div>", unsafe_allow_html=True)  # fecha .laudo-container
+              st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
+
+        st.markdown("<div class='card' style='margin-top:32px;'>", unsafe_allow_html=True)
+        st.markdown("""
+### Próximo passo lógico
+Acesse o **Laudo Completo + Plano de Ação** e receba também a leitura clara das 9 dimensões com:
+
+- Seu padrão atual e principais pontos de atenção  
+- Interpretação objetiva da sua zona de governança  
+- Priorização estratégica (o que atacar primeiro)  
+- Plano de ação prático:
+  - 07 dias para organização e foco
+  - 30 dias para consolidação e consistência
+
+O objetivo não é fazer mais.  
+É agir com critério, clareza e execução sustentada, no nível que você está hoje.
+        """)
+        st.markdown("</div>", unsafe_allow_html=True)
+
+         
+   
 
 
    
