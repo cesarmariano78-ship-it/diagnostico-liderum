@@ -674,6 +674,62 @@ elif st.session_state.etapa == "captura":
 # ETAPA 3: LAUDO
 # ---------------------------------------
 elif st.session_state.etapa == "resultado":
+    # Estilos locais (somente para a ETAPA 3)
+    st.markdown("""
+    <style>
+      /* Botão verde (Brasil) para "expandir laudo" */
+      .btn-brasil {
+        background: #009C3B;
+        color: #ffffff;
+        border: 1px solid #009C3B;
+        padding: 16px 22px;          /* ~10% maior que o padrão */
+        border-radius: 10px;
+        font-weight: 900;
+        display: inline-block;
+        width: 100%;
+        max-width: 720px;
+        font-size: 20px;            /* ~10% maior */
+        text-align: center;
+        cursor: pointer;
+      }
+
+      /* Botões finos (outline verde) para rodapé */
+      .btn-outline-brasil {
+        background: transparent;
+        color: #009C3B;
+        border: 1px solid #009C3B;
+        padding: 12px 18px;
+        border-radius: 10px;
+        font-weight: 900;
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+        cursor: pointer;
+      }
+
+      /* <details> como container de expansão */
+      details.laudo-details {
+        width: 100%;
+        margin: 10px 0 0 0;
+      }
+      details.laudo-details > summary {
+        list-style: none;
+        outline: none;
+      }
+      details.laudo-details > summary::-webkit-details-marker {
+        display: none;
+      }
+      .laudo-text {
+        margin-top: 14px;
+        padding: 18px 18px;
+        border-radius: 12px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(0,156,59,0.35);
+        line-height: 1.7;
+      }
+    </style>
+    """, unsafe_allow_html=True)
+
     # Garante submission_id para o link de checkout
     if not st.session_state.submission_id:
         st.session_state.submission_id = str(uuid.uuid4())
@@ -708,7 +764,12 @@ elif st.session_state.etapa == "resultado":
         fig.update_layout(
             polar=dict(
                 bgcolor="rgba(0,12,26,1)",
-                radialaxis=dict(visible=True, range=[0, 25], color="#888", gridcolor="rgba(212,175,55,0.1)")
+                radialaxis=dict(
+                    visible=True,
+                    range=[0, 25],
+                    color="#888",
+                    gridcolor="rgba(212,175,55,0.1)"
+                )
             ),
             showlegend=False,
             paper_bgcolor="rgba(0,0,0,0)",
@@ -719,94 +780,204 @@ elif st.session_state.etapa == "resultado":
         st.plotly_chart(fig, use_container_width=True)
 
     with col_r:
-        # Resumo visível (curto) + Expander com TEXTO COMPLETO (idêntico ao documento)
         st.markdown("<div class='laudo-container'>", unsafe_allow_html=True)
-        st.markdown("### 🔍 Direcionamento Estratégico")
 
         nome = st.session_state.nome_usuario
         zona = st.session_state.zona
-        total = int(st.session_state.total)
 
-        if zona == "ELITE":
-            st.markdown(f"""
-<span class='highlight'>{nome.upper()}</span>, você está na zona de <span class='highlight'>Elite</span>.
-""", unsafe_allow_html=True)
-        elif zona == "OSCILAÇÃO":
-            st.markdown(f"""
-<span class='highlight'>{nome.upper()}</span>, você está na zona de <span class='highlight'>Oscilação</span>.
-""", unsafe_allow_html=True)
+        # Botão (verde) + conteúdo expandível (texto longo, idêntico)
+        if zona == "OSCILAÇÃO":
+            laudo_texto = f"""
+PROTOCOLO LIDERUM
+
+Análise Individual: {nome}
+
+Pontuação Total: {st.session_state.total} / 225
+Zona de Governança: {zona}
+
+🔍 Direcionamento Estratégico
+Zona de Governança: OSCILAÇÃO
+
+{nome}, seu padrão atual é de Oscilação.
+
+Isso significa que você alterna entre períodos de boa entrega e momentos de queda, perda de foco ou desaceleração — mesmo tendo capacidade e repertório.
+
+Na prática, o problema não está na sua competência, mas na instabilidade da sua autogestão e da regulação cognitiva, o que impacta diretamente:
+
+constância de execução
+
+clareza de prioridade
+
+ritmo operacional
+
+O efeito mais comum desse padrão é simples:
+você até sabe o que fazer, mas não sustenta o mesmo nível de ação por tempo suficiente para gerar resultados consistentes.
+
+O objetivo aqui não é motivar.
+É estabilizar sua forma de se governar, para que a execução deixe de depender de emoção, contexto ou “fase boa”.
+
+⚠️ O ponto de atenção
+
+Quando a Oscilação não é tratada, ela costuma gerar:
+
+muitos recomeços e pouca continuidade
+
+decisões instáveis ou adiadas
+
+desgaste mental desnecessário
+
+sensação de esforço alto com retorno irregular
+
+Seu gráfico mostra tendências.
+O que ainda falta é clareza prática sobre onde intervir primeiro.
+            """.strip()
+
+        elif zona == "ELITE":
+            laudo_texto = f"""
+PROTOCOLO LIDERUM
+
+Análise Individual: {nome}
+
+Pontuação Total: {st.session_state.total} / 225
+Zona de Governança: {zona}
+
+🔍 Direcionamento Estratégico
+Zona de Governança: ELITE
+
+{nome}, seus resultados indicam que você está na Zona de Elite.
+
+Isso significa que sua governança pessoal já opera em um nível elevado.
+Você apresenta clareza, capacidade de execução e autonomia para conduzir sua vida com consistência acima da média.
+
+O principal ponto de atenção nessa zona não é capacidade, nem esforço.
+É a manutenção do nível ao longo do tempo.
+
+Pessoas na Zona de Elite costumam executar bem, tomar boas decisões e sustentar resultados — mas podem operar no automático, deixando de revisar fundamentos essenciais como:
+
+clareza contínua
+
+rotina funcional
+
+autorresponsabilidade ativa
+
+Aqui, o trabalho não é corrigir falhas evidentes.
+É refinar decisões, proteger o essencial e elevar a precisão da execução, para que o desempenho não dependa de contexto, fase ou excesso de carga.
+
+Quem opera nesse nível não pode relaxar no fundamento —
+porque é justamente o fundamento que sustenta a elite.
+
+O objetivo agora é claro:
+blindar constância, reduzir desgaste e transformar competência em impacto sustentado.
+            """.strip()
+
         else:
-            st.markdown(f"""
-<span class='highlight'>{nome.upper()}</span>, você está na zona de <span class='highlight'>Sobrevivência</span>.
-""", unsafe_allow_html=True)
+            laudo_texto = f"""
+PROTOCOLO LIDERUM
+
+Análise Individual: {nome}
+
+Pontuação Total: {st.session_state.total} / 225
+Zona de Governança: {zona}
+
+🔍 Direcionamento Estratégico
+Zona de Governança: SOBREVIVÊNCIA
+
+{nome}, você está na Zona de Sobrevivência.
+
+Isso indica que sua governança pessoal está operando no limite.
+Energia, clareza, rotina e disciplina entraram em modo reativo, fazendo com que você funcione mais para apagar incêndios do que para construir avanço real.
+
+Nesse estado, a vida passa a ser conduzida por urgências, demandas externas e cansaço acumulado.
+Decisões deixam de ser estratégicas e passam a ser defensivas.
+
+Normalmente, esse padrão aparece quando autogestão, clareza e regulação cognitiva estão fragilizadas ao mesmo tempo, gerando:
+
+baixa previsibilidade
+
+dificuldade de priorização
+
+execução inconsistente
+
+desgaste emocional elevado
+
+Aqui, não é hora de fazer mais.
+É hora de estancar perda de energia, reorganizar o essencial e recuperar capacidade mínima de condução.
+
+O objetivo inicial na Zona de Sobrevivência é simples e vital:
+parar o colapso, restaurar estabilidade básica e criar espaço interno para decisões melhores.
+
+Sem isso, qualquer tentativa de evolução vira mais peso — e não solução.
+            """.strip()
+
+        st.markdown(f"""
+<details class="laudo-details">
+  <summary>
+    <div class="btn-brasil">📄 Clique aqui para expandir e ler o seu Laudo</div>
+  </summary>
+  <div class="laudo-text">
+    <pre style="white-space: pre-wrap; margin: 0; font-family: inherit;">{laudo_texto}</pre>
+  </div>
+</details>
+        """, unsafe_allow_html=True)
 
         st.markdown("</div>", unsafe_allow_html=True)
 
-        with st.expander("📄 Clique aqui para expandir e ler o seu Laudo"):
-            st.markdown(_texto_laudo_expandido(nome=nome, total=total, zona=zona))
-
-        # Card de valor (sem “IA”)
+        # Próximo passo lógico (texto idêntico)
         st.markdown("<div class='card' style='margin-top:14px;'>", unsafe_allow_html=True)
-        st.markdown("""### Acesse o Laudo Completo + Plano de Ação
-E receba também a leitura clara das 9 dimensões, com""")
-
         st.markdown("""
+📌 Próximo passo lógico  
+Laudo Completo + Plano de Ação  
+Este diagnóstico apresenta tendências gerais da sua governança pessoal.  
+O Laudo Completo aprofunda essa leitura e transforma o retrato em direção prática, mostrando:  
+• o que sustenta seu padrão atual  
+• onde estão os principais pontos de atenção  
+• quais decisões e ajustes geram maior impacto agora  
 
-* Seu padrão atual e principais pontos de atenção
-* Interpretação objetiva da sua zona de governança
-* Priorização estratégica (o que atacar primeiro)
-* Plano de ação prático:
-- 07 dias para organização e foco
-- 30 dias para consolidação e consistência
+Você recebe uma leitura clara das 9 dimensões, com:  
+• interpretação objetiva da sua zona de governança  
+• priorização estratégica (o que atacar primeiro)  
+• plano de ação prático:  
+o 7 dias para organização e foco  
+o 30 dias para consolidação e consistência  
 
-O objetivo não é fazer mais.
+O objetivo não é fazer mais.  
 É agir com critério, clareza e execução sustentada, no nível que você está hoje.
         """)
         st.markdown("</div>", unsafe_allow_html=True)
 
     st.write("---")
 
-    # Próximo Passo (texto alinhado ao seu documento)
-    st.markdown("<h3 style='text-align: center;'>Próximo passo lógico</h3>", unsafe_allow_html=True)
-
+    # Centraliza texto e CTA principal
+    st.markdown("<h3 style='text-align: center;'>Próximo Passo</h3>", unsafe_allow_html=True)
     st.markdown(
-        "<p style='text-align:center;'>"
-        "Laudo Completo + Plano de Ação<br>"
-        "Este diagnóstico apresenta tendências gerais da sua governança pessoal. "
-        "O Laudo Completo aprofunda essa leitura e transforma o retrato em direção prática."
-        "</p>",
+        "<p style='text-align:center;'>Se você quiser profundidade e um plano objetivo, o Laudo Completo vai direto ao ponto — com priorização e execução.</p>",
         unsafe_allow_html=True
     )
 
-    # CTA Pagamento (Eduzz + submission_id em utm_content) — texto atualizado (sem “IA”)
+    # CTA Checkout (texto atualizado e sem “IA”)
     st.markdown(f"""
-        <div style='text-align: center; margin-bottom: 10px;'>
+        <div style='text-align: center; margin: 18px 0 6px 0;'>
             <a href='{checkout_url}' target='_blank' style='text-decoration: none;'>
                 <div style='background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%);
-                            color: #001226; padding: 20px 44px; font-weight: 900; border-radius: 10px;
+                            color: #001226; padding: 22px 44px; font-weight: 900; border-radius: 12px;
                             display: inline-block; width: 100%; max-width: 760px; font-size: 22px;'>
-                    QUERO MEU LAUDO COMPLETO + PLANO DE AÇÃO →
+                    🔶 QUERO MEU LAUDO COMPLETO + PLANO DE AÇÃO →
                 </div>
             </a>
         </div>
+        <div style='text-align:center; margin-bottom: 22px;'>
+            <span class='small'>Entrega imediata por e-mail • leitura direta • confidencial</span>
+        </div>
     """, unsafe_allow_html=True)
 
-    st.markdown(
-        "<p class='small' style='text-align:center; margin-top:0;'>"
-        "Entrega imediata por e-mail • leitura direta • confidencial"
-        "</p>",
-        unsafe_allow_html=True
-    )
+    # Rodapé: dois botões (mesmo layout), WhatsApp atualizado
+    wa_url = "https://wa.me/5581986245870?text=Olá!%20Acabei%20de%20fazer%20meu%20Diagnóstico%20LIDERUM%20e%20quero%20conhecer%20as%20soluções."
 
-    # Linha final: botões laterais (mantém seu layout atual; não altera tracking)
-    # CTA WhatsApp (direita)
-    wa_url = "https://wa.me/5581982602018?text=Olá!%20Acabei%20de%20fazer%20meu%20Diagnóstico%20LIDERUM%20e%20quero%20conhecer%20as%20soluções."
+    left, right = st.columns(2)
 
-    left, right = st.columns([1, 1])
     with left:
-        st.markdown("<p class='small'>Se quiser refazer o diagnóstico com mais calma:</p>", unsafe_allow_html=True)
-        # botão streamlit (se você já ajustou 50%/posição via layout, mantenha do seu jeito)
-        if st.button("Refazer diagnóstico"):
+        # Refazer (sem destaque; mesmo estilo outline)
+        if st.button("Refazer diagnóstico", key="btn_refazer_outline"):
             for i in range(45):
                 if f"q_{i}" in st.session_state:
                     st.session_state[f"q_{i}"] = None
@@ -821,15 +992,23 @@ O objetivo não é fazer mais.
             st.rerun()
 
     with right:
-        st.markdown("<p class='small' style='text-align:right;'>Precisa de ajuda ou tem dúvidas?</p>", unsafe_allow_html=True)
+        # Fale com nossa equipe (HTML outline)
         st.markdown(f"""
-            <div style='text-align: right; margin-bottom: 10px;'>
-                <a href='{wa_url}' target='_blank' style='text-decoration: none;'>
-                    <div style='background: rgba(212, 175, 55, 0.10); color: #D4AF37;
-                                border: 1px solid #D4AF37; padding: 12px 22px; font-weight: 900;
-                                border-radius: 8px; display: inline-block;'>
-                        FALE COM NOSSA EQUIPE
-                    </div>
-                </a>
-            </div>
+          <a href="{wa_url}" target="_blank" style="text-decoration:none;">
+            <div class="btn-outline-brasil">Fale com nossa equipe</div>
+          </a>
         """, unsafe_allow_html=True)
+
+    # Ajuste visual: deixa o botão Streamlit "Refazer diagnóstico" parecido com outline (sem mexer no CSS global)
+    st.markdown("""
+    <style>
+      /* Somente este botão (por key) mantém o estilo global do Streamlit,
+         então a gente neutraliza aqui com CSS local */
+      div[data-testid="stButton"] button[data-testid="baseButton-secondary"] {
+        background: transparent !important;
+        color: #009C3B !important;
+        border: 1px solid #009C3B !important;
+        font-weight: 900 !important;
+      }
+    </style>
+    """, unsafe_allow_html=True)
