@@ -685,7 +685,6 @@ elif st.session_state.etapa == "resultado":
     # Estilos locais (somente para a ETAPA 3)
     st.markdown("""
     <style>
-      /* Botão verde (Brasil) para "expandir laudo" */
       .btn-brasil {
         background: #009C3B;
         color: #ffffff;
@@ -701,7 +700,6 @@ elif st.session_state.etapa == "resultado":
         cursor: pointer;
       }
 
-      /* Botões finos (outline verde) para rodapé */
       .btn-outline-brasil {
         background: transparent;
         color: #009C3B;
@@ -715,7 +713,6 @@ elif st.session_state.etapa == "resultado":
         cursor: pointer;
       }
 
-      /* <details> como container de expansão */
       details.laudo-details { width: 100%; margin: 10px 0 0 0; }
       details.laudo-details > summary { list-style: none; outline: none; }
       details.laudo-details > summary::-webkit-details-marker { display: none; }
@@ -734,61 +731,11 @@ elif st.session_state.etapa == "resultado":
     # Garante submission_id e gera checkout_url (somente ETAPA 3)
     if not st.session_state.submission_id:
         st.session_state.submission_id = str(uuid.uuid4())
-
     checkout_url = _build_eduzz_checkout_url(st.session_state.submission_id)
 
-    # -------------------------------
-    # CTA CHECKOUT — LAUDO COMPLETO (SOMENTE ETAPA 3)
-    # -------------------------------
-    st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
-    st.markdown(
-        "<p style='text-align:center; font-size:16px; opacity:0.85; margin-bottom:10px;'>"
-        "Se você quer clareza prática sobre onde intervir primeiro — este é o próximo passo."
-        "</p>",
-        unsafe_allow_html=True
-    )
-
-    st.markdown(
-        f"""
-        <div style='text-align: center; margin: 22px 0 6px 0;'>
-            <a href='{checkout_url}' target='_blank' style='text-decoration: none;'>
-                <div style='
-                    background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%);
-                    color: #001226;
-                    padding: 22px 44px;
-                    font-weight: 900;
-                    border-radius: 10px;
-                    display: inline-block;
-                    width: 100%;
-                    max-width: 760px;
-                    font-size: 22px;
-                '>
-                    QUERO MEU LAUDO COMPLETO + PLANO DE AÇÃO →
-                </div>
-            </a>
-        </div>
-
-        <div style='text-align:center; margin-bottom: 24px;'>
-            <span class='small'>Entrega imediata por e-mail • leitura direta • confidencial</span>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    # Rodapé: WhatsApp (SOMENTE ETAPA 3)
-    wa_url = "https://wa.me/5581986245870?text=Olá!%20Acabei%20de%20fazer%20meu%20Diagnóstico%20LIDERUM%20e%20quero%20conhecer%20as%20soluções."
-
-    left, right = st.columns(2)
-    with right:
-        st.markdown(
-            f"""
-            <a href="{wa_url}" target="_blank" style="text-decoration:none;">
-                <div class="btn-outline-brasil">Fale com nossa equipe</div>
-            </a>
-            """,
-            unsafe_allow_html=True
-        )
-
+    # =========================
+    # TOPO DA PÁGINA (correto)
+    # =========================
     st.markdown(
         f"### Análise Individual: <span class='highlight'>{st.session_state.nome_usuario.upper()}</span>",
         unsafe_allow_html=True
@@ -800,8 +747,11 @@ elif st.session_state.etapa == "resultado":
     with c2:
         st.metric("Zona de Governança", st.session_state.zona)
 
-    st.write("---")
+    st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
 
+    # =========================
+    # CORPO (Radar + Laudo)
+    # =========================
     col_l, col_r = st.columns([1.2, 0.8])
 
     with col_l:
@@ -838,12 +788,124 @@ elif st.session_state.etapa == "resultado":
         nome = st.session_state.nome_usuario
         zona = st.session_state.zona
 
+        # Texto do laudo (USE OS SEUS TEXTOS ATUAIS AQUI)
         if zona == "OSCILAÇÃO":
-            laudo_texto = f"""...""".strip()
+            laudo_texto = """PROTOCOLO LIDERUM
+
+Análise Individual: {nome}
+
+Pontuação Total: {st.session_state.total} / 225
+Zona de Governança: {zona}
+
+ Direcionamento Estratégico
+Zona de Governança: OSCILAÇÃO
+
+{nome}, seu padrão atual é de Oscilação.
+
+Isso significa que você alterna entre períodos de boa entrega e momentos de queda, perda de foco ou desaceleração — mesmo tendo capacidade e repertório.
+
+Na prática, o problema não está na sua competência, mas na instabilidade da sua autogestão e da regulação cognitiva, o que impacta diretamente:
+
+constância de execução
+
+clareza de prioridade
+
+ritmo operacional
+
+O efeito mais comum desse padrão é simples:
+você até sabe o que fazer, mas não sustenta o mesmo nível de ação por tempo suficiente para gerar resultados consistentes.
+
+O objetivo aqui não é motivar.
+É estabilizar sua forma de se governar, para que a execução deixe de depender de emoção, contexto ou “fase boa”.
+
+⚠️ O ponto de atenção
+
+Quando a Oscilação não é tratada, ela costuma gerar:
+
+muitos recomeços e pouca continuidade
+
+decisões instáveis ou adiadas
+
+desgaste mental desnecessário
+
+sensação de esforço alto com retorno irregular
+
+Seu gráfico mostra tendências.
+O que ainda falta é clareza prática sobre onde intervir primeiro.
+""".strip()
         elif zona == "ELITE":
-            laudo_texto = f"""...""".strip()
+            laudo_texto = """PROTOCOLO LIDERUM
+
+Análise Individual: {nome}
+
+Pontuação Total: {st.session_state.total} / 225
+Zona de Governança: {zona}
+
+ Direcionamento Estratégico
+Zona de Governança: ELITE
+
+{nome}, seus resultados indicam que você está na Zona de Elite.
+
+Isso significa que sua governança pessoal já opera em um nível elevado.
+Você apresenta clareza, capacidade de execução e autonomia para conduzir sua vida com consistência acima da média.
+
+O principal ponto de atenção nessa zona não é capacidade, nem esforço.
+É a manutenção do nível ao longo do tempo.
+
+Pessoas na Zona de Elite costumam executar bem, tomar boas decisões e sustentar resultados — mas podem operar no automático, deixando de revisar fundamentos essenciais como:
+
+clareza contínua
+
+rotina funcional
+
+autorresponsabilidade ativa
+
+Aqui, o trabalho não é corrigir falhas evidentes.
+É refinar decisões, proteger o essencial e elevar a precisão da execução, para que o desempenho não dependa de contexto, fase ou excesso de carga.
+
+Quem opera nesse nível não pode relaxar no fundamento —
+porque é justamente o fundamento que sustenta a elite.
+
+O objetivo agora é claro:
+blindar constância, reduzir desgaste e transformar competência em impacto sustentado.
+""".strip()
         else:
-            laudo_texto = f"""...""".strip()
+            laudo_texto = """PROTOCOLO LIDERUM
+
+Análise Individual: {nome}
+
+Pontuação Total: {st.session_state.total} / 225
+Zona de Governança: {zona}
+
+ Direcionamento Estratégico
+Zona de Governança: SOBREVIVÊNCIA
+
+{nome}, você está na Zona de Sobrevivência.
+
+Isso indica que sua governança pessoal está operando no limite.
+Energia, clareza, rotina e disciplina entraram em modo reativo, fazendo com que você funcione mais para apagar incêndios do que para construir avanço real.
+
+Nesse estado, a vida passa a ser conduzida por urgências, demandas externas e cansaço acumulado.
+Decisões deixam de ser estratégicas e passam a ser defensivas.
+
+Normalmente, esse padrão aparece quando autogestão, clareza e regulação cognitiva estão fragilizadas ao mesmo tempo, gerando:
+
+baixa previsibilidade
+
+dificuldade de priorização
+
+execução inconsistente
+
+desgaste emocional elevado
+
+Aqui, não é hora de fazer mais.
+É hora de estancar perda de energia, reorganizar o essencial e recuperar capacidade mínima de condução.
+
+O objetivo inicial na Zona de Sobrevivência é simples e vital:
+parar o colapso, restaurar estabilidade básica e criar espaço interno para decisões melhores.
+
+Sem isso, qualquer tentativa de evolução vira mais peso — e não solução.
+""".strip()
 
         st.markdown(f"""
 <details class="laudo-details">
@@ -856,8 +918,81 @@ elif st.session_state.etapa == "resultado":
 </details>
         """, unsafe_allow_html=True)
 
-        st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)  # fecha .laudo-container
 
-        st.markdown("<div class='card' style='margin-top:14px;'>", unsafe_allow_html=True)
-        st.markdown("""...""")
-        st.markdown("</div>", unsafe_allow_html=True)
+    # =========================
+    # BLOCO QUE ESTAVA "SUMINDO"
+    # (Próximo passo lógico)
+    # =========================
+    st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
+
+    st.markdown("<div class='card' style='margin-top:14px;'>", unsafe_allow_html=True)
+    st.markdown("""
+### Próximo passo lógico
+Acesse o **Laudo Completo + Plano de Ação** e receba também a leitura clara das 9 dimensões com:
+
+- Seu padrão atual e principais pontos de atenção  
+- Interpretação objetiva da sua zona de governança  
+- Priorização estratégica (o que atacar primeiro)  
+- Plano de ação prático:
+  - 07 dias para organização e foco
+  - 30 dias para consolidação e consistência
+
+O objetivo não é fazer mais.  
+É agir com critério, clareza e execução sustentada, no nível que você está hoje.
+    """)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    # =========================
+    # CTA CHECKOUT (agora no lugar certo: abaixo)
+    # =========================
+    st.markdown(
+        "<p style='text-align:center; font-size:16px; opacity:0.85; margin: 10px 0 10px 0;'>"
+        "Se você quer clareza prática sobre onde intervir primeiro — este é o próximo passo."
+        "</p>",
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        f"""
+        <div style='text-align: center; margin: 22px 0 6px 0;'>
+            <a href='{checkout_url}' target='_blank' style='text-decoration: none;'>
+                <div style='
+                    background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%);
+                    color: #001226;
+                    padding: 22px 44px;
+                    font-weight: 900;
+                    border-radius: 10px;
+                    display: inline-block;
+                    width: 100%;
+                    max-width: 760px;
+                    font-size: 22px;
+                '>
+                    QUERO MEU LAUDO COMPLETO + PLANO DE AÇÃO →
+                </div>
+            </a>
+        </div>
+
+        <div style='text-align:center; margin-bottom: 18px;'>
+            <span class='small'>Entrega imediata por e-mail • leitura direta • confidencial</span>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # =========================
+    # Rodapé (WhatsApp) — por último
+    # =========================
+    wa_url = "https://wa.me/5581986245870?text=Olá!%20Acabei%20de%20fazer%20meu%20Diagnóstico%20LIDERUM%20e%20quero%20conhecer%20as%20soluções."
+
+    st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
+    col_wa_l, col_wa_r = st.columns([1, 1])
+    with col_wa_r:
+        st.markdown(
+            f"""
+            <a href="{wa_url}" target="_blank" style="text-decoration:none;">
+                <div class="btn-outline-brasil">Fale com nossa equipe</div>
+            </a>
+            """,
+            unsafe_allow_html=True
+        )
