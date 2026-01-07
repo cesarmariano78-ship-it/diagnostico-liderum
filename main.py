@@ -51,7 +51,7 @@ label, p, span, div { color: #FFFFFF !important; font-size: 18px !important; }
 .card {
   background-color: rgba(255,255,255,0.03);
   border: 1px solid rgba(212,175,55,0.25);
-  padding: 22px;
+  padding: 22px;2px
   border-radius: 14px;
 }
 
@@ -62,7 +62,7 @@ label, p, span, div { color: #FFFFFF !important; font-size: 18px !important; }
 .question-card {
   background-color: rgba(255,255,255,0.03);
   border: 1px solid rgba(212,175,55,0.18);
-  padding: 18px;
+  padding: 18px;2px
   border-radius: 12px;
   margin: 14px 0;
 }
