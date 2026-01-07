@@ -283,7 +283,7 @@ st.title("PROTOCOLO LIDERUM")
 # ETAPA 0: INTRO
 # ---------------------------------------
 if st.session_state.etapa == "intro":
-    # Layout mais limpo, CTA mais alto, texto reorganizado conforme novo briefing
+    # Layout mais limpo, CTA mais alto, texto reorganizado + CTA replicado no final
     col_c = st.columns([1, 2.2, 1])[1]
     with col_c:
         st.markdown("<div class='card'>", unsafe_allow_html=True)
@@ -340,6 +340,20 @@ Este diagnóstico existe para revelar exatamente isso.
 Suas respostas são confidenciais e usadas exclusivamente para gerar seu diagnóstico e direcionamento personalizado.  
 Nenhuma informação será compartilhada.
         """)
+
+        # CTA repetido no final (mesma ação, key diferente para não conflitar)
+        st.markdown("<div style='height:14px;'></div>", unsafe_allow_html=True)
+        st.markdown("<hr style='border: none; border-top: 1px solid rgba(212,175,55,0.18);'/>", unsafe_allow_html=True)
+        st.markdown("<div style='height:14px;'></div>", unsafe_allow_html=True)
+
+        if st.button("Iniciar diagnóstico gratuito", key="cta_intro_bottom"):
+            if not st.session_state.submission_id:
+                st.session_state.submission_id = str(uuid.uuid4())
+            _send_event("diagnostico_iniciado", etapa="intro")
+            st.session_state.etapa = "questoes"
+            st.rerun()
+
+        st.markdown("<p class='small'>Leva de 6 a 8 minutos.</p>", unsafe_allow_html=True)
 
         st.markdown("</div>", unsafe_allow_html=True)
 
