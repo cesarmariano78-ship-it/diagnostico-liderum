@@ -563,7 +563,7 @@ with col2:
 # ---------------------------------------
 # ETAPA 1: QUESTÕES
 # ---------------------------------------
-elif st.session_state.etapa == "questoes":
+if st.session_state.etapa == "questoes":
     # BLOCO 5 — Como responder (agora na página 2)
     st.markdown("<div class='card'>", unsafe_allow_html=True)
     st.markdown("### Como responder")
