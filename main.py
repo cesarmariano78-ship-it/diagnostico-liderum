@@ -927,10 +927,7 @@ Sem isso, qualquer tentativa de evolução vira mais peso — e não solução.
   </div>
 </details>
         """, unsafe_allow_html=True)
-
-        st.markdown("</div>", unsafe_allow_html=True)  # fecha .laudo-container
-
-    # =========================
+      # =========================
     # BLOCO QUE ESTAVA "SUMINDO"
     # (Próximo passo lógico)
     # =========================
@@ -952,6 +949,11 @@ O objetivo não é fazer mais.
 É agir com critério, clareza e execução sustentada, no nível que você está hoje.
     """)
     st.markdown("</div>", unsafe_allow_html=True)
+
+
+        st.markdown("</div>", unsafe_allow_html=True)  # fecha .laudo-container
+
+   
 
     # =========================
     # CTA CHECKOUT (agora no lugar certo: abaixo)
