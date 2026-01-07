@@ -795,7 +795,7 @@ Análise Individual: {nome}
 Pontuação Total: {st.session_state.total} / 225
 Zona de Governança: {zona}
 
-🔍 Direcionamento Estratégico
+ Direcionamento Estratégico
 Zona de Governança: OSCILAÇÃO
 
 {nome}, seu padrão atual é de Oscilação.
@@ -841,7 +841,7 @@ Análise Individual: {nome}
 Pontuação Total: {st.session_state.total} / 225
 Zona de Governança: {zona}
 
-🔍 Direcionamento Estratégico
+ Direcionamento Estratégico
 Zona de Governança: ELITE
 
 {nome}, seus resultados indicam que você está na Zona de Elite.
@@ -879,7 +879,7 @@ Análise Individual: {nome}
 Pontuação Total: {st.session_state.total} / 225
 Zona de Governança: {zona}
 
-🔍 Direcionamento Estratégico
+ Direcionamento Estratégico
 Zona de Governança: SOBREVIVÊNCIA
 
 {nome}, você está na Zona de Sobrevivência.
@@ -925,22 +925,18 @@ Sem isso, qualquer tentativa de evolução vira mais peso — e não solução.
         # Próximo passo lógico (texto idêntico)
         st.markdown("<div class='card' style='margin-top:14px;'>", unsafe_allow_html=True)
         st.markdown("""
-📌 Próximo passo lógico  
-Laudo Completo + Plano de Ação  
-Este diagnóstico apresenta tendências gerais da sua governança pessoal.  
-O Laudo Completo aprofunda essa leitura e transforma o retrato em direção prática, mostrando:  
-• o que sustenta seu padrão atual  
-• onde estão os principais pontos de atenção  
-• quais decisões e ajustes geram maior impacto agora  
+ Próximo passo lógico  
+Acesse o Laudo Completo + Plano de Ação
+E receba também a leitura clara das 9 dimensões com: 
 
-Você recebe uma leitura clara das 9 dimensões, com:  
-• interpretação objetiva da sua zona de governança  
-• priorização estratégica (o que atacar primeiro)  
-• plano de ação prático:  
-o 7 dias para organização e foco  
-o 30 dias para consolidação e consistência  
+* Seu padrão atual e principais pontos de atenção
+* Interpretação objetiva da sua zona de governança
+* Priorização estratégica (o que atacar primeiro)
+* Plano de ação prático:
+- 07 dias para organização e foco
+- 30 dias para consolidação e consistência
 
-O objetivo não é fazer mais.  
+O objetivo não é fazer mais.
 É agir com critério, clareza e execução sustentada, no nível que você está hoje.
         """)
         st.markdown("</div>", unsafe_allow_html=True)
@@ -961,7 +957,7 @@ O objetivo não é fazer mais.
                 <div style='background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%);
                             color: #001226; padding: 22px 44px; font-weight: 900; border-radius: 12px;
                             display: inline-block; width: 100%; max-width: 760px; font-size: 22px;'>
-                    🔶 QUERO MEU LAUDO COMPLETO + PLANO DE AÇÃO →
+                     QUERO MEU LAUDO COMPLETO + PLANO DE AÇÃO →
                 </div>
             </a>
         </div>
