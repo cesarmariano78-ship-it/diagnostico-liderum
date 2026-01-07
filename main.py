@@ -690,8 +690,9 @@ elif st.session_state.etapa == "resultado":
 
         # Card de valor (sem “IA”)
         st.markdown("<div class='card' style='margin-top:14px;'>", unsafe_allow_html=True)
-        st.markdown("### Acesse o Laudo Completo + Plano de Ação
-E receba também a leitura clara das 9 dimensões, com")
+        st.markdown("""### Acesse o Laudo Completo + Plano de Ação
+E receba também a leitura clara das 9 dimensões, com""")
+
         st.markdown("""
 
 * Seu padrão atual e principais pontos de atenção
