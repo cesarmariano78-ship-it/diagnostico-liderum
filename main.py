@@ -403,27 +403,39 @@ Sem isso, qualquer tentativa de evolução vira mais peso — e não solução.
 # HEADER
 # ---------------------------------------
 st.markdown('<div class="top-banner"></div>', unsafe_allow_html=True)
-st.title("PROTOCOLO LIDERUM")
+st.markdown("<h1 style='text-align:center; margin-top: 0;'>PROTOCOLO LIDERUM</h1>", unsafe_allow_html=True)
+
 
 # ---------------------------------------
 # ETAPA 0: INTRO
 # ---------------------------------------
 if st.session_state.etapa == "intro":
-    # Layout mais limpo, CTA mais alto, texto reorganizado + CTA replicado no final
+    # Layout limpo, CTA alto, texto reorganizado + CTA replicado no final (mesma ação)
     col_c = st.columns([1, 2.2, 1])[1]
     with col_c:
         st.markdown("<div class='card'>", unsafe_allow_html=True)
 
-        # BLOCO 1 — Headline
-        st.markdown("### Diagnóstico de Governança Pessoal")
+        # Headline (centralizado e sem duplicação)
+        st.markdown(
+            "<h1 style='text-align:center; margin: 0 0 6px 0;'>PROTOCOLO LIDERUM</h1>",
+            unsafe_allow_html=True
+        )
+        st.markdown(
+            "<h3 style='text-align:center; margin: 0 0 14px 0;'>Diagnóstico de Governança Pessoal</h3>",
+            unsafe_allow_html=True
+        )
+
+        # Subheadline
         st.markdown("""
-Descubra, em poucos minutos, onde sua autoliderança está sólida  
+<p style="text-align:center; margin-top: 0;">
+Descubra, em poucos minutos, onde sua autoliderança está sólida —<br/>
 e onde ela está quebrando sua constância, foco e execução.
-        """)
+</p>
+        """, unsafe_allow_html=True)
 
         st.markdown("<div style='height:14px;'></div>", unsafe_allow_html=True)
 
-        # BLOCO 4 — CTA principal (alto)
+        # CTA principal (alto)
         if st.button("Iniciar diagnóstico gratuito"):
             if not st.session_state.submission_id:
                 st.session_state.submission_id = str(uuid.uuid4())
@@ -431,13 +443,13 @@ e onde ela está quebrando sua constância, foco e execução.
             st.session_state.etapa = "questoes"
             st.rerun()
 
-        st.markdown("<p class='small'>Leva de 6 a 8 minutos.</p>", unsafe_allow_html=True)
+        st.markdown("<p class='small' style='text-align:center;'>Leva de 6 a 8 minutos.</p>", unsafe_allow_html=True)
 
         st.markdown("<div style='height:10px;'></div>", unsafe_allow_html=True)
         st.markdown("<hr style='border: none; border-top: 1px solid rgba(212,175,55,0.18);'/>", unsafe_allow_html=True)
         st.markdown("<div style='height:10px;'></div>", unsafe_allow_html=True)
 
-        # BLOCO 2 — Reenquadramento rápido
+        # Reenquadramento rápido
         st.markdown("### Antes de começar")
         st.markdown("""
 Este diagnóstico não é um teste psicológico, nem um julgamento sobre quem você é.  
@@ -448,10 +460,10 @@ Ele foi criado para ajudar você a observar com mais clareza como está hoje a s
 
         st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
 
-        # BLOCO 3 — Por que isso importa
+        # Por que isso importa
         st.markdown("### Por que isso importa")
         st.markdown("""
-Muitas pessoas são competentes, estudam, se esforçam, 
+Muitas pessoas são competentes, estudam, se esforçam —  
 mas os resultados oscilam porque a forma de se governar é instável.  
 
 Este diagnóstico existe para revelar exatamente isso.
@@ -459,7 +471,7 @@ Este diagnóstico existe para revelar exatamente isso.
 
         st.markdown("<div style='height:10px;'></div>", unsafe_allow_html=True)
 
-        # BLOCO 6 — Privacidade (encurtado)
+        # Privacidade (curto)
         st.markdown("### Privacidade e sigilo")
         st.markdown("""
 Suas respostas são confidenciais e usadas exclusivamente para gerar seu diagnóstico e direcionamento personalizado.  
@@ -478,7 +490,7 @@ Nenhuma informação será compartilhada.
             st.session_state.etapa = "questoes"
             st.rerun()
 
-        st.markdown("<p class='small'>Leva de 6 a 8 minutos.</p>", unsafe_allow_html=True)
+        st.markdown("<p class='small' style='text-align:center;'>Leva de 6 a 8 minutos.</p>", unsafe_allow_html=True)
 
         st.markdown("</div>", unsafe_allow_html=True)
 
