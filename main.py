@@ -563,7 +563,7 @@ with col2:
 # ---------------------------------------
 # ETAPA 1: QUESTÕES
 # ---------------------------------------
-if st.session_state.etapa == "questoes":
+elif st.session_state.etapa == "questoes":
     # BLOCO 5 — Como responder (agora na página 2)
     st.markdown("<div class='card'>", unsafe_allow_html=True)
     st.markdown("### Como responder")
@@ -961,41 +961,7 @@ O objetivo não é fazer mais.
         """)
 st.markdown("</div>", unsafe_allow_html=True)
 
-st.markdown(
-    "<hr style='border:none; border-top:0.5px solid #1DB954; opacity:0.6;'>",
-    unsafe_allow_html=True
-)
 
-
-
-
-# Centraliza texto e CTA principal
-st.markdown("<h3 style='text-align: center;'>Próximo Passo</h3>", unsafe_allow_html=True)
-
-st.markdown(
-    "<p style='text-align:center;'>Se você quiser profundidade e um plano objetivo, o Laudo Completo vai direto ao ponto — com priorização e execução.</p>",
-    unsafe_allow_html=True
-)
-
-# CTA Checkout (texto atualizado e sem “IA”)
-st.markdown(
-    f"""
-    <div style='text-align: center; margin: 18px 0 6px 0;'>
-        <a href='{checkout_url}' target='_blank' style='text-decoration: none;'>
-            <div style='background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%);
-                        color: #001226; padding: 22px 44px; font-weight: 900; border-radius: 10px;
-                        display: inline-block; width: 100%; max-width: 760px; font-size: 22px;'>
-                QUERO MEU LAUDO COMPLETO + PLANO DE AÇÃO →
-            </div>
-        </a>
-    </div>
-
-    <div style='text-align:center; margin-bottom: 22px;'>
-        <span class='small'>Entrega imediata por e-mail • leitura direta • confidencial</span>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
 
 # Rodapé: WhatsApp
 wa_url = "https://wa.me/5581986245870?text=Olá!%20Acabei%20de%20fazer%20meu%20Diagnóstico%20LIDERUM%20e%20quero%20conhecer%20as%20soluções."
@@ -1014,10 +980,4 @@ with right:
 
    
 
-    with right:
-        # Fale com nossa equipe (HTML outline)
-        st.markdown(f"""
-          <a href="{wa_url}" target="_blank" style="text-decoration:none;">
-            <div class="btn-outline-brasil">Fale com nossa equipe</div>
-          </a>
-        """, unsafe_allow_html=True)
+    
