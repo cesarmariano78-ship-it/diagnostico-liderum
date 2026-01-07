@@ -959,11 +959,13 @@ st.markdown(
 
 
     # Centraliza texto e CTA principal
-    st.markdown("<h3 style='text-align: center;'>Próximo Passo</h3>", unsafe_allow_html=True)
-    st.markdown(
-        "<p style='text-align:center;'>Se você quiser profundidade e um plano objetivo, o Laudo Completo vai direto ao ponto — com priorização e execução.</p>",
-        unsafe_allow_html=True
-    )
+st.markdown("<h3 style='text-align: center;'>Próximo Passo</h3>", unsafe_allow_html=True)
+
+st.markdown(
+    "<p style='text-align:center;'>Se você quiser profundidade e um plano objetivo, o Laudo Completo vai direto ao ponto — com priorização e execução.</p>",
+    unsafe_allow_html=True
+)
+
 
     # CTA Checkout (texto atualizado e sem “IA”)
     st.markdown(f"""
