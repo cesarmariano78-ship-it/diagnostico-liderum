@@ -467,15 +467,14 @@ st.markdown("<h1 style='text-align:center; margin-top: 0;'>PROTOCOLO LIDERUM</h1
 
 
 # ---------------------------------------
+# ---------------------------------------
 # ETAPA 0: INTRO
 # ---------------------------------------
 if st.session_state.etapa == "intro":
-    # Layout limpo, CTA alto, texto reorganizado + CTA replicado no final (mesma ação)
     col_c = st.columns([1, 2.2, 1])[1]
     with col_c:
         st.markdown("<div class='card'>", unsafe_allow_html=True)
 
-        # Headline (centralizado e sem duplicação)
         st.markdown(
             "<h1 style='text-align:center; margin: 0 0 6px 0;'>PROTOCOLO LIDERUM</h1>",
             unsafe_allow_html=True
@@ -485,7 +484,6 @@ if st.session_state.etapa == "intro":
             unsafe_allow_html=True
         )
 
-        # Subheadline
         st.markdown("""
 <p style="text-align:center; margin-top: 0;">
 Descubra, em poucos minutos, onde sua autoliderança está sólida —<br/>
@@ -509,7 +507,6 @@ e onde ela está quebrando sua constância, foco e execução.
         st.markdown("<hr style='border: none; border-top: 1px solid rgba(212,175,55,0.18);'/>", unsafe_allow_html=True)
         st.markdown("<div style='height:10px;'></div>", unsafe_allow_html=True)
 
-        # Reenquadramento rápido
         st.markdown("### Antes de começar")
         st.markdown("""
 Este diagnóstico não é um teste psicológico, nem um julgamento sobre quem você é.  
@@ -520,7 +517,6 @@ Ele foi criado para ajudar você a observar com mais clareza como está hoje a s
 
         st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
 
-        # Por que isso importa
         st.markdown("### Por que isso importa")
         st.markdown("""
 Muitas pessoas são competentes, estudam, se esforçam —  
@@ -530,33 +526,25 @@ Este diagnóstico existe para revelar exatamente isso.
         """)
 
         st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
-      
 
-        # Privacidade (curto)
         st.markdown("### Privacidade e sigilo")
         st.markdown("""
 Suas respostas são confidenciais e usadas exclusivamente para gerar seu diagnóstico e direcionamento personalizado.  
 Nenhuma informação será compartilhada.
         """)
 
-        # CTA repetido no final (mesma ação, key diferente para não conflitar)
-    st.markdown("<div style='height:14px;'></div>", unsafe_allow_html=True)
-    st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
+        # CTA repetido no final (centralizado)
+        st.markdown("<div style='height:14px;'></div>", unsafe_allow_html=True)
+        st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
 
-
-
-col1, col2, col3 = st.columns([1, 2, 1])
-with col2:
-    if st.button("Iniciar diagnóstico gratuito", key="cta_intro_bottom"):
-        if not st.session_state.submission_id:
-            st.session_state.submission_id = str(uuid.uuid4())
-        _send_event("diagnostico_iniciado", etapa="intro")
-        st.session_state.etapa = "questions"
-        st.rerun()
-
-            
-
-        st.markdown("<p class='small' style='text-align:center;'>Leva de 6 a 8 minutos.</p>", unsafe_allow_html=True)
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            if st.button("Iniciar diagnóstico gratuito", key="cta_intro_bottom"):
+                if not st.session_state.submission_id:
+                    st.session_state.submission_id = str(uuid.uuid4())
+                _send_event("diagnostico_iniciado", etapa="intro")
+                st.session_state.etapa = "questoes"
+                st.rerun()
 
         st.markdown("</div>", unsafe_allow_html=True)
 
@@ -564,7 +552,6 @@ with col2:
 # ETAPA 1: QUESTÕES
 # ---------------------------------------
 elif st.session_state.etapa == "questoes":
-    # BLOCO 5 — Como responder (agora na página 2)
     st.markdown("<div class='card'>", unsafe_allow_html=True)
     st.markdown("### Como responder")
     st.markdown("""
@@ -574,6 +561,7 @@ elif st.session_state.etapa == "questoes":
 - Este diagnóstico mede **consistência**, não intenção.
     """)
     st.markdown("</div>", unsafe_allow_html=True)
+
 
     st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
     st.markdown("<p class='small'>Instrução: clique em cada dimensão para abrir as perguntas. Responda todas as 45 para liberar o diagnóstico.</p>", unsafe_allow_html=True)
