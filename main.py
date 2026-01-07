@@ -283,7 +283,7 @@ Análise Individual: {nome}
 Pontuação Total: {total} / 225
 Zona de Governança: {zona}
 
-🔍 Direcionamento Estratégico
+ Direcionamento Estratégico
 Zona de Governança: OSCILAÇÃO
 
 {nome}, seu padrão atual é de Oscilação.
@@ -304,7 +304,7 @@ você até sabe o que fazer, mas não sustenta o mesmo nível de ação por temp
 O objetivo aqui não é motivar.
 É estabilizar sua forma de se governar, para que a execução deixe de depender de emoção, contexto ou “fase boa”.
 
-⚠️ O ponto de atenção
+ O ponto de atenção
 
 Quando a Oscilação não é tratada, ela costuma gerar:
 
@@ -329,7 +329,7 @@ Análise Individual: {nome}
 Pontuação Total: {total} / 225
 Zona de Governança: {zona}
 
-🔍 Direcionamento Estratégico
+ Direcionamento Estratégico
 Zona de Governança: ELITE
 
 {nome}, seus resultados indicam que você está na Zona de Elite.
@@ -367,7 +367,7 @@ Análise Individual: {nome}
 Pontuação Total: {total} / 225
 Zona de Governança: {zona}
 
-🔍 Direcionamento Estratégico
+ Direcionamento Estratégico
 Zona de Governança: SOBREVIVÊNCIA
 
 {nome}, você está na Zona de Sobrevivência.
@@ -418,7 +418,7 @@ if st.session_state.etapa == "intro":
         st.markdown("## PROTOCOLO LIDERUM")
         st.markdown("### Diagnóstico de Governança Pessoal")
         st.markdown("""
-Descubra, em poucos minutos, onde sua autoliderança está sólida —  
+Descubra, em poucos minutos, onde sua autoliderança está sólida  
 e onde ela está quebrando sua constância, foco e execução.
         """)
 
@@ -452,7 +452,7 @@ Ele foi criado para ajudar você a observar com mais clareza como está hoje a s
         # BLOCO 3 — Por que isso importa
         st.markdown("### Por que isso importa")
         st.markdown("""
-Muitas pessoas são competentes, estudam, se esforçam —  
+Muitas pessoas são competentes, estudam, se esforçam, 
 mas os resultados oscilam porque a forma de se governar é instável.  
 
 Este diagnóstico existe para revelar exatamente isso.
@@ -690,22 +690,18 @@ elif st.session_state.etapa == "resultado":
 
         # Card de valor (sem “IA”)
         st.markdown("<div class='card' style='margin-top:14px;'>", unsafe_allow_html=True)
-        st.markdown("### O que você recebe no Laudo Completo + Plano de Ação")
+        st.markdown("### Acesse o Laudo Completo + Plano de Ação
+E receba também a leitura clara das 9 dimensões, com")
         st.markdown("""
-Este diagnóstico apresenta tendências gerais da sua governança pessoal.  
-O Laudo Completo aprofunda essa leitura e transforma o retrato em direção prática, mostrando:  
-• o que sustenta seu padrão atual  
-• onde estão os principais pontos de atenção  
-• quais decisões e ajustes geram maior impacto agora  
 
-Você recebe uma leitura clara das 9 dimensões, com:  
-• interpretação objetiva da sua zona de governança  
-• priorização estratégica (o que atacar primeiro)  
-• plano de ação prático:  
-o 7 dias para organização e foco  
-o 30 dias para consolidação e consistência  
+* Seu padrão atual e principais pontos de atenção
+* Interpretação objetiva da sua zona de governança
+* Priorização estratégica (o que atacar primeiro)
+* Plano de ação prático:
+- 07 dias para organização e foco
+- 30 dias para consolidação e consistência
 
-O objetivo não é fazer mais.  
+O objetivo não é fazer mais.
 É agir com critério, clareza e execução sustentada, no nível que você está hoje.
         """)
         st.markdown("</div>", unsafe_allow_html=True)
