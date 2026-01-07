@@ -67,12 +67,16 @@ label, p, span, div { color: #FFFFFF !important; font-size: 18px !important; }
   border-radius: 12px;
   margin: 14px 0;
 }
-.question-text {
-  font-size: 21px !important;
-  line-height: 1.4;
-  color: #FFFFFF !important;
-  margin: 0 0 10px 0;
+/* Botão TESTE quase invisível */
+button[data-testid="baseButton-secondary"] {
+  opacity: 0.08;
+  transform: scale(0.85);
 }
+
+button[data-testid="baseButton-secondary"]:hover {
+  opacity: 0.25;
+}
+
 
 /* Laudo */
 .laudo-container {
