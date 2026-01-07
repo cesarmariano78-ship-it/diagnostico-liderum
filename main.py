@@ -51,30 +51,30 @@ label, p, span, div { color: #FFFFFF !important; font-size: 18px !important; }
 .card {
   background-color: rgba(255,255,255,0.02);
   border: 0.5px solid #1DB954; /* verde Brasil */
-  padding: 22px;2px
+  padding: 22px;
   border-radius: 12px;
 }
-/* Barra horizontal fina (substitui todas as molduras altas) */
+
+/* Barra horizontal fina (página toda) */
 .divider-brasil {
-  height: 2px;              /* bem fininha */
+  height: 2px;
   background-color: #1DB954;
   opacity: 0.85;
   width: 100%;
   border-radius: 2px;
   margin: 20px 0;
 }
-/* Divisor meia largura – usado apenas dentro dos blocos de texto */
+
+/* Divisor meia largura – usado dentro dos blocos (para não cortar a tela toda) */
 .divider-half {
   height: 2px;
   background-color: #1DB954;
   opacity: 0.85;
   width: 100%;
-  max-width: 520px;   /* controla a largura da linha */
-  margin: 20px 0;
+  max-width: 520px;
+  margin: 20px auto;      /* centraliza */
   border-radius: 2px;
 }
-
-
 
 .small { font-size: 15px !important; color: rgba(255,255,255,0.75) !important; }
 .highlight { color: #D4AF37 !important; font-weight: bold; }
@@ -83,20 +83,19 @@ label, p, span, div { color: #FFFFFF !important; font-size: 18px !important; }
 .question-card {
   background-color: rgba(255,255,255,0.03);
   border: 1px solid rgba(212,175,55,0.18);
-  padding: 18px;2px
+  padding: 18px;
   border-radius: 12px;
   margin: 14px 0;
 }
+
 /* Botão TESTE quase invisível */
 button[data-testid="baseButton-secondary"] {
   opacity: 0.08;
   transform: scale(0.85);
 }
-
 button[data-testid="baseButton-secondary"]:hover {
   opacity: 0.25;
 }
-
 
 /* Laudo */
 .laudo-container {
@@ -135,6 +134,7 @@ button[kind="primary"] {
 button[kind="primary"]:hover {
   background: rgba(212,175,55,0.28) !important;
 }
+
 /* =========================
    MOLDURA GLOBAL — fina + verde Brasil
    ========================= */
@@ -161,7 +161,7 @@ details.laudo-details > summary {
 
   padding: 16px 18px;
   font-weight: 900;
-  font-size: 19.8px; /* ~10% maior */
+  font-size: 19.8px;
   text-align: center;
 }
 
@@ -339,12 +339,10 @@ def calcular_zona(total: int) -> str:
     return "SOBREVIVÊNCIA"
 
 def _build_eduzz_checkout_url(submission_id: str) -> str:
-    # Envia o submission_id no utm_content (path confirmado: data.utm.utm_content)
     q = {"utm_content": submission_id or ""}
     return f"{EDUZZ_CHECKOUT_BASE}?{urllib.parse.urlencode(q)}"
 
 def _texto_laudo_expandido(nome: str, total: int, zona: str) -> str:
-    # TEXTO IDÊNTICO AO DOCUMENTO (apenas com preenchimento de variáveis)
     if zona == "OSCILAÇÃO":
         return f"""PROTOCOLO LIDERUM
 
@@ -388,8 +386,6 @@ sensação de esforço alto com retorno irregular
 
 Seu gráfico mostra tendências.
 O que ainda falta é clareza prática sobre onde intervir primeiro.
-
-
 """
     if zona == "ELITE":
         return f"""PROTOCOLO LIDERUM
@@ -426,10 +422,7 @@ porque é justamente o fundamento que sustenta a elite.
 
 O objetivo agora é claro:
 blindar constância, reduzir desgaste e transformar competência em impacto sustentado.
-
-
 """
-    # SOBREVIVÊNCIA
     return f"""PROTOCOLO LIDERUM
 
 Análise Individual: {nome}
@@ -465,8 +458,6 @@ O objetivo inicial na Zona de Sobrevivência é simples e vital:
 parar o colapso, restaurar estabilidade básica e criar espaço interno para decisões melhores.
 
 Sem isso, qualquer tentativa de evolução vira mais peso — e não solução.
-
-
 """
 
 # ---------------------------------------
@@ -475,8 +466,6 @@ Sem isso, qualquer tentativa de evolução vira mais peso — e não solução.
 st.markdown('<div class="top-banner"></div>', unsafe_allow_html=True)
 st.markdown("<h1 style='text-align:center; margin-top: 0;'>PROTOCOLO LIDERUM</h1>", unsafe_allow_html=True)
 
-
-# ---------------------------------------
 # ---------------------------------------
 # ETAPA 0: INTRO
 # ---------------------------------------
@@ -503,7 +492,6 @@ e onde ela está quebrando sua constância, foco e execução.
 
         st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
 
-        # CTA principal (alto)
         if st.button("Iniciar diagnóstico gratuito"):
             if not st.session_state.submission_id:
                 st.session_state.submission_id = str(uuid.uuid4())
@@ -543,7 +531,6 @@ Suas respostas são confidenciais e usadas exclusivamente para gerar seu diagnó
 Nenhuma informação será compartilhada.
         """)
 
-        # CTA repetido no final (centralizado)
         st.markdown("<div style='height:14px;'></div>", unsafe_allow_html=True)
         st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
 
@@ -571,7 +558,6 @@ elif st.session_state.etapa == "questoes":
 - Este diagnóstico mede **consistência**, não intenção.
     """)
     st.markdown("</div>", unsafe_allow_html=True)
-
 
     st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
     st.markdown("<p class='small'>Instrução: clique em cada dimensão para abrir as perguntas. Responda todas as 45 para liberar o diagnóstico.</p>", unsafe_allow_html=True)
@@ -692,7 +678,6 @@ elif st.session_state.etapa == "captura":
 # ETAPA 3: LAUDO
 # ---------------------------------------
 elif st.session_state.etapa == "resultado":
-    # Estilos locais (somente para a ETAPA 3)
     st.markdown("""
     <style>
       .btn-brasil {
@@ -744,7 +729,7 @@ elif st.session_state.etapa == "resultado":
     checkout_url = _build_eduzz_checkout_url(st.session_state.submission_id)
 
     # =========================
-    # TOPO DA PÁGINA (correto)
+    # TOPO DA PÁGINA
     # =========================
     st.markdown(
         f"### Análise Individual: <span class='highlight'>{st.session_state.nome_usuario.upper()}</span>",
@@ -798,9 +783,9 @@ elif st.session_state.etapa == "resultado":
         nome = st.session_state.nome_usuario
         zona = st.session_state.zona
 
-        # Texto do laudo (USE OS SEUS TEXTOS ATUAIS AQUI)
+        # Texto do laudo (agora com f-string para preencher {nome}/{zona})
         if zona == "OSCILAÇÃO":
-            laudo_texto = """PROTOCOLO LIDERUM
+            laudo_texto = f"""PROTOCOLO LIDERUM
 
 Análise Individual: {nome}
 
@@ -844,7 +829,7 @@ Seu gráfico mostra tendências.
 O que ainda falta é clareza prática sobre onde intervir primeiro.
 """.strip()
         elif zona == "ELITE":
-            laudo_texto = """PROTOCOLO LIDERUM
+            laudo_texto = f"""PROTOCOLO LIDERUM
 
 Análise Individual: {nome}
 
@@ -880,7 +865,7 @@ O objetivo agora é claro:
 blindar constância, reduzir desgaste e transformar competência em impacto sustentado.
 """.strip()
         else:
-            laudo_texto = """PROTOCOLO LIDERUM
+            laudo_texto = f"""PROTOCOLO LIDERUM
 
 Análise Individual: {nome}
 
@@ -927,10 +912,12 @@ Sem isso, qualquer tentativa de evolução vira mais peso — e não solução.
   </div>
 </details>
         """, unsafe_allow_html=True)
-     
-        st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
 
-        st.markdown("<div class='card' style='margin-top:32px;'>", unsafe_allow_html=True)
+        # Divisor meia largura (para não cortar a tela toda)
+        st.markdown("<div class='divider-half'></div>", unsafe_allow_html=True)
+
+        # Próximo passo lógico (UMA ÚNICA VEZ)
+        st.markdown("<div class='card' style='margin-top:18px;'>", unsafe_allow_html=True)
         st.markdown("""
 ### Próximo passo lógico
 Acesse o **Laudo Completo + Plano de Ação** e receba também a leitura clara das 9 dimensões com:
@@ -946,37 +933,14 @@ O objetivo não é fazer mais.
 É agir com critério, clareza e execução sustentada, no nível que você está hoje.
         """)
         st.markdown("</div>", unsafe_allow_html=True)
-
 
         st.markdown("</div>", unsafe_allow_html=True)  # fecha .laudo-container
-              st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
-
-        st.markdown("<div class='card' style='margin-top:32px;'>", unsafe_allow_html=True)
-        st.markdown("""
-### Próximo passo lógico
-Acesse o **Laudo Completo + Plano de Ação** e receba também a leitura clara das 9 dimensões com:
-
-- Seu padrão atual e principais pontos de atenção  
-- Interpretação objetiva da sua zona de governança  
-- Priorização estratégica (o que atacar primeiro)  
-- Plano de ação prático:
-  - 07 dias para organização e foco
-  - 30 dias para consolidação e consistência
-
-O objetivo não é fazer mais.  
-É agir com critério, clareza e execução sustentada, no nível que você está hoje.
-        """)
-        st.markdown("</div>", unsafe_allow_html=True)
-
-         
-   
-
-
-   
 
     # =========================
-    # CTA CHECKOUT (agora no lugar certo: abaixo)
+    # CTA CHECKOUT (fora do col_r, abaixo do bloco)
     # =========================
+    st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
+
     st.markdown(
         "<p style='text-align:center; font-size:16px; opacity:0.85; margin: 10px 0 10px 0;'>"
         "Se você quer clareza prática sobre onde intervir primeiro — este é o próximo passo."
@@ -1012,12 +976,14 @@ O objetivo não é fazer mais.
     )
 
     # =========================
-    # Rodapé (WhatsApp) — por último
+    # Rodapé (WhatsApp)
     # =========================
     wa_url = "https://wa.me/5581986245870?text=Olá!%20Acabei%20de%20fazer%20meu%20Diagnóstico%20LIDERUM%20e%20quero%20conhecer%20as%20soluções."
 
     st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
     col_wa_l, col_wa_r = st.columns([1, 1])
+    with col_wa_l:
+        st.write("")
     with col_wa_r:
         st.markdown(
             f"""
