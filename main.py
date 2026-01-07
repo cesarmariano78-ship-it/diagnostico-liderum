@@ -1003,16 +1003,3 @@ st.markdown(
           </a>
         """, unsafe_allow_html=True)
 
-    # Ajuste visual: deixa o botão Streamlit "Refazer diagnóstico" parecido com outline (sem mexer no CSS global)
-    st.markdown("""
-    <style>
-      /* Somente este botão (por key) mantém o estilo global do Streamlit,
-         então a gente neutraliza aqui com CSS local */
-      div[data-testid="stButton"] button[data-testid="baseButton-secondary"] {
-        background: transparent !important;
-        color: #009C3B !important;
-        border: 1px solid #009C3B !important;
-        font-weight: 900 !important;
-      }
-    </style>
-    """, unsafe_allow_html=True)
