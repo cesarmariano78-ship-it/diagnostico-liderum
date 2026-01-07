@@ -54,6 +54,15 @@ label, p, span, div { color: #FFFFFF !important; font-size: 18px !important; }
   padding: 22px;2px
   border-radius: 12px;
 }
+/* Barra horizontal fina (substitui todas as molduras altas) */
+.divider-brasil {
+  height: 2px;              /* bem fininha */
+  background-color: #1DB954;
+  opacity: 0.85;
+  width: 100%;
+  border-radius: 2px;
+  margin: 20px 0;
+}
 
 
 .small { font-size: 15px !important; color: rgba(255,255,255,0.75) !important; }
@@ -484,7 +493,7 @@ e onde ela está quebrando sua constância, foco e execução.
 </p>
         """, unsafe_allow_html=True)
 
-        st.markdown("<div style='height:14px;'></div>", unsafe_allow_html=True)
+        st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
 
         # CTA principal (alto)
         if st.button("Iniciar diagnóstico gratuito"):
@@ -520,7 +529,8 @@ mas os resultados oscilam porque a forma de se governar é instável.
 Este diagnóstico existe para revelar exatamente isso.
         """)
 
-        st.markdown("<div style='height:10px;'></div>", unsafe_allow_html=True)
+        st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
+      
 
         # Privacidade (curto)
         st.markdown("### Privacidade e sigilo")
@@ -536,7 +546,8 @@ Nenhuma informação será compartilhada.
     unsafe_allow_html=True
 )
 
-        st.markdown("<div style='height:14px;'></div>", unsafe_allow_html=True)
+       st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
+
 
         if st.button("Iniciar diagnóstico gratuito", key="cta_intro_bottom"):
             if not st.session_state.submission_id:
@@ -564,7 +575,7 @@ elif st.session_state.etapa == "questoes":
     """)
     st.markdown("</div>", unsafe_allow_html=True)
 
-    st.markdown("<div style='height:10px;'></div>", unsafe_allow_html=True)
+    st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
     st.markdown("<p class='small'>Instrução: clique em cada dimensão para abrir as perguntas. Responda todas as 45 para liberar o diagnóstico.</p>", unsafe_allow_html=True)
 
     top_l, top_r = st.columns([0.88, 0.12])
@@ -929,7 +940,7 @@ Sem isso, qualquer tentativa de evolução vira mais peso — e não solução.
 </details>
         """, unsafe_allow_html=True)
 
-        st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
 
         # Próximo passo lógico (texto idêntico)
         st.markdown("<div class='card' style='margin-top:14px;'>", unsafe_allow_html=True)
