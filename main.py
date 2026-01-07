@@ -63,6 +63,17 @@ label, p, span, div { color: #FFFFFF !important; font-size: 18px !important; }
   border-radius: 2px;
   margin: 20px 0;
 }
+/* Divisor meia largura – usado apenas dentro dos blocos de texto */
+.divider-half {
+  height: 2px;
+  background-color: #1DB954;
+  opacity: 0.85;
+  width: 100%;
+  max-width: 520px;   /* controla a largura da linha */
+  margin: 20px 0;
+  border-radius: 2px;
+}
+
 
 
 .small { font-size: 15px !important; color: rgba(255,255,255,0.75) !important; }
@@ -92,7 +103,6 @@ button[data-testid="baseButton-secondary"]:hover {
   background-color: rgba(255, 255, 255, 0.03);
   padding: 28px;
   border-radius: 15px;
-  border-left: 6px solid #D4AF37;
   margin-top: 10px;
   line-height: 1.7;
 }
