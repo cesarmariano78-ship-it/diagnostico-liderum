@@ -953,6 +953,7 @@ O objetivo não é fazer mais.
 )
 
 
+
     # Centraliza texto e CTA principal
     st.markdown("<h3 style='text-align: center;'>Próximo Passo</h3>", unsafe_allow_html=True)
     st.markdown(
