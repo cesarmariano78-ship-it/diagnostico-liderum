@@ -415,7 +415,6 @@ if st.session_state.etapa == "intro":
         st.markdown("<div class='card'>", unsafe_allow_html=True)
 
         # BLOCO 1 — Headline
-        st.markdown("## PROTOCOLO LIDERUM")
         st.markdown("### Diagnóstico de Governança Pessoal")
         st.markdown("""
 Descubra, em poucos minutos, onde sua autoliderança está sólida  
