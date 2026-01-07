@@ -531,8 +531,11 @@ Nenhuma informação será compartilhada.
 
         # CTA repetido no final (mesma ação, key diferente para não conflitar)
         st.markdown("<div style='height:14px;'></div>", unsafe_allow_html=True)
-        st.markdown(<hr style="border: none; border-top: 0.5px solid #1DB954; opacity: 0.6;">
-, unsafe_allow_html=True)
+        st.markdown(
+    "<hr style='border:none; border-top:0.5px solid #1DB954; opacity:0.6;'>",
+    unsafe_allow_html=True
+)
+
         st.markdown("<div style='height:14px;'></div>", unsafe_allow_html=True)
 
         if st.button("Iniciar diagnóstico gratuito", key="cta_intro_bottom"):
