@@ -220,6 +220,32 @@ div.stButton > button {
 #teste-anchor + div[data-testid="stButton"] button:hover {
   opacity: 0.22 !important;   /* aparece só no hover */
 }
+/* =========================================
+   BOTÃO TESTE MICRO (invisível + sem caixa)
+   ========================================= */
+div[data-testid="stButton"] > button[kind="secondary"][key="btn_teste_micro"],
+div[data-testid="stButton"] > button[key="btn_teste_micro"]{
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  line-height: 1 !important;
+  color: rgba(255,255,255,0.85) !important;
+  font-weight: 900 !important;
+}
+
+/* remove o "container" visual do botão */
+div[data-testid="stButton"]:has(button[key="btn_teste_micro"]) {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
 
 
 </style>
@@ -617,13 +643,16 @@ elif st.session_state.etapa == "questoes":
     st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
     st.markdown("<p class='small'>Instrução: clique em cada dimensão para abrir as perguntas. Responda todas as 45 para liberar o diagnóstico.</p>", unsafe_allow_html=True)
 
-    top_l, top_r = st.columns([0.97, 0.03])
+    col_titulo, col_ponto = st.columns([0.98, 0.02], vertical_alignment="center")
 
-    with top_r:
-        st.markdown("<div id='teste-anchor'></div>", unsafe_allow_html=True)
+    with col_titulo:
+        st.markdown("### Como responder")
+
+    with col_ponto:
         if st.button("•", key="btn_teste_micro", help="Preenche as 45 respostas aleatoriamente (uso interno)."):
-         _preencher_respostas_aleatorias()
-         st.rerun()
+            _preencher_respostas_aleatorias()
+            st.rerun()
+
 
 
     q_idx = 0
