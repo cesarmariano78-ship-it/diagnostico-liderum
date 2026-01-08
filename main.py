@@ -667,7 +667,7 @@ elif st.session_state.etapa == "questoes":
     q_idx = 0
     respondidas = 0
 
-      for dim_nome, dim_desc, perguntas in dimensoes:
+    for dim_nome, dim_desc, perguntas in dimensoes:
         with st.expander(f"✨ DIMENSÃO: {dim_nome}"):
             st.markdown(f"<p class='small'>{dim_desc}</p>", unsafe_allow_html=True)
             
