@@ -645,8 +645,8 @@ if st.session_state.etapa == "intro":
 # ---------------------------------------
 elif st.session_state.etapa == "questoes":
       st.markdown("<div class='card'>", unsafe_allow_html=True)
-    st.markdown("### Como responder")
-    st.markdown("""
+      st.markdown("### Como responder")
+      st.markdown("""
 - Use a escala de 1 a 5 considerando **como você age na maior parte do tempo**.  
 - Evite responder pelo que gostaria de ser. Responda pelo que você realmente faz.  
 - Se ficar em dúvida entre duas notas, **escolha a menor**.  
