@@ -617,7 +617,7 @@ elif st.session_state.etapa == "questoes":
     st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
     st.markdown("<p class='small'>Instrução: clique em cada dimensão para abrir as perguntas. Responda todas as 45 para liberar o diagnóstico.</p>", unsafe_allow_html=True)
 
-     top_l, top_r = st.columns([0.97, 0.03])
+    top_l, top_r = st.columns([0.97, 0.03])
 
 with top_r:
     st.markdown("<div id='teste-anchor'></div>", unsafe_allow_html=True)
