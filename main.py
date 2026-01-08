@@ -644,6 +644,19 @@ if st.session_state.etapa == "intro":
 # ETAPA 1: QUESTÕES
 # ---------------------------------------
 elif st.session_state.etapa == "questoes":
+      st.markdown("<div class='card'>", unsafe_allow_html=True)
+    st.markdown("### Como responder")
+    st.markdown("""
+- Use a escala de 1 a 5 considerando **como você age na maior parte do tempo**.  
+- Evite responder pelo que gostaria de ser. Responda pelo que você realmente faz.  
+- Se ficar em dúvida entre duas notas, **escolha a menor**.  
+- Este diagnóstico mede **consistência**, não intenção.
+    """)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
+    st.markdown("<p class='small'>Instrução: clique em cada dimensão para abrir as perguntas. Responda todas as 45 para liberar o diagnóstico.</p>", unsafe_allow_html=True)
+
    
 
     st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
