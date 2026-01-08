@@ -268,15 +268,7 @@ button[title="Preenche as 45 respostas aleatoriamente (uso interno)."]{
 button[title="Preenche as 45 respostas aleatoriamente (uso interno)."]:hover{
   opacity: 0.85 !important;
 }
-st.markdown("""
-<style>
-/* botão feedback */
-[data-testid="stFeedback"] { display: none; }
 
-/* qualquer floating button */
-button[title="Send feedback"] { display: none; }
-</style>
-""", unsafe_allow_html=True)
 
 
 
