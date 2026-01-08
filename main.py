@@ -621,7 +621,7 @@ elif st.session_state.etapa == "questoes":
 
 with top_r:
     st.markdown("<div id='teste-anchor'></div>", unsafe_allow_html=True)
-            if st.button("•", key="btn_teste_micro", help="Preenche as 45 respostas aleatoriamente (uso interno)."):
+      if st.button("•", key="btn_teste_micro", help="Preenche as 45 respostas aleatoriamente (uso interno)."):
         _preencher_respostas_aleatorias()
         st.rerun()
 
