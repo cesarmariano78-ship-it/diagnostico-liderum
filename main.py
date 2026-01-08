@@ -652,10 +652,10 @@ elif st.session_state.etapa == "questoes":
 - Se ficar em dúvida entre duas notas, **escolha a menor**.  
 - Este diagnóstico mede **consistência**, não intenção.
     """)
-    st.markdown("</div>", unsafe_allow_html=True)
+     st.markdown("</div>", unsafe_allow_html=True)
 
-    st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
-    st.markdown("<p class='small'>Instrução: clique em cada dimensão para abrir as perguntas. Responda todas as 45 para liberar o diagnóstico.</p>", unsafe_allow_html=True)
+     st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
+     st.markdown("<p class='small'>Instrução: clique em cada dimensão para abrir as perguntas. Responda todas as 45 para liberar o diagnóstico.</p>", unsafe_allow_html=True)
 
    
 
