@@ -11,6 +11,16 @@ import urllib.parse
 # CONFIG
 # ---------------------------------------
 st.set_page_config(page_title="Protocolo LIDERUM", layout="wide")
+st.markdown("""
+<style>
+/* some com header inteiro */
+header {visibility: hidden;}
+
+/* remove espaço que o header deixa */
+.stApp { margin-top: -80px; }
+</style>
+""", unsafe_allow_html=True)
+
 
 URL_WEBHOOK = "https://script.google.com/macros/s/AKfycbzpgNSVxPbMgFG_yk5UN5vucWROJzN6VUlpv5mVeW-gUw4ZySZOwLzhOa6lr1oVfWYo/exec"
 APP_VERSION = "mvp-0.1"
