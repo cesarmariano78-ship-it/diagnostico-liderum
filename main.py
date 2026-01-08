@@ -237,14 +237,28 @@ div[data-testid="stButton"] > button[key="btn_teste_micro"]{
   font-weight: 900 !important;
 }
 
-/* remove o "container" visual do botão */
-div[data-testid="stButton"]:has(button[key="btn_teste_micro"]) {
+/* BOTÃO TESTE MICRO (só o do help "Preenche as 45 respostas...") */
+button[title="Preenche as 45 respostas aleatoriamente (uso interno)."]{
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
   padding: 0 !important;
   margin: 0 !important;
+
+  width: 14px !important;
+  height: 14px !important;
+  min-width: 14px !important;
+  min-height: 14px !important;
+
+  color: rgba(255,255,255,0.70) !important;
+  font-weight: 900 !important;
+  line-height: 14px !important;
 }
+
+button[title="Preenche as 45 respostas aleatoriamente (uso interno)."]:hover{
+  opacity: 0.85 !important;
+}
+
 
 
 
@@ -630,28 +644,32 @@ if st.session_state.etapa == "intro":
 # ETAPA 1: QUESTÕES
 # ---------------------------------------
 elif st.session_state.etapa == "questoes":
-    st.markdown("<div class='card'>", unsafe_allow_html=True)
-    st.markdown("### Como responder")
-    st.markdown("""
-- Use a escala de 1 a 5 considerando **como você age na maior parte do tempo**.  
-- Evite responder pelo que gostaria de ser. Responda pelo que você realmente faz.  
-- Se ficar em dúvida entre duas notas, **escolha a menor**.  
-- Este diagnóstico mede **consistência**, não intenção.
-    """)
-    st.markdown("</div>", unsafe_allow_html=True)
+    /* BOTÃO TESTE MICRO (só o do help "Preenche as 45 respostas...") */
+button[title="Preenche as 45 respostas aleatoriamente (uso interno)."]{
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+
+  width: 14px !important;
+  height: 14px !important;
+  min-width: 14px !important;
+  min-height: 14px !important;
+
+  color: rgba(255,255,255,0.70) !important;
+  font-weight: 900 !important;
+  line-height: 14px !important;
+}
+
+button[title="Preenche as 45 respostas aleatoriamente (uso interno)."]:hover{
+  opacity: 0.85 !important;
+}
 
     st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
     st.markdown("<p class='small'>Instrução: clique em cada dimensão para abrir as perguntas. Responda todas as 45 para liberar o diagnóstico.</p>", unsafe_allow_html=True)
 
-    col_titulo, col_ponto = st.columns([0.98, 0.02], vertical_alignment="center")
-
-    with col_titulo:
-        st.markdown("### Como responder")
-
-    with col_ponto:
-        if st.button("•", key="btn_teste_micro", help="Preenche as 45 respostas aleatoriamente (uso interno)."):
-            _preencher_respostas_aleatorias()
-            st.rerun()
+    
 
 
 
