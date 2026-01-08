@@ -664,23 +664,23 @@ elif st.session_state.etapa == "questoes":
             _preencher_respostas_aleatorias()
             st.rerun()
 
-st.markdown("""
-<style>
-/* deixa o micro-botão sem caixa visível */
-button[data-testid="baseButton-secondary"][title="Preenche as 45 respostas aleatoriamente (uso interno)."]{
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  min-width: 10px !important;
-  height: 10px !important;
-  line-height: 10px !important;
-  color: rgba(255,255,255,0.70) !important;
-  font-weight: 900 !important;
-}
-</style>
-""", unsafe_allow_html=True)
+    st.markdown("""
+    <style>
+    /* deixa o micro-botão sem caixa visível */
+    button[data-testid="baseButton-secondary"][title="Preenche as 45 respostas aleatoriamente (uso interno)."]{
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      bmargin: 0 !important;
+      min-width: 10px !important;
+      height: 10px !important;
+      line-height: 10px !important;
+      color: rgba(255,255,255,0.70) !important;
+      font-weight: 900 !important;
+  }
+  </style>
+  """, unsafe_allow_html=True)
 
 
     
