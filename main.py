@@ -644,27 +644,7 @@ if st.session_state.etapa == "intro":
 # ETAPA 1: QUESTÕES
 # ---------------------------------------
 elif st.session_state.etapa == "questoes":
-    /* BOTÃO TESTE MICRO (só o do help "Preenche as 45 respostas...") */
-button[title="Preenche as 45 respostas aleatoriamente (uso interno)."]{
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-
-  width: 14px !important;
-  height: 14px !important;
-  min-width: 14px !important;
-  min-height: 14px !important;
-
-  color: rgba(255,255,255,0.70) !important;
-  font-weight: 900 !important;
-  line-height: 14px !important;
-}
-
-button[title="Preenche as 45 respostas aleatoriamente (uso interno)."]:hover{
-  opacity: 0.85 !important;
-}
+   
 
     st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
     st.markdown("<p class='small'>Instrução: clique em cada dimensão para abrir as perguntas. Responda todas as 45 para liberar o diagnóstico.</p>", unsafe_allow_html=True)
