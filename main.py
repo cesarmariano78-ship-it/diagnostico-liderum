@@ -181,6 +181,22 @@ details.laudo-details[open] > summary {
   padding: 18px;
   line-height: 1.7;
 }
+/* =========================
+   AJUSTE FINAL — CENTRALIZAÇÃO REAL DOS BOTÕES
+   ========================= */
+
+/* Centraliza o container do botão do Streamlit */
+div.stButton {
+  display: flex !important;
+  justify-content: center !important;
+}
+
+/* Define largura fixa para não “puxar” visualmente para a esquerda */
+div.stButton > button {
+  width: 380px !important;     /* desktop */
+  max-width: 100% !important;  /* mobile */
+}
+
 </style>
 """, unsafe_allow_html=True)
 
