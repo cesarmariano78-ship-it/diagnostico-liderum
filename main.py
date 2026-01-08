@@ -196,6 +196,31 @@ div.stButton > button {
   width: 380px !important;     /* desktop */
   max-width: 100% !important;  /* mobile */
 }
+/* =========================
+   BOTÃO TESTE (micro, discreto, canto)
+   ========================= */
+#teste-anchor + div[data-testid="stButton"] button {
+  width: 14px !important;
+  height: 14px !important;
+  min-height: 14px !important;
+
+  padding: 0 !important;
+  border-radius: 999px !important;
+
+  font-size: 0 !important;     /* “mata” o texto */
+  line-height: 0 !important;
+
+  opacity: 0.08 !important;   /* quase invisível */
+  background: #ffffff !important;
+  border: 1px solid rgba(255,255,255,0.25) !important;
+
+  box-shadow: none !important;
+}
+
+#teste-anchor + div[data-testid="stButton"] button:hover {
+  opacity: 0.22 !important;   /* aparece só no hover */
+}
+
 
 </style>
 """, unsafe_allow_html=True)
@@ -592,11 +617,14 @@ elif st.session_state.etapa == "questoes":
     st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
     st.markdown("<p class='small'>Instrução: clique em cada dimensão para abrir as perguntas. Responda todas as 45 para liberar o diagnóstico.</p>", unsafe_allow_html=True)
 
-    top_l, top_r = st.columns([0.88, 0.12])
-    with top_r:
-        if st.button("TESTE", help="Preenche as 45 respostas aleatoriamente (uso interno)."):
-            _preencher_respostas_aleatorias()
-            st.rerun()
+    top_l, top_r = st.columns([0.97, 0.03])
+with top_r:
+    st.markdown("<div id='teste-anchor'></div>", unsafe_allow_html=True)
+
+    if st.button("•", key="btn_teste_micro", help="Preenche as 45 respostas aleatoriamente (uso interno)."):
+        _preencher_respostas_aleatorias()
+        st.rerun()
+
 
     q_idx = 0
     respondidas = 0
