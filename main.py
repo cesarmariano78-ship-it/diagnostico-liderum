@@ -664,8 +664,8 @@ elif st.session_state.etapa == "questoes":
 
 
 
-    q_idx = 0
-    respondidas = 0
+      q_idx = 0
+      respondidas = 0
 
     for dim_nome, dim_desc, perguntas in dimensoes:
         with st.expander(f"✨ DIMENSÃO: {dim_nome}"):
