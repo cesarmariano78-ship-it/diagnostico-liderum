@@ -559,7 +559,10 @@ st.markdown('<div class="top-banner"></div>', unsafe_allow_html=True)
 
 # Mostra o título global apenas fora do intro (evita duplicidade)
 if st.session_state.etapa != "intro":
-    st.markdown("<h1 style='text-align:center; margin-top: 0;'>PROTOCOLO LIDERUM</h1>", unsafe_allow_html=True)
+    st.markdown(
+        "<h1 style='text-align:center; margin-top: 0;'>PROTOCOLO LIDERUM</h1>",
+        unsafe_allow_html=True
+    )
 
 
 # ---------------------------------------
@@ -571,10 +574,11 @@ if st.session_state.etapa == "intro":
     with col_c:
         st.markdown("<div class='card intro-center'>", unsafe_allow_html=True)
 
-            st.markdown(
+  st.markdown(
     "<h4 style='text-align:center; margin: 0 0 6px 0; letter-spacing: 0.08em; opacity: 0.9;'>PROTOCOLO LIDERUM</h4>",
     unsafe_allow_html=True
 )
+
 st.markdown(
     "<h1 style='text-align:center; margin: 0 0 14px 0; font-size: 2.1rem;'>Diagnóstico de Governança Pessoal</h1>",
     unsafe_allow_html=True
