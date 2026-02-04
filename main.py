@@ -566,24 +566,22 @@ if st.session_state.etapa != "intro":
 
 
 # ---------------------------------------
-# ETAPA 0: INTRO (100% CENTRALIZADA)
+# ETAPA 0: INTRO (copy do marketing) — bloco limpo (sem tabs)
 # ---------------------------------------
-
 if st.session_state.etapa == "intro":
     col_c = st.columns([1, 2.2, 1])[1]
     with col_c:
         st.markdown("<div class='card intro-center'>", unsafe_allow_html=True)
 
-  st.markdown(
-    "<h4 style='text-align:center; margin: 0 0 6px 0; letter-spacing: 0.08em; opacity: 0.9;'>PROTOCOLO LIDERUM</h4>",
-    unsafe_allow_html=True
-)
+        st.markdown(
+            "<h4 style='text-align:center; margin: 0 0 6px 0; letter-spacing: 0.08em; opacity: 0.9;'>PROTOCOLO LIDERUM</h4>",
+            unsafe_allow_html=True
+        )
 
-st.markdown(
-    "<h1 style='text-align:center; margin: 0 0 14px 0; font-size: 2.1rem;'>Diagnóstico de Governança Pessoal</h1>",
-    unsafe_allow_html=True
-)
-
+        st.markdown(
+            "<h1 style='text-align:center; margin: 0 0 14px 0; font-size: 2.1rem;'>Diagnóstico de Governança Pessoal</h1>",
+            unsafe_allow_html=True
+        )
 
         st.markdown(
             """
@@ -601,15 +599,10 @@ st.markdown(
         st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
 
         st.markdown(
-            """
-            <p style="text-align:center; margin: 12px 0 16px 0;">
-              Se você não entende onde sua governança quebra, você continua recomeçando.
-            </p>
-            """,
+            "<p style='text-align:center; margin: 12px 0 16px 0;'>Se você não entende onde sua governança quebra, você continua recomeçando.</p>",
             unsafe_allow_html=True
         )
 
-        # CTA principal
         cta_l, cta_c, cta_r = st.columns([1, 2, 1])
         with cta_c:
             if st.button("QUERO MEU DIAGNÓSTICO AGORA →", key="cta_intro_top"):
@@ -630,6 +623,7 @@ st.markdown(
         )
 
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
