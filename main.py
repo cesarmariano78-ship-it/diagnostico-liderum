@@ -571,7 +571,6 @@ if st.session_state.etapa == "intro":
     with col_c:
         st.markdown("<div class='card intro-center'>", unsafe_allow_html=True)
 
-        st.markdown(
             st.markdown(
     "<h4 style='text-align:center; margin: 0 0 6px 0; letter-spacing: 0.08em; opacity: 0.9;'>PROTOCOLO LIDERUM</h4>",
     unsafe_allow_html=True
