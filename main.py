@@ -11,6 +11,8 @@ import urllib.parse
 # CONFIG
 # ---------------------------------------
 st.set_page_config(page_title="Protocolo LIDERUM", layout="wide")
+_flush_pending_events()
+
 st.markdown("""
 <style>
 /* some com header inteiro */
@@ -302,6 +304,10 @@ if "submission_id" not in st.session_state:
 
 if "sent_events" not in st.session_state:
     st.session_state.sent_events = set()
+ 
+if "pending_events" not in st.session_state:
+    st.session_state.pending_events = []
+
 
 # ---------------------------------------
 # TRACKING (mínimo, dedupe, falha silenciosa)
@@ -309,26 +315,38 @@ if "sent_events" not in st.session_state:
 def _now_utc_iso():
     return datetime.datetime.utcnow().isoformat()
 
-def _send_event(event_name, etapa=None):
-    import threading, requests
+def _send_event(event_name: str, etapa: str = ""):
+    if "pending_events" not in st.session_state:
+        st.session_state.pending_events = []
 
     payload = {
+        "type": "event",
         "event_name": event_name,
-        "submission_id": st.session_state.get("submission_id"),
+        "timestamp": _now_utc_iso(),
+        "submission_id": st.session_state.get("submission_id") or "",
+        "app_version": APP_VERSION,
         "etapa": etapa,
-        "app_version": st.session_state.get("APP_VERSION", "v1")
     }
 
-    def _post():
+    st.session_state.pending_events.append(payload)
+
+
+def _flush_pending_events(max_per_run: int = 3):
+    import requests
+
+    if "pending_events" not in st.session_state:
+        st.session_state.pending_events = []
+
+    sent = 0
+    while st.session_state.pending_events and sent < max_per_run:
+        payload = st.session_state.pending_events.pop(0)
         try:
-            requests.post(URL_WEBHOOK, json=payload, timeout=1.2)
+            requests.post(URL_WEBHOOK, json=payload, timeout=0.8)
         except Exception:
-            pass  # nunca trava a interface
+            st.session_state.pending_events.insert(0, payload)
+            break
+        sent += 1
 
-    threading.Thread(target=_post, daemon=True).start()
-
-    except:
-        pass
 
 # ---------------------------------------
 # TESTE (preencher 45 respostas em 1 clique - discreto e sem quebrar UX)
