@@ -603,32 +603,36 @@ if st.session_state.etapa == "intro":
             unsafe_allow_html=True
         )
 
-        cta_l, cta_c, cta_r = st.columns([1, 2, 1])
-with cta_c:
+      # ---------------------------------------
+# ETAPA 0: INTRO
+# ---------------------------------------
+if st.session_state.etapa == "intro":
 
-    if st.button("QUERO MEU DIAGNÓSTICO AGORA →", key="cta_intro_top"):
+    cta_l, cta_c, cta_r = st.columns([1, 2, 1])
+    with cta_c:
+        if st.button("QUERO MEU DIAGNÓSTICO AGORA →", key="cta_intro_top"):
 
-        if not st.session_state.submission_id:
-            st.session_state.submission_id = str(uuid.uuid4())
+            if not st.session_state.get("submission_id"):
+                st.session_state.submission_id = str(uuid.uuid4())
 
-        try:
-            requests.post(
-                URL_WEBHOOK,
-                json={
-                    "type": "event",
-                    "event_name": "diagnostico_iniciado",
-                    "timestamp": _now_utc_iso(),
-                    "submission_id": st.session_state.submission_id,
-                    "app_version": APP_VERSION,
-                    "etapa": "intro",
-                },
-                timeout=3,
-            )
-        except:
-            pass
+            try:
+                requests.post(
+                    URL_WEBHOOK,
+                    json={
+                        "type": "event",
+                        "event_name": "diagnostico_iniciado",
+                        "timestamp": _now_utc_iso(),
+                        "submission_id": st.session_state.submission_id,
+                        "app_version": APP_VERSION,
+                        "etapa": "intro",
+                    },
+                    timeout=3,
+                )
+            except Exception:
+                pass
 
-        st.session_state.etapa = "questoes"
-        st.rerun()
+            st.session_state.etapa = "questoes"
+            st.rerun()
 
 # ---------------------------------------
 # ETAPA 1: QUESTÕES
@@ -637,6 +641,7 @@ elif st.session_state.etapa == "questoes":
     st.markdown("<div class='card'>", unsafe_allow_html=True)
     st.markdown("### Como responder")
     st.markdown("""
+
 - Use a escala de 1 a 5 considerando **como você age na maior parte do tempo**.  
 - Evite responder pelo que gostaria de ser. Responda pelo que você realmente faz.  
 - Se ficar em dúvida entre duas notas, **escolha a menor**.  
