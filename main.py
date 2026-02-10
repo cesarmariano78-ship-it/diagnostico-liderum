@@ -865,9 +865,9 @@ elif st.session_state.etapa == "resultado":
     col_l, col_r = st.columns([1.2, 0.8])
 
     with col_l:
-    import plotly.graph_objects as go  # <-- ADD AQUI (lazy import)
-    categorias_radar = [d[0].split(" (")[0] for d in dimensoes]
-    fig = go.Figure()
+        import plotly.graph_objects as go  # <-- ADD AQUI (lazy import)
+        categorias_radar = [d[0].split(" (")[0] for d in dimensoes]
+        fig = go.Figure()
         fig.add_trace(go.Scatterpolar(
             r=st.session_state.scores,
             theta=categorias_radar,
