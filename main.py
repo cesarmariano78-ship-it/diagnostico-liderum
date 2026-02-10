@@ -608,11 +608,9 @@ with cta_c:
 
     if st.button("QUERO MEU DIAGNÓSTICO AGORA →", key="cta_intro_top"):
 
-        # Garante ID antes de qualquer coisa
         if not st.session_state.submission_id:
             st.session_state.submission_id = str(uuid.uuid4())
 
-        # Envio síncrono APENAS na página 1 (garante captura do clique)
         try:
             requests.post(
                 URL_WEBHOOK,
@@ -627,15 +625,10 @@ with cta_c:
                 timeout=3,
             )
         except:
-            pass  # nunca trava a interface
+            pass
 
-        # Avança fluxo
         st.session_state.etapa = "questoes"
         st.rerun()
-
-
-
-
 
 # ---------------------------------------
 # ETAPA 1: QUESTÕES
