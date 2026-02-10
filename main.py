@@ -620,11 +620,19 @@ if st.session_state.etapa == "intro":
         )
 
         cta_l, cta_c, cta_r = st.columns([1, 2, 1])
-        with cta_c:
-            if st.button("QUERO MEU DIAGNÓSTICO AGORA →", key="cta_intro_top"):
+       with cta_c:
+           if st.button("QUERO MEU DIAGNÓSTICO AGORA →", key="cta_intro_top"):
+              st.session_state["debug_click_intro"] = st.session_state.get("debug_click_intro", 0) + 1
 
-               if not st.session_state.submission_id:
-                   st.session_state.submission_id = str(uuid.uuid4())
+              if not st.session_state.submission_id:
+                  st.session_state.submission_id = str(uuid.uuid4())
+
+              _send_event("diagnostico_iniciado", etapa="intro")
+              st.session_state.etapa = "questoes"
+              st.rerun()
+
+           st.write("debug_click_intro:", st.session_state.get("debug_click_intro", 0))
+
 
         _send_event("diagnostico_iniciado", etapa="intro")
 
