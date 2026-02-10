@@ -606,12 +606,12 @@ if st.session_state.etapa == "intro":
         cta_l, cta_c, cta_r = st.columns([1, 2, 1])
         with cta_c:
           if st.button("QUERO MEU DIAGNÓSTICO AGORA →", key="cta_intro_top"):
-            t0 = time.perf_counter()
-            _send_event("diagnostico_iniciado", etapa="intro")
-            st.caption(f"Tempo do evento: {time.perf_counter() - t0:.2f}s")
+          t0 = time.perf_counter()
+          _send_event("diagnostico_iniciado", etapa="intro")
+          st.session_state.debug_t_evento = time.perf_counter() - t0
 
-            st.session_state.etapa = "questoes"
-            st.rerun()
+          st.session_state.etapa = "questoes"
+          st.rerun()
 
 
 
@@ -635,6 +635,9 @@ if st.session_state.etapa == "intro":
 # ---------------------------------------
 # ETAPA 1: QUESTÕES
 # ---------------------------------------
+if "debug_t_evento" in st.session_state:
+    st.caption(f"Tempo do evento: {st.session_state.debug_t_evento:.2f}s")
+
 elif st.session_state.etapa == "questoes":
     st.markdown("<div class='card'>", unsafe_allow_html=True)
     st.markdown("### Como responder")
