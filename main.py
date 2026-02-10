@@ -605,13 +605,13 @@ if st.session_state.etapa == "intro":
 
         cta_l, cta_c, cta_r = st.columns([1, 2, 1])
         with cta_c:
-          if st.button("QUERO MEU DIAGNÓSTICO AGORA →", key="cta_intro_top"):
-          t0 = time.perf_counter()
-          _send_event("diagnostico_iniciado", etapa="intro")
-          st.session_state.debug_t_evento = time.perf_counter() - t0
+            if st.button("QUERO MEU DIAGNÓSTICO AGORA →", key="cta_intro_top"):
+               t0 = time.perf_counter()
+               _send_event("diagnostico_iniciado", etapa="intro")
+               st.session_state.debug_t_evento = time.perf_counter() - t0
 
-          st.session_state.etapa = "questoes"
-          st.rerun()
+               st.session_state.etapa = "questoes"
+               st.rerun()
 
 
 
