@@ -604,11 +604,15 @@ if st.session_state.etapa == "intro":
         cta_l, cta_c, cta_r = st.columns([1, 2, 1])
         with cta_c:
             if st.button("QUERO MEU DIAGNÓSTICO AGORA →", key="cta_intro_top"):
-                if not st.session_state.submission_id:
-                    st.session_state.submission_id = str(uuid.uuid4())
-                _send_event("diagnostico_iniciado", etapa="intro")
-                st.session_state.etapa = "questoes"
-                st.rerun()
+
+               if not st.session_state.submission_id:
+                   st.session_state.submission_id = str(uuid.uuid4())
+
+        _send_event("diagnostico_iniciado", etapa="intro")
+
+        st.session_state.etapa = "questoes"
+        st.rerun()
+
 
         st.markdown(
             "<p class='small' style='text-align:center; margin: 8px 0 0 0;'>(Leva de 6 a 8 minutos)</p>",
