@@ -615,6 +615,7 @@ if st.session_state.etapa == "intro":
 
 
 
+
         st.markdown(
             "<p class='small' style='text-align:center; margin: 8px 0 0 0;'>(Leva de 6 a 8 minutos)</p>",
             unsafe_allow_html=True
