@@ -309,26 +309,24 @@ if "sent_events" not in st.session_state:
 def _now_utc_iso():
     return datetime.datetime.utcnow().isoformat()
 
-def _send_event(event_name: str, etapa: str = "", meta: dict | None = None):
-    try:
-        submission_id = st.session_state.submission_id or ""
-        dedupe_key = f"{event_name}:{submission_id}"
-        if dedupe_key in st.session_state.sent_events:
-            return
+def _send_event(event_name, etapa=None):
+    import threading, requests
 
-        payload = {
-            "type": "event",
-            "event_name": event_name,
-            "timestamp": _now_utc_iso(),
-            "submission_id": submission_id,
-            "app_version": APP_VERSION,
-            "etapa": etapa,
-        }
-        if isinstance(meta, dict) and meta:
-            payload["meta"] = meta
+    payload = {
+        "event_name": event_name,
+        "submission_id": st.session_state.get("submission_id"),
+        "etapa": etapa,
+        "app_version": st.session_state.get("APP_VERSION", "v1")
+    }
 
-        requests.post(URL_WEBHOOK, json=payload, timeout=6)
-        st.session_state.sent_events.add(dedupe_key)
+    def _post():
+        try:
+            requests.post(URL_WEBHOOK, json=payload, timeout=1.2)
+        except Exception:
+            pass  # nunca trava a interface
+
+    threading.Thread(target=_post, daemon=True).start()
+
     except:
         pass
 
@@ -608,7 +606,7 @@ if st.session_state.etapa == "intro":
             if st.button("QUERO MEU DIAGNÓSTICO AGORA →", key="cta_intro_top"):
                 if not st.session_state.submission_id:
                     st.session_state.submission_id = str(uuid.uuid4())
-                # _send_event("diagnostico_iniciado", etapa="intro")
+                _send_event("diagnostico_iniciado", etapa="intro")
                 st.session_state.etapa = "questoes"
                 st.rerun()
 
