@@ -605,13 +605,14 @@ if st.session_state.etapa == "intro":
 
         cta_l, cta_c, cta_r = st.columns([1, 2, 1])
 with cta_c:
+
     if st.button("QUERO MEU DIAGNÓSTICO AGORA →", key="cta_intro_top"):
 
         # Garante ID antes de qualquer coisa
         if not st.session_state.submission_id:
             st.session_state.submission_id = str(uuid.uuid4())
 
-        # --- ENVIO SÍNCRONO APENAS NA PÁGINA 1 (garante captura do clique) ---
+        # Envio síncrono APENAS na página 1 (garante captura do clique)
         try:
             requests.post(
                 URL_WEBHOOK,
@@ -628,17 +629,10 @@ with cta_c:
         except:
             pass  # nunca trava a interface
 
-        # Avança fluxo normalmente
+        # Avança fluxo
         st.session_state.etapa = "questoes"
         st.rerun()
 
-
-        st.markdown(
-            "<p class='small' style='text-align:center; margin: 10px 0 0 0;'>Baseado no Protocolo LIDERUM, aplicado a milhares de pessoas.</p>",
-            unsafe_allow_html=True
-        )
-
-        st.markdown("</div>", unsafe_allow_html=True)
 
 
 
