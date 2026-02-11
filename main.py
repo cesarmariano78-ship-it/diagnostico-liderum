@@ -608,10 +608,37 @@ if st.session_state.etapa == "intro":
 # ETAPA 0: INTRO
 # ---------------------------------------
 if st.session_state.etapa == "intro":
+    col_c = st.columns([1, 2.2, 1])[1]
 
-    cta_l, cta_c, cta_r = st.columns([1, 2, 1])
-    with cta_c:
-                if st.button("QUERO MEU DIAGNÓSTICO AGORA →", key="cta_intro_top"):
+    with col_c:
+        st.markdown("<div class='card intro-center'>", unsafe_allow_html=True)
+
+        st.markdown(
+            "<h4 style='text-align:center; margin: 0 0 6px 0; letter-spacing: 0.08em; opacity: 0.85;'>PROTOCOLO LIDERUM</h4>",
+            unsafe_allow_html=True,
+        )
+
+        st.markdown(
+            "<h1 style='text-align:center; margin: 0 0 14px 0; font-size: 2.1rem;'>Diagnóstico de Governança Pessoal</h1>",
+            unsafe_allow_html=True,
+        )
+
+        st.markdown(
+            """
+            <p style="text-align:center; margin: 0 0 10px 0; font-size: 1.05rem;">
+            Descubra seu tipo de governança em 6–8 minutos
+            </p>
+            <p style="text-align:center; margin: 0 0 10px 0; font-size: 1.05rem;">
+            e veja por que você oscila — mesmo sendo competente.
+            </p>
+            <p style="text-align:center; margin: 0 0 16px 0; font-size: 1.05rem;">
+            Resultado personalizado + leitura objetiva + próximo passo claro.
+            </p>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        if st.button("QUERO MEU DIAGNÓSTICO AGORA →", key="cta_intro_top"):
             if not st.session_state.submission_id:
                 st.session_state.submission_id = str(uuid.uuid4())
 
