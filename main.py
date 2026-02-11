@@ -576,8 +576,7 @@ if st.session_state.etapa == "intro":
             "<h4 style='text-align:center; margin: 0 0 6px 0; letter-spacing: 0.08em; opacity: 0.9;'>PROTOCOLO LIDERUM</h4>",
             unsafe_allow_html=True
         )
-        st.stop()
-
+        
       
 
         st.markdown(
@@ -635,6 +634,7 @@ if st.session_state.etapa == "intro":
 
             st.session_state.etapa = "questoes"
             st.rerun()
+          st.stop()
 
 # ---------------------------------------
 # ETAPA 1: QUESTÕES
