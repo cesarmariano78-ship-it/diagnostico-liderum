@@ -635,7 +635,7 @@ if st.session_state.etapa == "intro":
             st.session_state.etapa = "questoes"
             st.rerun()
           
-      st.stop()
+       st.stop()
 
 # ---------------------------------------
 # ETAPA 1: QUESTÕES
