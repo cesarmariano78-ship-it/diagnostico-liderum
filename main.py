@@ -557,8 +557,7 @@ Sem isso, qualquer tentativa de evolução vira mais peso — e não solução.
 st.markdown('<div class="top-banner"></div>', unsafe_allow_html=True)
 
 
-    )
-
+  
 
 # ---------------------------------------
 # ETAPA 0: INTRO (copy do marketing) — bloco limpo (sem tabs)
