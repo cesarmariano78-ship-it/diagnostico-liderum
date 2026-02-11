@@ -611,9 +611,8 @@ if st.session_state.etapa == "intro":
 
     cta_l, cta_c, cta_r = st.columns([1, 2, 1])
     with cta_c:
-        if st.button("QUERO MEU DIAGNÓSTICO AGORA →", key="cta_intro_top"):
-
-            if not st.session_state.get("submission_id"):
+                if st.button("QUERO MEU DIAGNÓSTICO AGORA →", key="cta_intro_top"):
+            if not st.session_state.submission_id:
                 st.session_state.submission_id = str(uuid.uuid4())
 
             try:
@@ -627,15 +626,16 @@ if st.session_state.etapa == "intro":
                         "app_version": APP_VERSION,
                         "etapa": "intro",
                     },
-                    timeout=3,
+                    timeout=1,
                 )
-            except Exception:
+            except:
                 pass
 
             st.session_state.etapa = "questoes"
             st.rerun()
-          
-       st.stop()
+
+        st.stop()
+
 
 # ---------------------------------------
 # ETAPA 1: QUESTÕES
