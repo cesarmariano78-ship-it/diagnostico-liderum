@@ -17,7 +17,10 @@ def main() -> None:
     # best-effort: tenta reenviar tracking pendente sem travar a UI
     flush_pending_events(timeout=1.5)
 
-    
+    # HEADER
+    st.markdown('<div class="top-banner"></div>', unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align:center; margin-top: 0;'>PROTOCOLO LIDERUM</h1>", unsafe_allow_html=True)
+
     etapa = st.session_state.etapa
 
     if etapa == "intro":
