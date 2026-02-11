@@ -15,55 +15,13 @@ def _build_eduzz_checkout_url(submission_id: str) -> str:
     return f"{EDUZZ_CHECKOUT_BASE}?{urllib.parse.urlencode(q)}"
 
 def render_resultado() -> None:
-    st.markdown("""
-    <style>
-      .btn-brasil {
-        background: #009C3B;
-        color: #ffffff;
-        border: 1px solid #009C3B;
-        padding: 16px 22px;
-        border-radius: 10px;
-        font-weight: 900;
-        display: inline-block;
-        width: 100%;
-        max-width: 720px;
-        font-size: 20px;
-        text-align: center;
-        cursor: pointer;
-      }
-
-      .btn-outline-brasil {
-        background: transparent;
-        color: #009C3B;
-        border: 1px solid #009C3B;
-        padding: 12px 18px;
-        border-radius: 10px;
-        font-weight: 900;
-        display: inline-block;
-        width: 100%;
-        text-align: center;
-        cursor: pointer;
-      }
-
-      details.laudo-details { width: 100%; margin: 10px 0 0 0; }
-      details.laudo-details > summary { list-style: none; outline: none; }
-      details.laudo-details > summary::-webkit-details-marker { display: none; }
-
-      .laudo-text {
-        margin-top: 14px;
-        padding: 18px 18px;
-        border-radius: 12px;
-        background: rgba(255,255,255,0.03);
-        border: 1px solid rgba(0,156,59,0.35);
-        line-height: 1.7;
-      }
-    </style>
-    """, unsafe_allow_html=True)
 
     if not st.session_state.submission_id:
         st.session_state.submission_id = str(uuid.uuid4())
+
     checkout_url = _build_eduzz_checkout_url(st.session_state.submission_id)
 
+    # Topo
     st.markdown(
         f"### Análise Individual: <span class='highlight'>{st.session_state.nome_usuario.upper()}</span>",
         unsafe_allow_html=True,
@@ -77,6 +35,7 @@ def render_resultado() -> None:
 
     st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
 
+    # Corpo (Radar + Laudo)
     col_l, col_r = st.columns([1.2, 0.8])
 
     with col_l:
@@ -93,10 +52,76 @@ def render_resultado() -> None:
 
         laudo_texto = texto_laudo(zona, nome, total)
 
-        st.markdown(f"<div class='laudo-text'><pre style='white-space: pre-wrap;'>{laudo_texto}</pre></div>", unsafe_allow_html=True)
+        st.markdown(f"""
+        <details class="laudo-details">
+          <summary>
+            <div class="btn-brasil">📄 Clique aqui para expandir e ler o seu Laudo</div>
+          </summary>
+          <div class="laudo-text">
+            <pre style="white-space: pre-wrap; margin: 0; font-family: inherit;">
+{laudo_texto}
+            </pre>
+          </div>
+        </details>
+        """, unsafe_allow_html=True)
 
-        st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
-        st.markdown(f"<a class='btn-brasil' href='{checkout_url}' target='_blank'>QUERO MEU LAUDO COMPLETO (R$ 29,90)</a>", unsafe_allow_html=True)
+        st.markdown("<div class='divider-half'></div>", unsafe_allow_html=True)
+
+        st.markdown("""
+        <div class='card' style='margin-top:18px;'>
+        <h3>Próximo passo lógico</h3>
+        Acesse o Laudo Completo + Plano de Ação para:
+        <ul>
+        <li>Prioridade clara</li>
+        <li>Plano de 7 dias</li>
+        <li>Plano de 30 dias</li>
+        </ul>
+        </div>
+        """, unsafe_allow_html=True)
 
         st.markdown("</div>", unsafe_allow_html=True)
 
+    st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
+
+    st.markdown(
+        f"""
+        <div style='text-align: center; margin: 22px 0 6px 0;'>
+            <a href='{checkout_url}' target='_blank' style='text-decoration: none;'>
+                <div style='
+                    background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%);
+                    color: #001226;
+                    padding: 22px 44px;
+                    font-weight: 900;
+                    border-radius: 10px;
+                    display: inline-block;
+                    width: 100%;
+                    max-width: 760px;
+                    font-size: 22px;
+                '>
+                    QUERO MEU LAUDO COMPLETO + PLANO DE AÇÃO →
+                </div>
+            </a>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # Rodapé WhatsApp
+    wa_url = (
+        "https://wa.me/5581986245870?"
+        "text=Olá!%20Acabei%20de%20fazer%20meu%20Diagnóstico%20LIDERUM"
+        "%20e%20quero%20conhecer%20as%20soluções."
+    )
+
+    st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
+
+    col_wa_l, col_wa_r = st.columns([1, 1])
+    with col_wa_r:
+        st.markdown(
+            f"""
+            <a href="{wa_url}" target="_blank" style="text-decoration:none;">
+                <div class="btn-outline-brasil">Fale com nossa equipe</div>
+            </a>
+            """,
+            unsafe_allow_html=True,
+        )
