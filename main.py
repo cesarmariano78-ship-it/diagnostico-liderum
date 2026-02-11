@@ -556,11 +556,7 @@ Sem isso, qualquer tentativa de evolução vira mais peso — e não solução.
 # ---------------------------------------
 st.markdown('<div class="top-banner"></div>', unsafe_allow_html=True)
 
-# Mostra o título global apenas fora do intro (evita duplicidade)
-if st.session_state.etapa != "intro":
-    st.markdown(
-        "<h1 style='text-align:center; margin-top: 0;'>PROTOCOLO LIDERUM</h1>",
-        unsafe_allow_html=True
+
     )
 
 
