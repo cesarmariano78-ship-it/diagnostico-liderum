@@ -560,23 +560,22 @@ st.markdown('<div class="top-banner"></div>', unsafe_allow_html=True)
   
 
 # ---------------------------------------
-# ETAPA 0: INTRO (copy do marketing) — bloco limpo (sem tabs)
+# ETAPA 0: INTRO (ÚNICA)
 # ---------------------------------------
 if st.session_state.etapa == "intro":
     col_c = st.columns([1, 2.2, 1])[1]
+
     with col_c:
         st.markdown("<div class='card intro-center'>", unsafe_allow_html=True)
 
         st.markdown(
-            "<h4 style='text-align:center; margin: 0 0 6px 0; letter-spacing: 0.08em; opacity: 0.9;'>PROTOCOLO LIDERUM</h4>",
-            unsafe_allow_html=True
+            "<h4 style='text-align:center; margin: 0 0 6px 0; letter-spacing: 0.08em; opacity: 0.90;'>PROTOCOLO LIDERUM</h4>",
+            unsafe_allow_html=True,
         )
-        
-      
 
         st.markdown(
             "<h1 style='text-align:center; margin: 0 0 14px 0; font-size: 2.1rem;'>Diagnóstico de Governança Pessoal</h1>",
-            unsafe_allow_html=True
+            unsafe_allow_html=True,
         )
 
         st.markdown(
@@ -589,15 +588,32 @@ if st.session_state.etapa == "intro":
               Resultado personalizado + leitura objetiva + próximo passo claro.
             </p>
             """,
-            unsafe_allow_html=True
+            unsafe_allow_html=True,
         )
 
         st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
 
         st.markdown(
             "<p style='text-align:center; margin: 12px 0 16px 0;'>Se você não entende onde sua governança quebra, você continua recomeçando.</p>",
-            unsafe_allow_html=True
+            unsafe_allow_html=True,
         )
+
+        cta_l, cta_c, cta_r = st.columns([1, 2, 1])
+        with cta_c:
+            if st.button("QUERO MEU DIAGNÓSTICO AGORA →", key="cta_intro_top"):
+                if not st.session_state.get("submission_id"):
+                    st.session_state.submission_id = str(uuid.uuid4())
+
+                # garante captura do clique (dedupe + silencioso)
+                _send_event("diagnostico_iniciado", etapa="intro")
+
+                st.session_state.etapa = "questoes"
+                st.rerun()
+
+        st.markdown("</div>", unsafe_allow_html=True)  # fecha card da intro
+
+    st.stop()
+
 
       
 
