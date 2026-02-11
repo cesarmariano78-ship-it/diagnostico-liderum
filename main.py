@@ -600,6 +600,7 @@ if st.session_state.etapa == "intro":
         )
 
       # ---------------------------------------
+# ---------------------------------------
 # ETAPA 0: INTRO
 # ---------------------------------------
 if st.session_state.etapa == "intro":
@@ -633,30 +634,35 @@ if st.session_state.etapa == "intro":
             unsafe_allow_html=True,
         )
 
-        if st.button("QUERO MEU DIAGNÓSTICO AGORA →", key="cta_intro_top"):
-            if not st.session_state.submission_id:
-                st.session_state.submission_id = str(uuid.uuid4())
+        # CTA centralizado (mesma estética do layout anterior)
+        cta_l, cta_c, cta_r = st.columns([1, 2, 1])
+        with cta_c:
+            if st.button("QUERO MEU DIAGNÓSTICO AGORA →", key="cta_intro_top"):
+                if not st.session_state.get("submission_id"):
+                    st.session_state.submission_id = str(uuid.uuid4())
 
-            try:
-                requests.post(
-                    URL_WEBHOOK,
-                    json={
-                        "type": "event",
-                        "event_name": "diagnostico_iniciado",
-                        "timestamp": _now_utc_iso(),
-                        "submission_id": st.session_state.submission_id,
-                        "app_version": APP_VERSION,
-                        "etapa": "intro",
-                    },
-                    timeout=1,
-                )
-            except:
-                pass
+                try:
+                    requests.post(
+                        URL_WEBHOOK,
+                        json={
+                            "type": "event",
+                            "event_name": "diagnostico_iniciado",
+                            "timestamp": _now_utc_iso(),
+                            "submission_id": st.session_state.submission_id,
+                            "app_version": APP_VERSION,
+                            "etapa": "intro",
+                        },
+                        timeout=1,
+                    )
+                except Exception:
+                    pass
 
-            st.session_state.etapa = "questoes"
-            st.rerun()
+                st.session_state.etapa = "questoes"
+                st.rerun()
 
-        st.stop()
+        st.markdown("</div>", unsafe_allow_html=True)  # fecha o card da intro
+
+    st.stop()
 
 
 # ---------------------------------------
@@ -665,24 +671,30 @@ if st.session_state.etapa == "intro":
 elif st.session_state.etapa == "questoes":
     st.markdown("<div class='card'>", unsafe_allow_html=True)
     st.markdown("### Como responder")
-    st.markdown("""
-
+    st.markdown(
+        """
 - Use a escala de 1 a 5 considerando **como você age na maior parte do tempo**.  
 - Evite responder pelo que gostaria de ser. Responda pelo que você realmente faz.  
 - Se ficar em dúvida entre duas notas, **escolha a menor**.  
 - Este diagnóstico mede **consistência**, não intenção.
-    """)
+        """
+    )
     st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown("<div class='divider-brasil'></div>", unsafe_allow_html=True)
-    
-    st.markdown("<p class='small'>Instrução: clique em cada dimensão para abrir as perguntas. Responda todas as 45 para liberar o diagnóstico.</p>", unsafe_allow_html=True)
-# --- BOTÃO TESTE (micro e discreto) ---
+
+    st.markdown(
+        "<p class='small'>Instrução: clique em cada dimensão para abrir as perguntas. Responda todas as 45 para liberar o diagnóstico.</p>",
+        unsafe_allow_html=True,
+    )
+
+    # --- BOTÃO TESTE (micro e discreto) ---
     top_l, top_r = st.columns([0.985, 0.015])
     with top_r:
         if st.button("•", key="btn_teste_micro", help="Preenche as 45 respostas aleatoriamente (uso interno)."):
             _preencher_respostas_aleatorias()
             st.rerun()
+
 
     st.markdown("""
     <style>
