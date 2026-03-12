@@ -1,72 +1,23 @@
+from __future__ import annotations
+
+import os
 import streamlit as st
-import requests
-import datetime
-import uuid
 
-from src.config import get_webhook_url
-from src.utils import calcular_zona, simular_processamento
+APP_VERSION = "mvp-0.1"
 
-def render_captura():
-    col1, col2, col3 = st.columns([1, 2, 1])
+# Checkout Eduzz (base)
+EDUZZ_CHECKOUT_BASE = "https://sun.eduzz.com/7977E15B9E"
 
-    with col2:
-        st.markdown(
-            "<h3 style='text-align: center; color: #D4AF37;'>🔒 DIAGNÓSTICO CONCLUÍDO</h3>",
-            unsafe_allow_html=True
-        )
-
-        st.markdown(
-            "<p class='small' style='text-align:center;'>Preencha seus dados para liberar seu Radar e sua Zona.</p>",
-            unsafe_allow_html=True
-        )
-
-        with st.form("lead_form"):
-            nome = st.text_input("Nome completo")
-            email = st.text_input("E-mail")
-            whatsapp = st.text_input("WhatsApp")
-            empresa = st.text_input("Empresa")
-            cargo = st.text_input("Cargo")
-
-            submit = st.form_submit_button("LIBERAR MEU LAUDO AGORA", type="primary")
-
-            if submit:
-                if all([nome, email, whatsapp, empresa, cargo]):
-
-                    total = int(st.session_state.total)
-                    zona = calcular_zona(total)
-
-                    st.session_state.zona = zona
-                    st.session_state.nome_usuario = nome
-
-                    if not st.session_state.submission_id:
-                        st.session_state.submission_id = str(uuid.uuid4())
-
-                    payload = {
-                        "timestamp": datetime.datetime.utcnow().isoformat(),
-                        "submission_id": st.session_state.submission_id,
-                        "nome": nome,
-                        "email": email,
-                        "whatsapp": whatsapp,
-                        "empresa": empresa,
-                        "cargo": cargo,
-                        "pontos_total": total,
-                        "zona": zona,
-                        "scores_dimensoes": st.session_state.scores,
-                        "answers_json": [int(v) for v in st.session_state.answers_json],
-                    }
-
-                    simular_processamento()
-
-                    webhook = get_webhook_url()
-
-                    if webhook:
-                        try:
-                            requests.post(webhook, json=payload, timeout=12)
-                        except Exception:
-                            pass
-
-                    st.session_state.etapa = "resultado"
-                    st.rerun()
-
-                else:
-                    st.warning("Por favor, preencha todos os campos.")
+def get_webhook_url() -> str:
+    """
+    Prioridade:
+    1) st.secrets["URL_WEBHOOK"]
+    2) env var URL_WEBHOOK
+    """
+    try:
+        v = st.secrets.get("URL_WEBHOOK", "")
+        if v:
+            return v
+    except Exception:
+        pass
+    return os.getenv("URL_WEBHOOK", "")
