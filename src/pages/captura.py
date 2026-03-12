@@ -1,24 +1,37 @@
-# src/pages/captura.py
 import uuid
-import datetime
-import requests
+import time
 import streamlit as st
 
-from src.events import send_event
-from src.config import URL_WEBHOOK
+from src.events import send_event, send_submission
 from src.scoring import calcular_zona
-from src.utils import simular_processamento  # mantém seu comportamento visual
+
+
+def simular_processamento() -> None:
+    msgs = [
+        "Processando suas respostas…",
+        "Calculando sua Zona de Governança…",
+        "Montando seu Radar por Dimensões…",
+        "Gerando seu Direcionamento Estratégico…",
+        "Finalizando…",
+    ]
+    box = st.empty()
+    with st.spinner("Aguarde…"):
+        for msg in msgs:
+            box.markdown(f"<p class='small'>🔎 {msg}</p>", unsafe_allow_html=True)
+            time.sleep(0.8)
+    box.empty()
+
 
 def render_captura() -> None:
     col1, col2, col3 = st.columns([1, 2, 1])
+
     with col2:
         st.markdown(
             "<h3 style='text-align: center; color: #D4AF37;'>🔒 DIAGNÓSTICO CONCLUÍDO</h3>",
             unsafe_allow_html=True,
         )
         st.markdown(
-            "<p class='small' style='text-align:center;'>"
-            "Preencha seus dados para liberar seu Radar e sua Zona.</p>",
+            "<p class='small' style='text-align:center;'>Preencha seus dados para liberar seu Radar e sua Zona.</p>",
             unsafe_allow_html=True,
         )
 
@@ -35,7 +48,6 @@ def render_captura() -> None:
 
             if submit:
                 if all([nome, email, whatsapp, empresa, cargo]):
-
                     total = int(st.session_state.total)
                     zona = calcular_zona(total)
 
@@ -46,7 +58,6 @@ def render_captura() -> None:
                         st.session_state.submission_id = str(uuid.uuid4())
 
                     payload = {
-                        "timestamp": datetime.datetime.utcnow().isoformat(),
                         "submission_id": st.session_state.submission_id,
                         "nome": nome,
                         "email": email,
@@ -56,27 +67,14 @@ def render_captura() -> None:
                         "pontos_total": total,
                         "zona": zona,
                         "scores_dimensoes": st.session_state.scores,
-                        "answers_json": [
-                            int(v) for v in st.session_state.answers_json
-                        ],
+                        "answers_json": [int(v) for v in st.session_state.answers_json],
                     }
 
                     simular_processamento()
 
-                    ok = False
-                    try:
-                        r = requests.post(
-                            URL_WEBHOOK, json=payload, timeout=12
-                        )
-                        if getattr(r, "status_code", 0) == 200:
-                            txt = (r.text or "").strip().upper()
-                            if "OK" in txt:
-                                ok = True
-                    except Exception:
-                        ok = False
+                    ok = send_submission(payload, timeout=12)
 
                     if ok:
-                        # ✅ TRACKING CORRETO (novo padrão)
                         send_event("lead_enviado", etapa="captura")
 
                     st.session_state.etapa = "resultado"
